@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: startmatch-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: startmatch
+      POSTGRES_PASSWORD: startmatch
+      POSTGRES_DB: startmatch
+    ports:
+      - "5432:5432"
+    volumes:
+      - startmatch-db-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: startmatch-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  startmatch-db-data:

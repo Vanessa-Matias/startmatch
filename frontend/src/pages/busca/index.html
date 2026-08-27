@@ -1,0 +1,95 @@
+<!--
+  Tela: Busca
+  ============
+  Uma ÚNICA tela usada tanto para "startup buscando investidores" quanto para
+  "investidor buscando startups" — o main.ts decide o que mostrar de acordo com o
+  tipo do usuário logado (usuario.tipo). Por isso alguns filtros ficam escondidos
+  (atributo `hidden`) dependendo de quem está buscando:
+    - #filtro-estagio        -> só aparece quando o investidor busca startups
+    - #filtro-investimento   -> só aparece quando a startup busca investidores
+
+  #results é onde os cards de resultado aparecem, #pagination é a barra de
+  "Anterior / Página X de Y / Próxima" embaixo da lista.
+
+  IDENTIDADE VISUAL (atualização): nenhum id/estrutura mudou aqui — a navbar
+  escura, o hover dos cards de resultado e o foco azul dos campos já vêm
+  automaticamente de components.css/variables.css.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Buscar</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Texto trocado por main.ts: "Buscar investidores" ou "Buscar startups" -->
+      <h1 id="titulo-busca">Buscar</h1>
+
+      <div class="card">
+        <div class="field">
+          <label for="texto">Buscar por texto</label>
+          <input class="input" id="texto" type="text" placeholder="Nome, descrição, tese…" />
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="segmentoId">Segmento</label>
+            <!-- Opções preenchidas por main.ts via GET /segments -->
+            <select class="select" id="segmentoId">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <!-- Só visível quando quem busca é investidor (buscando startups) -->
+          <div class="field" id="filtro-estagio" hidden>
+            <label for="estagio">Estágio</label>
+            <select class="select" id="estagio">
+              <option value="">Todos</option>
+              <option value="ideacao">Ideação</option>
+              <option value="mvp">MVP</option>
+              <option value="operacao">Operação</option>
+              <option value="scale_up">Scale-up</option>
+            </select>
+          </div>
+          <!-- Só visível quando quem busca é startup (buscando investidores) -->
+          <div class="field" id="filtro-investimento" hidden>
+            <label for="investimentoMin">Faixa de investimento (R$)</label>
+            <div class="stack" style="flex-direction: row; gap: 8px">
+              <input class="input" id="investimentoMin" type="number" min="0" placeholder="Mín." />
+              <input class="input" id="investimentoMax" type="number" min="0" placeholder="Máx." />
+            </div>
+          </div>
+          <div class="field">
+            <label for="uf">UF</label>
+            <select class="select" id="uf">
+              <option value="">Todas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <div id="results" class="grid">
+        <p class="text-muted">Carregando resultados…</p>
+      </div>
+      <div class="spacer-md"></div>
+      <div id="pagination" class="stack" style="flex-direction: row; justify-content: center; gap: 8px"></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

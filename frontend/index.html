@@ -1,0 +1,26 @@
+<!--
+  index.html (raiz do frontend)
+  =============================
+  Este é o ÚNICO arquivo HTML que fica na raiz do projeto — todas as outras telas
+  (login, cadastro, dashboard, etc.) têm seu próprio index.html dentro de
+  src/pages/<nome-da-tela>/.
+
+  A função dele é só redirecionar: quem abre o site é jogado para src/main.ts, que decide
+  para onde mandar o usuário (ver comentários em src/main.ts).
+
+  Se for mexer no ícone/tema do PWA (manifest.json, cor da barra do navegador), é aqui.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Cor da barra de status em navegadores mobile — mesma cor do --color-primary do variables.css -->
+    <meta name="theme-color" content="#152a54" />
+    <title>StartMatch</title>
+  </head>
+  <body>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

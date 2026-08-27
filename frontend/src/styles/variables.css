@@ -1,0 +1,66 @@
+/*
+  src/styles/variables.css
+  =========================
+  Paleta de cores e variáveis de design do projeto (CSS Custom Properties).
+  Este é o PRIMEIRO arquivo que você (Agnes) deve abrir para mexer na identidade
+  visual — mudando um valor aqui, o site inteiro muda, porque global.css,
+  components.css e o <style> de cada tela usam essas variáveis via var(--nome).
+
+  Ordem de carregamento em cada index.html: variables.css -> global.css ->
+  components.css. Sempre nessa ordem, porque os outros dois dependem das variáveis
+  definidas aqui.
+
+  ATUALIZAÇÃO (identidade visual "tech/Porto Digital"): a paleta trocou de
+  azul-marinho + laranja para azul-marinho + AZUL vibrante como cor de destaque,
+  com verde e vermelho aparecendo só como pequenos detalhes (ícones, badges) — não
+  como cor de botão. As fontes também mudaram: título em Space Grotesk (visual mais
+  "tech"), texto em Inter (mantido, é a fonte que o projeto já usava).
+*/
+
+/* Fontes carregadas do Google Fonts — um <link> só, aqui, em vez de repetir em
+   toda tela. Cai fora do "1 destino externo além do próprio site" do resto do
+   projeto porque Google Fonts é sempre permitido. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Cores principais */
+  --color-primary: #0f2148; /* azul-marinho profundo — navbar, hero, superfícies escuras */
+  --color-primary-light: #152a54; /* azul-marinho um pouco mais claro — gradientes, hover em superfícies escuras */
+  --color-accent: #2f6feb; /* azul vibrante — cor de destaque: botões primários, links, foco */
+  --color-accent-hover: #1d4ed8; /* azul mais escuro — hover/estado ativo do azul de destaque */
+
+  /* Neutros */
+  --color-bg: #f5f7fa; /* fundo geral */
+  --color-surface: #ffffff; /* cards, formulários */
+  --color-border: #e2e5ea;
+  --color-text: #101827;
+  --color-text-muted: #64748b;
+
+  /* Estados */
+  --color-success: #16a34a; /* match confirmado, badges de sucesso */
+  --color-success-light: #22c55e; /* verde mais claro — detalhes, ícones, pontos de destaque */
+  --color-warning: #f5a623;
+  --color-error: #e74c3c;
+  --color-red-detail: #dc2626; /* vermelho usado só como DETALHE pontual (ex.: ícone de Mentores) — nunca como cor de botão */
+
+  /* Tipografia */
+  --font-family: 'Inter', system-ui, sans-serif; /* texto/corpo */
+  --font-family-display: 'Space Grotesk', 'Inter', system-ui, sans-serif; /* títulos (h1-h4) */
+  --font-size-base: 16px;
+
+  /* Espaçamento e formas */
+  --radius: 8px;
+  --radius-lg: 14px; /* cards — cantos um pouco mais arredondados que botões/inputs */
+  --radius-xl: 20px; /* blocos maiores — CTA final, painéis de destaque */
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px; /* respiro entre blocos de uma mesma seção (mais generoso que --spacing-lg) */
+  --spacing-2xl: 88px; /* respiro vertical entre seções inteiras de uma página — dá "ar" ao layout */
+
+  /* Sombras — escala de elevação usada em cards/painéis pra dar profundidade sem
+     exagerar (sombra sempre difusa, nunca dura/reta). */
+  --shadow-sm: 0 1px 2px rgba(15, 33, 72, 0.06), 0 1px 3px rgba(15, 33, 72, 0.05);
+  --shadow-md: 0 8px 24px -12px rgba(15, 33, 72, 0.18);
+  --shadow-lg: 0 24px 48px -20px rgba(15, 33, 72, 0.24);
+}

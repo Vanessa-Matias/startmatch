@@ -1,0 +1,58 @@
+<!--
+  Tela: Dashboard do Mentor
+  ============================
+  Tela principal de quem está logado como Mentor — Etapa 6 do fluxograma da
+  designer ("Fluxo das Mentorias"). Até esta atualização, mentor não tinha
+  dashboard próprio nesta 1ª entrega (caía direto em Configurações); agora segue
+  o mesmo padrão dos dashboards de Startup/Investidor: resumo do perfil + atalhos
+  para as telas do papel (Agenda, Solicitações, Histórico, Certificados).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Dashboard do Mentor</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="resumo-perfil" class="card">
+        <p class="text-muted">Carregando perfil…</p>
+      </section>
+
+      <div class="spacer-lg"></div>
+      <h2>Atalhos</h2>
+      <div class="grid">
+        <a class="card" href="../agenda/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Agenda</div>
+          <p class="text-muted">Sua disponibilidade e próximas sessões.</p>
+        </a>
+        <a class="card" href="../solicitacoes/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Solicitações</div>
+          <p class="text-muted">Pedidos de mentoria recebidos de startups.</p>
+        </a>
+        <a class="card" href="../historico-mentorias/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Histórico</div>
+          <p class="text-muted">Sessões realizadas e horas de mentoria.</p>
+        </a>
+        <a class="card" href="../certificados/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Certificados</div>
+          <p class="text-muted">Certificado de horas, exportável para LinkedIn.</p>
+        </a>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

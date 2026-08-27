@@ -1,0 +1,143 @@
+<!--
+  Tela: Sobre (Área Pública)
+  ============================
+  Parte da "Etapa 1 — Entrada na plataforma" do fluxograma da designer:
+  Home -> Sobre -> Como funciona -> Planos. Explica o projeto, o problema
+  enfrentado por startups/investidores e como o StartMatch resolve essa
+  necessidade dentro do ecossistema do Porto Digital.
+
+  IDENTIDADE VISUAL (atualização v2 — mais sofisticada): cabeçalho escuro
+  (.page-hero) com mais respiro, cada card com um ícone próprio (.icon-circle,
+  mesmo padrão usado na Home/Recursos) pra ficar mais rico visualmente em vez
+  de só texto, e espaçamento maior entre os blocos. Nenhuma lógica mudou
+  (main.ts continua vazio).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Sobre</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      .sobre-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+      }
+      @media (max-width: 720px) {
+        .sobre-cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav>
+          <a href="../home/index.html">Home</a>
+          <a href="./index.html">Sobre</a>
+          <a href="../como-funciona/index.html">Como funciona</a>
+          <a href="../recursos/index.html">Recursos</a>
+          <a href="../planos/index.html">Planos</a>
+          <a href="../login/index.html">Entrar</a>
+          <a class="btn btn-accent" href="../onboarding/index.html">Criar conta</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="page-hero">
+      <div class="container">
+        <span class="section-eyebrow blue" style="background: rgba(47,111,235,0.14); border-color: rgba(47,111,235,0.4); color: #a9c8ff">SOBRE O PROJETO</span>
+        <h1>Sobre o StartMatch</h1>
+        <p class="lead">
+          Por que existimos e como conectamos o ecossistema de startups e economia criativa do
+          Porto Digital.
+        </p>
+      </div>
+    </section>
+
+    <div class="container container--narrow">
+      <div class="spacer-xl"></div>
+
+      <div class="card card-feature sm-reveal">
+        <div class="icon-circle" style="background: #eff6ff">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"></path><path d="M9.5 12.5l2 2 3.5-4"></path></svg>
+        </div>
+        <div class="card-title">Missão</div>
+        <p>
+          Conectar startups nascentes do Porto Digital a investidores-anjo e mentores,
+          reduzindo a distância entre quem tem uma boa ideia e quem pode ajudá-la a crescer —
+          com capital, orientação e rede de contatos.
+        </p>
+      </div>
+
+      <div class="spacer-lg"></div>
+
+      <div class="sobre-cards">
+        <div class="card card-feature sm-reveal" style="animation-delay: 0.06s">
+          <div class="icon-circle" style="background: #fef2f2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0z"></path></svg>
+          </div>
+          <div class="card-title">O problema</div>
+          <p class="text-muted">
+            Startups em estágio inicial têm dificuldade em encontrar investidores e mentores
+            alinhados ao seu segmento e estágio de maturidade. Investidores, por sua vez, gastam
+            tempo garimpando oportunidades sem um canal estruturado de descoberta e triagem.
+          </p>
+        </div>
+
+        <div class="card card-feature sm-reveal" style="animation-delay: 0.12s">
+          <div class="icon-circle" style="background: #ecfdf5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg>
+          </div>
+          <div class="card-title">A solução</div>
+          <p class="text-muted">
+            Uma plataforma de matchmaking: cada lado cria um perfil detalhado, busca com filtros
+            relevantes (segmento, estágio, localização, faixa de investimento) e demonstra
+            interesse. Quando o interesse é mútuo, nasce um match — e a conversa começa dentro da
+            própria plataforma.
+          </p>
+        </div>
+      </div>
+
+      <div class="spacer-lg"></div>
+
+      <div class="card card-feature sm-reveal" style="animation-delay: 0.18s">
+        <div class="icon-circle" style="background: #eff6ff">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"></path><path d="M9 21v-6h6v6"></path></svg>
+        </div>
+        <div class="card-title">Ecossistema Porto Digital</div>
+        <p>
+          O StartMatch nasce a partir do ecossistema de startups e economia criativa do
+          Porto Digital (Recife). Mentores vinculados a empresas do Porto Digital têm
+          condições especiais na plataforma, reforçando a rede de apoio local.
+        </p>
+      </div>
+
+      <div class="spacer-xl"></div>
+      <p style="text-align: center"><a href="../como-funciona/index.html">Ver como funciona em detalhes →</a></p>
+      <div class="spacer-xl"></div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          <a href="../home/index.html">Home</a> ·
+          <a href="./index.html">Sobre</a> ·
+          <a href="../como-funciona/index.html">Como funciona</a> ·
+          <a href="../recursos/index.html">Recursos</a> ·
+          <a href="../planos/index.html">Planos</a>
+        </p>
+        <p class="copy">StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).</p>
+      </div>
+    </footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!--
+  Tela: Agenda (Mentor)
+  =======================
+  Mostra a disponibilidade cadastrada pelo mentor e as próximas sessões
+  agendadas. O agendamento propriamente dito (Etapa 6 do fluxograma: Startup
+  solicita -> Mentor aceita -> vira sessão na agenda) depende de uma entidade de
+  "sessão de mentoria" que ainda não existe no backend nesta 1ª entrega — por
+  isso a lista de sessões aparece vazia, pronta
+  para receber dados reais quando esse recurso for implementado.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Agenda</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container container--narrow">
+      <h1>Agenda</h1>
+
+      <div class="card">
+        <div class="card-title">Sua disponibilidade</div>
+        <p id="disponibilidade" class="text-muted">Carregando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Próximas sessões</h2>
+      <div id="sessoes" class="stack">
+        <p class="text-muted">
+          Nenhuma sessão agendada ainda — o agendamento de mentorias chega na 2ª entrega do
+          projeto.
+        </p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

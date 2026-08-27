@@ -1,0 +1,75 @@
+<!--
+  Tela: Perfil do Investidor
+  ===========================
+  Equivalente à tela de cadastro-startup, mas para investidores. A diferença
+  principal no formulário: em vez de escolher um segmento "principal", o
+  investidor define uma PRIORIDADE numérica para cada segmento de interesse
+  (1 = mais prioritário) — ver #segmentos-list, preenchido pelo main.ts.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Perfil do Investidor</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <div class="container container--narrow">
+      <div class="spacer-lg"></div>
+      <h1>Perfil do Investidor</h1>
+      <p class="text-muted">Essas informações aparecem para startups na busca.</p>
+
+      <form id="form-investidor">
+        <div class="field">
+          <label for="tipo">Tipo de investidor</label>
+          <select class="select" id="tipo" name="tipo" required>
+            <option value="anjo">Investidor-anjo</option>
+            <option value="vc">Venture Capital</option>
+            <option value="fundo">Fundo</option>
+            <option value="corporate">Corporate Venture</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="teseInvestimento">Tese de investimento</label>
+          <textarea class="textarea" id="teseInvestimento" name="teseInvestimento" required></textarea>
+        </div>
+        <div class="field">
+          <label>Segmentos de interesse</label>
+          <p class="form-hint">Marque os segmentos e defina a prioridade (1 = mais prioritário).</p>
+          <!-- Preenchido dinamicamente por main.ts (init -> GET /segments) -->
+          <div id="segmentos-list" class="stack"></div>
+        </div>
+        <div class="field">
+          <label for="investimentoMin">Investimento mínimo (R$)</label>
+          <input class="input" id="investimentoMin" name="investimentoMin" type="number" min="0" step="1000" required />
+        </div>
+        <div class="field">
+          <label for="investimentoMax">Investimento máximo (R$)</label>
+          <input class="input" id="investimentoMax" name="investimentoMax" type="number" min="0" step="1000" required />
+        </div>
+        <div class="field">
+          <label for="cidade">Cidade</label>
+          <input class="input" id="cidade" name="cidade" type="text" required />
+        </div>
+        <div class="field">
+          <label for="uf">UF</label>
+          <select class="select" id="uf" name="uf" required></select>
+        </div>
+        <div class="field checkbox-row">
+          <input id="perfilPublico" name="perfilPublico" type="checkbox" checked />
+          <label for="perfilPublico">Exibir meu perfil na busca de startups</label>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit">Salvar e continuar</button>
+        <p class="form-error" id="form-error"></p>
+      </form>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

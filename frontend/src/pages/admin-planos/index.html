@@ -1,0 +1,51 @@
+<!--
+  Tela: Gestão de planos (Admin)
+  =================================
+  Etapa 7 do fluxograma — item "Gestão de planos". Mostra quantos usuários
+  (startups e investidores) estão em cada plano de assinatura, a partir de
+  GET /admin/metrics. A tabela de referência dos planos é conteúdo estático,
+  igual à tela pública Planos.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Gestão de planos</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Gestão de planos</h1>
+
+      <h2>Startups por plano</h2>
+      <div id="startups-planos" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Investidores por plano</h2>
+      <div id="investidores-planos" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <p class="text-muted">
+        Para os valores e benefícios de cada plano, veja a página pública
+        <a href="../planos/index.html">Planos</a>.
+      </p>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!--
+  Tela: Solicitações (Mentor)
+  ==============================
+  Caixa de entrada de pedidos de mentoria enviados por startups (Etapa 6 do
+  fluxograma: Startup solicita mentoria, escolhe mentor -> aparece aqui para o
+  mentor aceitar). Ainda não tem backend nesta 1ª entrega (não existe entidade de
+  solicitação de mentoria) — a tela já está estruturada e pronta para exibir
+  dados reais assim que o endpoint existir.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Solicitações</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Solicitações de mentoria</h1>
+      <p class="text-muted">Pedidos de sessão enviados por startups, aguardando sua resposta.</p>
+
+      <div id="solicitacoes-list" class="stack">
+        <p class="text-muted">
+          Nenhuma solicitação no momento — o agendamento de mentorias chega na 2ª entrega do
+          projeto.
+        </p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

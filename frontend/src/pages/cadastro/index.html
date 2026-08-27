@@ -1,0 +1,179 @@
+<!--
+  Tela: Cadastro (conta de login)
+  ================================
+  Cria a CONTA de login (nome, e-mail, senha) — ainda não o perfil de negócio
+  (startup/investidor/mentor), que fica em telas separadas (cadastro-startup,
+  cadastro-investidor, cadastro-mentor) logo em seguida.
+
+  #tipo-descricao é preenchido pelo main.ts com um texto tipo "Criando conta como
+  Startup." — o tipo vem da escolha feita na tela de onboarding.
+
+  O checkbox "aceite-termos" é obrigatório (attribute `required`) e sua marcação
+  também é registrada no backend como consentimento LGPD (ver main.ts).
+
+  IDENTIDADE VISUAL (atualização v2 — mais sofisticada): mesmo layout em duas
+  colunas do Login/Onboarding (painel de marca com rede de pontos animada +
+  formulário), pra manter consistência em todo o fluxo de cadastro. Nenhum
+  id/name mudou — #tipo-descricao, #form-cadastro, #nome, #email, #senha,
+  #aceite-termos, #form-error e o main.ts continuam iguais.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Criar conta</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      .auth-split {
+        display: grid;
+        grid-template-columns: 0.85fr 1fr;
+        min-height: 100vh;
+      }
+      .auth-brand {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .auth-brand a {
+        color: #fff;
+        font-family: var(--font-family-display);
+        font-weight: 700;
+        font-size: 1.15rem;
+        text-decoration: none;
+      }
+      #particle-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .auth-brand > * {
+        position: relative;
+        z-index: 1;
+      }
+      .auth-brand h2 {
+        color: #fff;
+        font-size: 26px;
+        line-height: 1.3;
+        max-width: 380px;
+      }
+      .auth-brand ul {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 380px;
+      }
+      .auth-brand li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #c7d0e6;
+        font-size: 14.5px;
+      }
+      .auth-brand .check {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .auth-brand footer {
+        color: #5c6a94;
+        font-size: 13px;
+      }
+      .auth-form-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+      .auth-form-side .container--narrow {
+        max-width: 400px;
+        padding: 0;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: var(--spacing-lg);
+      }
+      @media (max-width: 860px) {
+        .auth-split {
+          grid-template-columns: 1fr;
+        }
+        .auth-brand {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-split">
+      <div class="auth-brand">
+        <a href="../home/index.html">StartMatch</a>
+
+        <div>
+          <h2>Você está a um passo de entrar no ecossistema Porto Digital.</h2>
+          <div class="spacer-md"></div>
+          <ul>
+            <li><span class="check" style="background: rgba(47,111,235,0.18)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Perfil completo por segmento e estágio</li>
+            <li><span class="check" style="background: rgba(34,197,94,0.18)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Busca com filtros e sugestões de compatibilidade</li>
+            <li><span class="check" style="background: rgba(220,38,38,0.14)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Match e conversa direta pelo chat</li>
+          </ul>
+        </div>
+
+        <footer>StartMatch — ecossistema Porto Digital (Recife).</footer>
+        <canvas id="particle-bg"></canvas>
+      </div>
+
+      <div class="auth-form-side">
+        <div class="container--narrow sm-reveal">
+          <p class="text-muted back-link"><a href="../onboarding/index.html">&larr; Voltar</a></p>
+          <h1>Criar conta</h1>
+          <p class="text-muted" id="tipo-descricao"></p>
+
+          <div class="spacer-sm"></div>
+          <form id="form-cadastro">
+            <div class="field">
+              <label for="nome">Nome</label>
+              <input class="input" id="nome" name="nome" type="text" required />
+            </div>
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input class="input" id="email" name="email" type="email" required />
+            </div>
+            <div class="field">
+              <label for="senha">Senha</label>
+              <input class="input" id="senha" name="senha" type="password" minlength="8" required />
+              <p class="form-hint">Mínimo de 8 caracteres.</p>
+            </div>
+            <div class="field checkbox-row">
+              <input id="aceite-termos" name="aceiteTermos" type="checkbox" required />
+              <label for="aceite-termos">Li e aceito os termos de uso e a política de privacidade.</label>
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit">Criar conta</button>
+            <p class="form-error" id="form-error"></p>
+          </form>
+
+          <p class="text-muted">
+            Já tem conta? <a href="../login/index.html">Entrar</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<!--
+  Tela: Governança e LGPD (Admin)
+  ==================================
+  Etapa 7 do fluxograma — item "Governança e LGPD". Conteúdo espelha o
+  levantamento inicial de dados pessoais feito pelo projeto — é uma tela de
+  referência/consulta nesta 1ª entrega (não lista consentimentos individuais por
+  usuário ainda; isso é um recurso futuro que dependeria de um novo endpoint
+  agregando a tabela consentimento_lgpd por usuário).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Governança e LGPD</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a> 
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Governança e LGPD</h1>
+      <p class="text-muted">Levantamento de dados pessoais tratados pela plataforma.</p>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-title">Nome, e-mail, senha (hash)</div>
+          <p class="text-muted">Finalidade: autenticação e identificação da conta.</p>
+          <p class="text-muted">Base legal: execução de contrato. Retenção: enquanto a conta existir.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Dados de perfil (startup, investidor, mentor)</div>
+          <p class="text-muted">Finalidade: exibir perfil e viabilizar busca/match.</p>
+          <p class="text-muted">Base legal: execução de contrato / interesse legítimo. Retenção: enquanto a conta existir.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Mensagens entre usuários com match</div>
+          <p class="text-muted">Finalidade: comunicação entre as partes.</p>
+          <p class="text-muted">Base legal: execução de contrato. Retenção: enquanto o match existir.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Registro de consentimento</div>
+          <p class="text-muted">Finalidade: comprovar aceite de termos/privacidade.</p>
+          <p class="text-muted">Base legal: obrigação legal. Retenção: 5 anos após encerramento da conta.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Avaliação beta</div>
+          <p class="text-muted">Finalidade: melhoria do produto (uso opcional).</p>
+          <p class="text-muted">Base legal: consentimento. Retenção: enquanto o produto estiver em beta.</p>
+        </div>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <p class="text-muted">
+        Um painel de consentimentos por usuário é um recurso planejado para uma
+        fase futura do projeto.
+      </p>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

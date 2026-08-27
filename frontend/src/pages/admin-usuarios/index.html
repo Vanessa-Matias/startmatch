@@ -1,0 +1,39 @@
+<!--
+  Tela: Gestão de usuários (Admin)
+  ===================================
+  Etapa 7 do fluxograma — item "Gestão de usuários". Lista todas as contas da
+  plataforma (GET /users, endpoint novo, admin-only). Só leitura nesta 1ª
+  entrega — ações de gestão (suspender conta, aprovar mentor verificado etc.)
+  ficam para uma fase futura.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Usuários</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Usuários</h1>
+      <p class="text-muted">Todas as contas cadastradas na plataforma.</p>
+
+      <div id="usuarios-list" class="stack">
+        <p class="text-muted">Carregando usuários…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

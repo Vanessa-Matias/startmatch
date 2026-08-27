@@ -1,0 +1,47 @@
+<!--
+  Tela: Mentorias (Startup)
+  ============================
+  Nova tela do fluxo — item "Mentorias" do menu da Startup na hierarquia do
+  fluxograma da designer: "área para solicitar sessões com mentores conforme o
+  plano contratado". Lista os mentores cadastrados na plataforma (GET /mentors,
+  endpoint novo) para a startup escolher com quem quer mentoria.
+
+  O agendamento de sessão em si (Etapa 6 do fluxograma: Startup -> Agendamento ->
+  Mentor) ainda não tem backend nesta 1ª entrega ("mentoria funcionando ponta a
+  ponta" está fora do escopo desta entrega) — por isso o botão "Solicitar
+  mentoria" fica desabilitado, no mesmo
+  padrão já usado na tela de Plano para o botão de upgrade.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Mentorias</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Mentorias</h1>
+      <p class="text-muted">
+        Escolha um mentor do ecossistema Porto Digital para solicitar uma sessão.
+      </p>
+
+      <div id="mentores-list" class="grid">
+        <p class="text-muted">Carregando mentores…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

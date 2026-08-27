@@ -1,0 +1,50 @@
+<!--
+  Tela: Interesses
+  ==================
+  Nova tela do fluxo (Hierarquia "3. Startup" e "4. Investidor" do fluxograma da
+  designer): lista os interesses que o usuário logado ENVIOU e os que RECEBEU.
+  Uma única tela serve Startup e Investidor — mesmo padrão de busca/perfil/matches.
+
+  Antes desta tela existir, "interesses recebidos" só aparecia dentro do
+  dashboard (resumo). Agora tem uma tela própria e completa, com os dois lados
+  (enviados/recebidos), batendo com o item "Interesses" do menu de ambos os
+  papéis.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Interesses</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Interesses</h1>
+      <p class="text-muted" id="subtitulo">Interesses enviados e recebidos.</p>
+
+      <h2>Recebidos</h2>
+      <div id="interesses-recebidos" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Enviados</h2>
+      <div id="interesses-enviados" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!--
+  Tela: Histórico de mentorias
+  ===============================
+  Combina dois itens da hierarquia de telas do fluxograma da designer para o
+  papel Mentor: "Histórico de mentorias" e "Horas realizadas" (fazem sentido
+  juntos — a mesma tabela de sessões alimenta o total de horas). Ainda sem
+  backend nesta 1ª entrega — estrutura pronta
+  para os dados reais.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Histórico de mentorias</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Histórico de mentorias</h1>
+
+      <div class="card">
+        <div class="card-title">Horas realizadas</div>
+        <p><span class="badge">0h</span> <span class="text-muted">até agora</span></p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Sessões</h2>
+      <div id="historico-list" class="stack">
+        <p class="text-muted">Nenhuma sessão registrada ainda.</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

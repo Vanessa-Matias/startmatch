@@ -1,0 +1,136 @@
+<!--
+  Tela: Mensagens
+  ================
+  Tela de chat em duas colunas: lista de conversas à esquerda (#conversas-list) e a
+  janela de mensagens à direita (#chat-box + formulário de envio). É a tela com mais
+  CSS próprio no <style> — as outras telas usam só as classes de global.css e
+  components.css, mas essa precisa de um layout de chat específico (bolhas de
+  mensagem, cores diferentes para "minha mensagem" vs. mensagem recebida).
+
+  Dica para alterações visuais: a classe .mensagem.minha é a bolha das mensagens que
+  EU enviei (alinhada à direita, cor de destaque); .mensagem sozinha é a bolha da
+  outra pessoa (alinhada à esquerda, cor neutra).
+
+  IDENTIDADE VISUAL (atualização): bolha "minha" agora usa o azul de destaque
+  (--color-accent) em vez do azul-marinho antigo, a conversa selecionada usa a
+  mesma cor de borda, e toda bolha nova entra com uma pequena animação de
+  fade+slide (@keyframes bubble-in) — funciona sozinho porque o main.ts só
+  precisa continuar criando elementos com a classe "mensagem"/"mensagem minha",
+  nada de lógica mudou.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Mensagens</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      /* Layout de duas colunas: lista de conversas (280px fixos) + caixa de chat (resto do espaço) */
+      .mensagens-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: var(--spacing-md);
+        align-items: start;
+      }
+      .conversas-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+      .conversas-list button {
+        text-align: left;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: var(--spacing-sm);
+        cursor: pointer;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+      .conversas-list button:hover {
+        border-color: #cdd8f2;
+      }
+      /* Destaque da conversa selecionada no momento */
+      .conversas-list button.ativa {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 1px var(--color-accent);
+      }
+      .chat-box {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        min-height: 320px;
+        max-height: 480px;
+        overflow-y: auto;
+      }
+      @keyframes bubble-in {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Bolha de mensagem padrão (mensagem recebida — alinhada à esquerda) */
+      .mensagem {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 14px 14px 14px 4px;
+        background: #f1f4f8;
+        animation: bubble-in 0.3s ease-out;
+      }
+      /* Bolha de mensagem enviada por mim — alinhada à direita, cor de destaque */
+      .mensagem.minha {
+        align-self: flex-end;
+        border-radius: 14px 14px 4px 14px;
+        background: var(--color-accent);
+        color: #fff;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mensagem {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Mensagens</h1>
+      <div class="mensagens-layout">
+        <!-- Preenchido dinamicamente por main.ts com um botão por conversa -->
+        <div id="conversas-list" class="conversas-list">
+          <p class="text-muted">Carregando conversas…</p>
+        </div>
+
+        <div class="card">
+          <!-- Preenchido com as bolhas de mensagem da conversa selecionada -->
+          <div id="chat-box" class="chat-box">
+            <p class="text-muted">Selecione uma conversa.</p>
+          </div>
+          <div class="spacer-sm"></div>
+          <!-- Campo de envio começa desabilitado até uma conversa ser selecionada -->
+          <form id="form-mensagem" class="stack" style="flex-direction: row; gap: 8px">
+            <input class="input" id="conteudo" type="text" placeholder="Escreva uma mensagem…" disabled />
+            <button class="btn btn-primary" type="submit" disabled>Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!--
+  Tela: Matches
+  ==============
+  Lista as conexões CONFIRMADAS (interesse mútuo já detectado pelo backend) — tanto
+  para startups quanto investidores, a mesma tela serve os dois (main.ts decide o
+  que mostrar de acordo com usuario.tipo). Cada card de match é um link direto para
+  a conversa correspondente na tela de Mensagens.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Matches</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Matches</h1>
+      <p class="text-muted">Conexões confirmadas — interesse mútuo entre você e a outra parte.</p>
+      <div id="matches-list" class="grid">
+        <p class="text-muted">Carregando matches…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

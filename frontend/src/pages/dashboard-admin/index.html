@@ -1,0 +1,64 @@
+<!--
+  Tela: Dashboard do Administrador
+  ===================================
+  Etapa 7 do fluxograma da designer ("Área Administrativa") — tela que não
+  aparece para usuários comuns. Indicadores gerais da plataforma, vindos de
+  GET /admin/metrics (endpoint novo, admin.controller.ts): total de startups,
+  investidores, mentores e matches, com detalhamento por plano/estágio.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Dashboard Admin</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Dashboard geral</h1>
+      <p class="text-muted">Visão consolidada da plataforma.</p>
+
+      <div id="indicadores" class="grid">
+        <p class="text-muted">Carregando indicadores…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Atalhos</h2>
+      <div class="grid">
+        <a class="card" href="../admin-usuarios/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Usuários</div>
+          <p class="text-muted">Gestão de contas da plataforma.</p>
+        </a>
+        <a class="card" href="../admin-planos/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Planos</div>
+          <p class="text-muted">Distribuição de assinaturas.</p>
+        </a>
+        <a class="card" href="../admin-relatorios/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Relatórios</div>
+          <p class="text-muted">Indicadores detalhados.</p>
+        </a>
+        <a class="card" href="../admin-lgpd/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Governança e LGPD</div>
+          <p class="text-muted">Dados pessoais tratados e base legal.</p>
+        </a>
+        <a class="card" href="../admin-auditoria/index.html" style="text-decoration:none;color:inherit">
+          <div class="card-title">Auditoria</div>
+          <p class="text-muted">Registro de eventos da plataforma.</p>
+        </a>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

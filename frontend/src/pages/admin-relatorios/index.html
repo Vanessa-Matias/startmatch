@@ -1,0 +1,48 @@
+<!--
+  Tela: Relatórios (Admin)
+  ===========================
+  Etapa 7 do fluxograma — item "Relatórios". Visão mais detalhada dos mesmos
+  indicadores do dashboard-admin, com detalhamento por estágio de startup e por
+  tipo de usuário.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Relatórios (Admin)</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Relatórios</h1>
+      <p class="text-muted">
+        Indicadores consolidados do momento. Um histórico de crescimento ao longo do tempo é
+        um recurso planejado para a 2ª entrega do projeto (depende de série histórica de dados).
+      </p>
+
+      <h2>Usuários por tipo</h2>
+      <div id="usuarios-tipo" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Startups por estágio</h2>
+      <div id="startups-estagio" class="grid">
+        <p class="text-muted">Carregando…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

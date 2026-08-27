@@ -1,0 +1,196 @@
+<!--
+  Tela: Onboarding ("Comece por aqui")
+  =====================================
+  Primeira tela que qualquer visitante não-logado vê (ver src/main.ts na raiz).
+  Função: perguntar "você é Startup, Investidor ou Mentor?" antes de ir para o
+  cadastro — a resposta é salva e usada na próxima tela (cadastro/).
+
+  Para mexer no texto/visual: os 3 botões abaixo (data-tipo="startup" /
+  "investidor" / "mentor") são os únicos elementos com comportamento — o resto é
+  só apresentação. Pode trocar textos, cores (via classes .btn-primary/.btn-outline)
+  e o layout à vontade, contanto que os atributos data-tipo continuem batendo com o
+  que main.ts espera.
+
+  Esta tela corresponde à etapa "Escolha do perfil" da Autenticação, no fluxograma
+  da designer (Aula 02 - PI.pdf) — o passo em que o sistema pergunta "Qual é o seu
+  perfil?". O card de Administrador não tem botão de cadastro: contas admin são
+  criadas pela equipe da plataforma, não por autocadastro público (ver comentário
+  no bloco #card-admin abaixo).
+
+  IDENTIDADE VISUAL (atualização v2 — mais sofisticada): mesmo layout em duas
+  colunas do Login (painel de marca com a rede de pontos animada à esquerda,
+  conteúdo à direita), pra dar consistência visual em todo o fluxo de
+  cadastro (Onboarding -> Cadastro -> Login). Nenhum atributo/id mudou —
+  data-tipo, #card-admin e o main.ts continuam iguais.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Comece por aqui</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela (ver index.html da raiz) -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      .auth-split {
+        display: grid;
+        grid-template-columns: 0.85fr 1fr;
+        min-height: 100vh;
+      }
+      .auth-brand {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .auth-brand a {
+        color: #fff;
+        font-family: var(--font-family-display);
+        font-weight: 700;
+        font-size: 1.15rem;
+        text-decoration: none;
+      }
+      #particle-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .auth-brand > * {
+        position: relative;
+        z-index: 1;
+      }
+      .auth-brand h2 {
+        color: #fff;
+        font-size: 26px;
+        line-height: 1.3;
+        max-width: 380px;
+      }
+      .auth-brand p {
+        color: #a9b4cc;
+        max-width: 360px;
+      }
+      .auth-brand footer {
+        color: #5c6a94;
+        font-size: 13px;
+      }
+      .auth-form-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+      .auth-form-side .container--narrow {
+        max-width: 420px;
+        padding: 0;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: var(--spacing-lg);
+      }
+      .tipo-btn {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        text-align: left;
+        padding: 16px 18px;
+      }
+      .tipo-btn .icon-circle {
+        margin-bottom: 0;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+      .tipo-btn .tipo-btn-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .tipo-btn .tipo-btn-copy small {
+        font-weight: 400;
+        opacity: 0.85;
+        font-size: 12.5px;
+      }
+      @media (max-width: 860px) {
+        .auth-split {
+          grid-template-columns: 1fr;
+        }
+        .auth-brand {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-split">
+      <div class="auth-brand">
+        <a href="../home/index.html">StartMatch</a>
+
+        <div>
+          <h2>Conectando startups do Porto Digital a investidores e mentores.</h2>
+          <div class="spacer-md"></div>
+          <p>Leva menos de 5 minutos: escolha seu perfil, complete o cadastro e comece a buscar oportunidades.</p>
+        </div>
+
+        <footer>StartMatch — ecossistema Porto Digital (Recife).</footer>
+        <canvas id="particle-bg"></canvas>
+      </div>
+
+      <div class="auth-form-side">
+        <div class="container--narrow sm-reveal">
+          <p class="text-muted back-link"><a href="../home/index.html">&larr; Voltar para o site</a></p>
+          <h1>Qual é o seu perfil?</h1>
+          <p class="text-muted">
+            Conectamos startups do Porto Digital a investidores-anjo e mentores. Como você quer
+            participar?
+          </p>
+          <div class="spacer-md"></div>
+          <div class="stack">
+            <!-- Cada botão guarda o tipo escolhido no atributo data-tipo; main.ts lê isso no clique. -->
+            <button class="btn btn-primary btn-block tipo-btn" data-tipo="startup" type="button">
+              <span class="icon-circle" style="background: rgba(255,255,255,0.18)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"></path><path d="M9.5 12.5l2 2 3.5-4"></path></svg></span>
+              <span class="tipo-btn-copy">Sou uma Startup<small>Buscar investidores e mentores</small></span>
+            </button>
+            <button class="btn btn-primary btn-block tipo-btn" data-tipo="investidor" type="button">
+              <span class="icon-circle" style="background: rgba(255,255,255,0.18)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"></path><path d="M15 6h6v6"></path></svg></span>
+              <span class="tipo-btn-copy">Sou um Investidor<small>Descobrir startups compatíveis</small></span>
+            </button>
+            <button class="btn btn-outline btn-block tipo-btn" data-tipo="mentor" type="button">
+              <span class="icon-circle" style="background: #fef2f2"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"></path><circle cx="18" cy="9" r="2.3"></circle><path d="M15.8 13.6c2.3.2 4.2 2.1 4.2 4.9"></path></svg></span>
+              <span class="tipo-btn-copy">Sou Mentor<small>Compartilhar experiência</small></span>
+            </button>
+
+            <!--
+              Card informativo de Administrador — sem data-tipo de propósito. Contas admin
+              são provisionadas pela equipe da plataforma (não é autocadastro público),
+              mas o card fica visível aqui para o fluxo de telas ficar completo, igual ao
+              fluxograma da designer (Etapa 2 — "Qual é o seu perfil?": Startup / Investidor
+              / Mentor / Admin).
+            -->
+            <div class="card" id="card-admin">
+              <div class="card-title">Administrador</div>
+              <p class="text-muted">
+                Acesso interno, provisionado pela equipe do StartMatch. Se você já tem uma
+                conta de administrador, <a href="../login/index.html">entre por aqui</a>.
+              </p>
+            </div>
+          </div>
+          <div class="spacer-md"></div>
+          <p class="text-muted">
+            Já tem conta? <a href="../login/index.html">Entrar</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

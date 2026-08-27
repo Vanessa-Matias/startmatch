@@ -1,0 +1,50 @@
+<!--
+  Tela: Certificados (Mentor)
+  ==============================
+  Certificado de horas de mentoria, exportável (ex.: para LinkedIn) — parte do
+  modelo de negócio para mentores vinculados ao Porto Digital. Depende do
+  histórico de sessões
+  (historico-mentorias/), que ainda não tem backend nesta 1ª entrega — o botão de
+  exportar fica desabilitado até lá.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Certificados</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container container--narrow">
+      <h1>Certificado de mentoria</h1>
+      <div class="card">
+        <div class="card-title">Certificado de horas</div>
+        <p class="text-muted">
+          Exporte um certificado com o total de horas de mentoria realizadas na plataforma —
+          disponível assim que você tiver sessões registradas no histórico.
+        </p>
+        <button
+          class="btn btn-primary"
+          type="button"
+          disabled
+          title="Disponível assim que o histórico de sessões existir"
+        >
+          Exportar certificado
+        </button>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

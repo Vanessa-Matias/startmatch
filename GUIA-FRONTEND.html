@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Guia do Frontend — StartMatch</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --color-primary: #152a54;
+      --color-primary-light: #24407c;
+      --color-accent: #ff6b35;
+      --color-bg: #f5f7fa;
+      --color-surface: #ffffff;
+      --color-border: #e2e5ea;
+      --color-text: #1a1a2e;
+      --color-text-muted: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.65;
+    }
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+    h1, h2, h3, h4 {
+      color: var(--color-primary);
+      line-height: 1.3;
+    }
+    h1 {
+      font-size: 2rem;
+      border-bottom: 3px solid var(--color-accent);
+      padding-bottom: 0.6rem;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 2.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+    h3 {
+      font-size: 1.15rem;
+      color: var(--color-primary-light);
+    }
+    a { color: var(--color-primary-light); }
+    a:hover { color: var(--color-accent); }
+    code {
+      background: #eef1f6;
+      color: #b3391f;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-family: 'Cascadia Code', Consolas, 'Courier New', monospace;
+    }
+    pre {
+      background: #12203f;
+      color: #e6ebf5;
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+    }
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+    blockquote {
+      background: #fff7f2;
+      border-left: 4px solid var(--color-accent);
+      margin: 1.2rem 0;
+      padding: 0.8rem 1.2rem;
+      color: #5a4234;
+      border-radius: 0 6px 6px 0;
+    }
+    blockquote p { margin: 0.4rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--color-border);
+      padding: 0.55rem 0.7rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    tr:nth-child(even) td {
+      background: #fafbfd;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 2.5rem 0;
+    }
+    ul, ol { padding-left: 1.4rem; }
+    li { margin-bottom: 0.3rem; }
+    .cover-note {
+      background: var(--color-primary);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1rem 1.4rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .cover-note strong { color: var(--color-accent); }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0f1420; color: #e4e8f1; }
+      .page { }
+      h1, h2 { color: #8fb0ff; }
+      h3 { color: #b7c9f2; }
+      code { background: #1c2740; color: #ff9d7a; }
+      blockquote { background: #241a15; color: #f0c8b3; }
+      th { background: #1f3566; }
+      tr:nth-child(even) td { background: #141b2c; }
+      td, th { border-color: #2a3550; }
+      hr { border-top-color: #2a3550; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+<p class="cover-note">Este arquivo é uma versão em HTML do <code>GUIA-FRONTEND.md</code>, só para abrir direto no navegador com formatação — <strong>o conteúdo é o mesmo dos dois arquivos</strong>. Se editar o guia, edite o <code>.md</code> e gere este de novo.</p>
+
+<h1 id="guia-do-frontend-startmatch">Guia do Frontend — StartMatch</h1>
+<blockquote>
+<p>Documento único, na raiz do projeto, para você (Agnes) usar de duas formas: (1) como mapa para entender qualquer arquivo do <code>frontend/</code> antes de mexer nele, e (2) como contexto para colar em outra IA (ChatGPT, outra instância do Claude, etc.) quando pedir ajuda com estilização. Com este arquivo você consegue fazer qualquer mudança visual ou de tela sem precisar entender a lógica de backend por trás.</p>
+<p>Ele reúne num lugar só o que antes estava espalhado em vários arquivos — a estrutura de páginas segue exatamente o fluxograma de navegação enviado pela designer, e este documento (seção 5) já traz o mapa completo: cada tela do fluxograma ao lado da pasta de código correspondente, com o que já é real e o que é estrutura pronta aguardando backend futuro.</p>
+</blockquote>
+<hr />
+<h2 id="modo-demonstração-rode-sem-backend-e-sem-banco-de-dados">0. Modo demonstração — rode sem backend e sem banco de dados</h2>
+<p><strong>Você não precisa instalar Postgres, Docker, nem pedir pra Vanessa subir nada.</strong> Enquanto o banco de dados real não existir, o site roda inteiro com dados de mentira (uma startup, um investidor, um mentor, etc. — já com nomes, descrições e até um match/conversa de exemplo prontos).</p>
+<p>Pra rodar:</p>
+<pre><code>cd frontend
+npm install
+npm run dev</code></pre>
+<p>Abre em <code>http://localhost:5173</code>. Só isso — nenhuma variável de ambiente extra é necessária, o modo demonstração já vem ligado por padrão.</p>
+<p><strong>Como isso te dá liberdade total pra estilizar:</strong></p>
+<ul>
+<li>Qualquer tela que normalmente exigiria login (dashboard, busca, mensagens, o dashboard do Mentor, o painel do Admin — QUALQUER uma) abre direto, sem precisar entrar antes. Ao abrir a URL de uma tela, o site “loga sozinho” com o papel certo pra aquela tela.</li>
+<li>As telas de Login/Cadastro também funcionam — pode usar os mesmos e-mails de teste de antes (<code>startup@teste.com</code>, <code>investidor@teste.com</code>, <code>mentor@teste.com</code>, <code>admin@teste.com</code>, qualquer senha) ou simplesmente clicar em qualquer link do menu, o resultado é o mesmo.</li>
+<li>Os formulários (cadastro de perfil, “Tenho interesse”, enviar mensagem, avaliar o app…) podem ser enviados à vontade — tudo “dá certo” na hora, sem quebrar.</li>
+</ul>
+<p><strong>Se quiser trocar os dados de exemplo</strong> (nome da startup, textos, quantidade de mentores na vitrine etc.), edite <code>frontend/src/scripts/mockData.ts</code> — é só um arquivo de dados, sem lógica nenhuma. Não precisa mexer em <code>mock.ts</code>, <code>api.ts</code> nem <code>auth.ts</code> pra isso.</p>
+<p>Quando o banco de dados real estiver pronto, a Vanessa desliga esse modo (uma linha só, em <code>scripts/mock.ts</code>) e o site passa a falar com a API de verdade — nenhuma tela muda por causa disso.</p>
+<hr />
+<h2 id="resumo-rápido">1. Resumo rápido</h2>
+<p>O esqueleto funcional do frontend (formulários, chamadas à API, navegação entre telas) já está pronto. O que falta é <strong>estilização e responsividade</strong> — você não precisa mexer em lógica para deixar o site bonito.</p>
+<p>O frontend é <strong>HTML, CSS e TypeScript puros</strong> — sem React, Vue ou qualquer framework. Cada tela do site é uma pasta com dois arquivos: um <code>index.html</code> (estrutura da página) e um <code>main.ts</code> (o que acontece quando ela carrega — buscar dados da API, reagir a cliques, etc.). O projeto usa Vite em modo “multi-page app”, então cada pasta de tela é descoberta automaticamente — você não precisa configurar nada para adicionar uma tela nova (ver seção 8).</p>
+<h2 id="o-que-é-seguro-editar-livremente">2. O que é seguro editar livremente</h2>
+<ul>
+<li><code>frontend/src/styles/variables.css</code> — cores, tipografia, espaçamentos. Editar este arquivo muda a identidade visual do app inteiro de uma vez.</li>
+<li><code>frontend/src/styles/global.css</code> — reset e estilos base (tipografia, layout de container).</li>
+<li><code>frontend/src/styles/components.css</code> — botões, cards, inputs, badges, navbar. Compartilhado por todas as telas.</li>
+<li>Um <code>&lt;style&gt;</code> específico dentro do <code>index.html</code> de uma tela (a tela de <code>mensagens/</code> já tem um exemplo disso, para o layout do chat) — para ajustes que só fazem sentido naquela tela.</li>
+<li>A estrutura HTML dentro de cada <code>index.html</code> (classes, divs, ordem visual) — pode reorganizar o layout à vontade, contanto que mantenha os elementos com <code>id</code> que o <code>main.ts</code> da mesma pasta usa (ver seção 7, “Regra de ouro”).</li>
+</ul>
+<h2 id="o-que-tem-lógica-e-não-deveria-precisar-mexer">3. O que tem lógica e não deveria precisar mexer</h2>
+<ul>
+<li><code>frontend/src/scripts/api.ts</code>, <code>auth.ts</code>, <code>nav.ts</code>, <code>types.ts</code>, <code>ufs.ts</code>, <code>pwa.ts</code> — cliente de API, sessão de login, menu de navegação por papel, tipos de dados, lista de UFs, registro do PWA. Compartilhado por todas as telas.</li>
+<li>Qualquer <code>main.ts</code> dentro de <code>src/pages/&lt;tela&gt;/</code> — busca dados da API, valida formulário, faz a navegação entre telas.</li>
+</ul>
+<p>Se precisar mudar algo em um <code>main.ts</code> (ex.: adicionar um campo novo no formulário), tudo bem — só avise a Vanessa depois, porque isso também precisa bater com o que o backend espera.</p>
+<h2 id="estrutura-completa-da-pasta-frontend">4. Estrutura completa da pasta <code>frontend/</code></h2>
+<pre><code>frontend/
+├── index.html            &lt;- só redireciona para a primeira tela (não é uma tela em si)
+├── vite.config.ts         &lt;- configuração do Vite (build/servidor local)
+├── package.json            &lt;- dependências e comandos (npm run dev / build)
+├── tsconfig.json            &lt;- configuração do TypeScript
+├── .env.example               &lt;- exemplo de variável de ambiente do frontend
+├── public/                     &lt;- arquivos servidos &quot;como estão&quot;, sem passar pelo Vite
+│   ├── manifest.json              manifesto do PWA (nome, ícone, cor do app)
+│   ├── sw.js                       service worker (cache offline)
+│   └── icons/icon.svg               ícone do app
+└── src/
+    ├── main.ts             &lt;- decide se manda o usuário pro login ou pro dashboard
+    ├── scripts/            &lt;- código compartilhado por TODAS as telas (API, login, tipos)
+    ├── styles/              &lt;- CSS compartilhado por TODAS as telas (cores, botões, cards...)
+    └── pages/               &lt;- uma pasta por TELA do site (ver tabela na seção 6)</code></pre>
+<h2 id="o-que-cada-pastaarquivo-contém-com-exemplo">5. O que cada pasta/arquivo contém (com exemplo)</h2>
+<h3 id="frontendindex.html"><code>frontend/index.html</code></h3>
+<p>Único arquivo HTML na raiz do frontend — não é uma tela, só redireciona quem abre o site para <code>src/main.ts</code>. É aqui que fica o link do <code>manifest.json</code> do PWA e a cor da barra de tema do navegador. Exemplo do conteúdo:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">&lt;link</span><span class="ot"> rel=</span><span class="st">&quot;manifest&quot;</span><span class="ot"> href=</span><span class="st">&quot;/manifest.json&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">&lt;meta</span><span class="ot"> name=</span><span class="st">&quot;theme-color&quot;</span><span class="ot"> content=</span><span class="st">&quot;#152a54&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;module&quot;</span><span class="ot"> src=</span><span class="st">&quot;/src/main.ts&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></span></code></pre></div>
+<h3 id="frontendvite.config.ts"><code>frontend/vite.config.ts</code></h3>
+<p>Configuração do Vite em modo multi-page: descobre automaticamente todo <code>src/pages/*/index.html</code> e transforma cada um num “ponto de entrada” do build. Também tem o proxy que redireciona chamadas <code>/api/...</code> para o backend rodando em <code>localhost:3000</code> durante o desenvolvimento (evita problema de CORS local). Você não precisa editar este arquivo ao criar uma tela nova — ele já descobre sozinho.</p>
+<h3 id="frontendpackage.json"><code>frontend/package.json</code></h3>
+<p>Lista as dependências (<code>vite</code>, <code>typescript</code>, <code>fast-glob</code>) e os comandos disponíveis:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="er">&quot;scripts&quot;:</span> <span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>  <span class="dt">&quot;dev&quot;</span><span class="fu">:</span> <span class="st">&quot;vite&quot;</span><span class="fu">,</span>          <span class="er">//</span> <span class="er">roda</span> <span class="er">o</span> <span class="er">servidor</span> <span class="er">local</span> <span class="er">(localhost</span><span class="fu">:</span><span class="dv">5173</span><span class="er">)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>  <span class="st">&quot;build&quot;</span><span class="er">:</span> <span class="st">&quot;tsc &amp;&amp; vite build&quot;</span><span class="fu">,</span>  <span class="er">//</span> <span class="er">gera</span> <span class="er">a</span> <span class="er">versão</span> <span class="er">de</span> <span class="er">produção</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>  <span class="dt">&quot;preview&quot;</span><span class="fu">:</span> <span class="st">&quot;vite preview&quot;</span>      <span class="er">//</span> <span class="er">pré-visualiza</span> <span class="er">o</span> <span class="er">build</span> <span class="er">de</span> <span class="er">produção</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="frontendtsconfig.json"><code>frontend/tsconfig.json</code></h3>
+<p>Configuração do TypeScript (o que ele valida, quais erros bloqueiam o build). Não costuma precisar mexer aqui para estilização.</p>
+<h3 id="frontend.env.example"><code>frontend/.env.example</code></h3>
+<p>Exemplo de variável de ambiente usada pelo frontend:</p>
+<pre><code>VITE_API_URL=/api</code></pre>
+<p>Em desenvolvimento, o valor padrão (<code>/api</code>) já funciona sozinho com o proxy do Vite. Só é preciso copiar para um arquivo <code>.env</code> de verdade se for apontar para um backend rodando em outro endereço.</p>
+<h3 id="frontendpublic"><code>frontend/public/</code></h3>
+<p>Arquivos servidos direto pelo navegador, sem passar pelo processamento do Vite — tudo aqui vira acessível a partir da raiz do site (<code>/manifest.json</code>, <code>/sw.js</code>, etc.).</p>
+<ul>
+<li><p><strong><code>manifest.json</code></strong> — o “manifesto” do PWA: nome do app, cores, e o ícone usado quando alguém instala o site como aplicativo no celular/desktop.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;StartMatch&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="dt">&quot;theme_color&quot;</span><span class="fu">:</span> <span class="st">&quot;#152a54&quot;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">&quot;background_color&quot;</span><span class="fu">:</span> <span class="st">&quot;#f5f7fa&quot;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">&quot;icons&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">&quot;src&quot;</span><span class="fu">:</span> <span class="st">&quot;/icons/icon.svg&quot;</span><span class="fu">,</span> <span class="dt">&quot;sizes&quot;</span><span class="fu">:</span> <span class="st">&quot;any&quot;</span><span class="fu">,</span> <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;image/svg+xml&quot;</span> <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>Para trocar o nome ou as cores do “app instalado”, é aqui.</p></li>
+<li><p><strong><code>sw.js</code></strong> — o service worker: cacheia o HTML/CSS/JS do site para funcionar offline (estratégia “network-first” para navegação e chamadas de API, “cache-first” para o resto). Só entra em ação em produção (<code>npm run build</code>), não durante <code>npm run dev</code>.</p></li>
+<li><p><strong><code>icons/icon.svg</code></strong> — o ícone do app, em SVG (escala para qualquer tamanho sem perder qualidade). Para trocar o ícone visual do StartMatch, troque este arquivo (mantendo o nome <code>icon.svg</code> ou atualizando a referência em <code>manifest.json</code>).</p></li>
+</ul>
+<h3 id="frontendsrcmain.ts"><code>frontend/src/main.ts</code></h3>
+<p>Ponto de entrada carregado pelo <code>index.html</code> da raiz. Registra o service worker do PWA e decide para onde mandar o usuário: dashboard do seu tipo de conta (se já estiver logado) ou a tela de onboarding (se não estiver).</p>
+<h3 id="frontendsrcscripts-lógica-compartilhada-evite-mexer"><code>frontend/src/scripts/</code> (lógica compartilhada — evite mexer)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Arquivo</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>api.ts</code></td>
+<td>Toda chamada de rede do frontend passa por aqui (<code>api.get</code>, <code>api.post</code>…). Injeta o token de login automaticamente e trata erro de sessão expirada.</td>
+</tr>
+<tr class="even">
+<td><code>auth.ts</code></td>
+<td>Login, logout, e <code>requireAuth([...])</code> — chamada no topo de quase todo <code>main.ts</code> para proteger a tela.</td>
+</tr>
+<tr class="odd">
+<td><code>nav.ts</code></td>
+<td>Menu de navegação (<code>renderNav(...)</code>) de toda tela autenticada — um mapa único por papel (startup/investidor/mentor/admin), seguindo o fluxograma de navegação da designer.</td>
+</tr>
+<tr class="even">
+<td><code>types.ts</code></td>
+<td>Só definições de tipos do TypeScript (formato dos dados de Startup, Investidor, Match, etc.), sem lógica.</td>
+</tr>
+<tr class="odd">
+<td><code>ufs.ts</code></td>
+<td>Lista das siglas de estado brasileiras, usada nos campos “UF”.</td>
+</tr>
+<tr class="even">
+<td><code>pwa.ts</code></td>
+<td>Registra o service worker (<code>public/sw.js</code>) em produção.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontendsrcstyles-aqui-é-onde-você-mexe-para-estilizar"><code>frontend/src/styles/</code> (aqui é onde você mexe para estilizar)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Arquivo</th>
+<th>O que contém</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>variables.css</code></td>
+<td>Paleta de cores e variáveis de espaçamento/tipografia — <strong>comece por aqui</strong>.</td>
+</tr>
+<tr class="even">
+<td><code>global.css</code></td>
+<td>Reset do navegador + classes utilitárias de layout (<code>.container</code>, <code>.stack</code>, <code>.grid</code>).</td>
+</tr>
+<tr class="odd">
+<td><code>components.css</code></td>
+<td>Aparência dos componentes reutilizados: botões, cards, campos de formulário, badges, navbar.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontendsrcpages-uma-pasta-por-tela"><code>frontend/src/pages/</code> (uma pasta por tela)</h3>
+<p>Cada tela é uma pasta com um <code>index.html</code> (estrutura) e um <code>main.ts</code> (lógica). Todo <code>index.html</code> de tela carrega os três CSS acima, nessa ordem, e termina com <code>&lt;script type="module" src="./main.ts"&gt;&lt;/script&gt;</code>.</p>
+<p>A lista abaixo já segue a ordem do fluxograma de navegação da designer, com o nome exato de cada tela no fluxograma ao lado da pasta correspondente.</p>
+<p><strong>Área pública (sem login):</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>home</code></td>
+<td>Home</td>
+<td>Primeira tela do site — apresentação + CTAs de criar conta/entrar</td>
+</tr>
+<tr class="even">
+<td><code>sobre</code></td>
+<td>Sobre</td>
+<td>Missão, problema/solução, ecossistema Porto Digital</td>
+</tr>
+<tr class="odd">
+<td><code>como-funciona</code></td>
+<td>Como funciona</td>
+<td>Passo a passo do fluxo principal, do cadastro ao match</td>
+</tr>
+<tr class="even">
+<td><code>recursos</code></td>
+<td>Recursos</td>
+<td>Grade de recursos em destaque da plataforma</td>
+</tr>
+<tr class="odd">
+<td><code>planos</code></td>
+<td>Planos</td>
+<td>Tabela pública de preços (Startup/Investidor/Mentor)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Autenticação:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>onboarding</code></td>
+<td>Escolha do perfil</td>
+<td>3 botões (startup/investidor/mentor) + card informativo de Admin (sem autocadastro)</td>
+</tr>
+<tr class="even">
+<td><code>login</code></td>
+<td>Login</td>
+<td>Formulário de e-mail + senha</td>
+</tr>
+<tr class="odd">
+<td><code>cadastro</code></td>
+<td>Criação de conta</td>
+<td>Nome/e-mail/senha + aceite de termos (LGPD)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Startup / Investidor:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cadastro-startup</code></td>
+<td>Perfil da startup</td>
+<td>Formulário longo + seleção de segmentos com “principal”</td>
+</tr>
+<tr class="even">
+<td><code>cadastro-investidor</code></td>
+<td>Perfil do investidor</td>
+<td>Formulário longo + segmentos com prioridade numérica</td>
+</tr>
+<tr class="odd">
+<td><code>dashboard-startup</code></td>
+<td>Painel da startup</td>
+<td>Resumo do perfil, sugestões de investidores, interesses recebidos</td>
+</tr>
+<tr class="even">
+<td><code>dashboard-investidor</code></td>
+<td>Painel do investidor</td>
+<td>Resumo do perfil, sugestões e oportunidades de startups</td>
+</tr>
+<tr class="odd">
+<td><code>busca</code></td>
+<td>Busca e filtros</td>
+<td>Uma tela serve os dois lados (startup ou investidor), com paginação</td>
+</tr>
+<tr class="even">
+<td><code>interesses</code></td>
+<td>Interesses</td>
+<td>Enviados + recebidos, também compartilhada entre os dois papéis</td>
+</tr>
+<tr class="odd">
+<td><code>perfil</code></td>
+<td>Perfil detalhado</td>
+<td>Tela genérica (lê <code>?tipo=</code> e <code>?id=</code> da URL) + botão “Tenho interesse”</td>
+</tr>
+<tr class="even">
+<td><code>matches</code></td>
+<td>Lista de matches</td>
+<td>Conexões confirmadas, cada card leva para a conversa</td>
+</tr>
+<tr class="odd">
+<td><code>mensagens</code></td>
+<td>Conversas e chat</td>
+<td>Layout de duas colunas, CSS próprio no <code>&lt;style&gt;</code> do <code>index.html</code></td>
+</tr>
+<tr class="even">
+<td><code>mentorias</code></td>
+<td>Mentorias (Startup)</td>
+<td>Vitrine de mentores; botão de solicitar sessão desabilitado (sem backend de agendamento)</td>
+</tr>
+<tr class="odd">
+<td><code>relatorios</code></td>
+<td>Relatórios (Investidor)</td>
+<td>Métricas calculadas a partir de <code>/interests/sent</code> e <code>/matches</code></td>
+</tr>
+<tr class="even">
+<td><code>canvas</code></td>
+<td>Business Model Canvas</td>
+<td>Só para startups — 4 campos de texto longo</td>
+</tr>
+<tr class="odd">
+<td><code>plano</code></td>
+<td>Plano / Plano e assinatura</td>
+<td>Plano atual (leitura) + comparação; upgrade desabilitado (cobrança é 2ª entrega)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mentor:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cadastro-mentor</code></td>
+<td>Perfil do mentor</td>
+<td>Inclui o checkbox de vínculo com Porto Digital (desconto)</td>
+</tr>
+<tr class="even">
+<td><code>dashboard-mentor</code></td>
+<td>Dashboard do mentor</td>
+<td>Resumo do perfil + atalhos para as telas abaixo</td>
+</tr>
+<tr class="odd">
+<td><code>agenda</code></td>
+<td>Agenda</td>
+<td>Disponibilidade cadastrada; lista de sessões ainda vazia</td>
+</tr>
+<tr class="even">
+<td><code>solicitacoes</code></td>
+<td>Solicitações</td>
+<td>Estrutura pronta, sem dados (sem backend de solicitação de mentoria)</td>
+</tr>
+<tr class="odd">
+<td><code>historico-mentorias</code></td>
+<td>Histórico + Horas realizadas</td>
+<td>Os dois itens do fluxograma combinados numa tela só</td>
+</tr>
+<tr class="even">
+<td><code>certificados</code></td>
+<td>Certificados</td>
+<td>Exportação desabilitada até existir histórico de sessões</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Administrador:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dashboard-admin</code></td>
+<td>Dashboard geral</td>
+<td>Indicadores reais via <code>GET /admin/metrics</code> (endpoint novo)</td>
+</tr>
+<tr class="even">
+<td><code>admin-usuarios</code></td>
+<td>Gestão de usuários</td>
+<td>Lista via <code>GET /users</code> (endpoint novo, admin-only)</td>
+</tr>
+<tr class="odd">
+<td><code>admin-planos</code></td>
+<td>Gestão de planos</td>
+<td>Distribuição de planos (mesmo endpoint de métricas)</td>
+</tr>
+<tr class="even">
+<td><code>admin-relatorios</code></td>
+<td>Relatórios</td>
+<td>Detalhamento por tipo de usuário / estágio de startup</td>
+</tr>
+<tr class="odd">
+<td><code>admin-lgpd</code></td>
+<td>Governança e LGPD</td>
+<td>Conteúdo de referência estático sobre governança de dados/LGPD</td>
+</tr>
+<tr class="even">
+<td><code>admin-auditoria</code></td>
+<td>Auditoria</td>
+<td>Placeholder — depende de log de auditoria, ainda inexistente</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Comum a todos os papéis:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pasta</th>
+<th>Tela</th>
+<th>O que tem de especial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>configuracoes</code></td>
+<td>Configurações</td>
+<td>Conta e avaliação beta; menu de navegação muda conforme o papel (via <code>scripts/nav.ts</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="regra-de-ouro-ao-editar-html">6. Regra de ouro ao editar HTML</h2>
+<p>Cada elemento com <code>id="..."</code> é usado pelo <code>main.ts</code> da mesma pasta para ler valores ou preencher conteúdo. Você pode mover, estilizar e reorganizar esses elementos à vontade — <strong>só não mude nem remova</strong>:</p>
+<ul>
+<li>o atributo <code>id</code> de um elemento que o <code>main.ts</code> procura (ex.: <code>document.getElementById('form-login')</code>);</li>
+<li>o atributo <code>name</code> dos campos de formulário (usado por <code>FormData</code> no envio);</li>
+<li>a linha <code>&lt;script type="module" src="./main.ts"&gt;&lt;/script&gt;</code> no final do <code>&lt;body&gt;</code>.</li>
+</ul>
+<h2 id="paleta-de-cores-atual-srcstylesvariables.css">7. Paleta de cores atual (<code>src/styles/variables.css</code>)</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>--color-primary<span class="in">: #152a54;       /* azul-marinho</span> — sidebar<span class="op">,</span> cabeçalhos<span class="op">,</span> botões primários <span class="op">*</span>/</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>--color-primary-light<span class="in">: #24407c;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>--color-accent<span class="in">: #ff6b35</span>;        <span class="co">/* laranja — CTAs, &quot;Tenho Interesse&quot;, &quot;Match!&quot; */</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>--color-accent-light<span class="in">: #ff8f66</span>;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>--color-bg<span class="in">: #f5f7fa</span>;            <span class="co">/* fundo geral */</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>--color-surface<span class="in">: #ffffff</span>;       <span class="co">/* cards, formulários */</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>--color-border<span class="in">: #e2e5ea</span>;</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>--color-text<span class="in">: #1a1a2e;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>--color-text-muted<span class="in">: #6b7280;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>--color-success<span class="in">: #2ecc71;       /* match</span> confirmado <span class="op">*</span>/</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>--color-warning<span class="in">: #f5a623</span>;</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a>--color-error<span class="in">: #e74c3c</span>;</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a>--font-family<span class="in">: &#39;Inter</span>&#39;<span class="op">,</span> system-ui<span class="op">,</span> sans-serif;</span></code></pre></div>
+<h2 id="como-adicionar-uma-tela-nova">8. Como adicionar uma tela nova</h2>
+<p>Crie uma pasta em <code>frontend/src/pages/&lt;nome-da-tela&gt;/</code> com um <code>index.html</code> e um <code>main.ts</code>. O <code>vite.config.ts</code> descobre telas novas automaticamente — não precisa editar nenhuma configuração, só rodar <code>npm run dev</code> de novo se o servidor já estivesse ligado.</p>
+<h2 id="como-rodar-o-projeto-localmente">9. Como rodar o projeto localmente</h2>
+<pre><code>cd frontend
+npm install
+npm run dev</code></pre>
+<p>Abre em <code>http://localhost:5173</code>. Para as chamadas de API funcionarem de verdade, o backend também precisa estar rodando (peça pra Vanessa te ajudar a subir o <code>backend/</code> com Docker/PostgreSQL) — ou trabalhe só na estilização olhando o HTML estático mesmo sem dados reais.</p>
+<h2 id="prompt-sugerido-para-pedir-ajuda-de-estilização-a-uma-ia">10. Prompt sugerido para pedir ajuda de estilização a uma IA</h2>
+<p>Cole isto junto com o arquivo <code>index.html</code> da tela que quiser mexer (e o <code>variables.css</code> da seção 7, se a IA não tiver acesso ao projeto inteiro):</p>
+<pre><code>Estou estilizando uma PWA em HTML + CSS + TypeScript puro (sem framework), feita com Vite
+em modo multi-page. A paleta de cores e os tokens estão em variables.css (colei acima).
+Quero estilizar a tela X (arquivo index.html colado abaixo) mantendo os ids e o script
+main.ts como estão — só quero sugestões de CSS/HTML para deixar mais bonito e responsivo.</code></pre>
+<h2 id="padrões-que-se-repetem-em-quase-todo-main.ts">11. Padrões que se repetem em quase todo <code>main.ts</code></h2>
+<p>Para não se perder lendo os arquivos comentados, vale saber que praticamente todo <code>main.ts</code> de tela protegida segue o mesmo esqueleto:</p>
+<ol type="1">
+<li><code>requireAuth(['startup'])</code> (ou outro papel) logo no topo — se a pessoa não devia estar ali, ela é redirecionada antes de qualquer coisa acontecer na tela.</li>
+<li>Uma função <code>init()</code> assíncrona que busca os dados da API (<code>api.get(...)</code>) e preenche a tela — normalmente escrevendo HTML diretamente num elemento via <code>.innerHTML</code>.</li>
+<li>Um bloco <code>try/catch</code> (ou <code>.catch()</code>) que mostra uma mensagem de erro amigável em um <code>&lt;p class="form-error"&gt;</code> caso a chamada à API falhe.</li>
+<li>Formulários usam <code>FormData</code> para ler os campos preenchidos e enviam com <code>api.post(...)</code> ou <code>api.put(...)</code>.</li>
+</ol>
+<h2 id="comentários-dentro-do-código">12. Comentários dentro do código</h2>
+<p>Todos os arquivos do <code>frontend/</code> (HTML, TS e CSS) já têm comentários explicando o que cada trecho faz — no topo de cada arquivo, um bloco de comentário identifica de qual tela ele é (ex.: <code>// Tela: Login — lógica</code>) e, ao longo do arquivo, comentários menores explicam trechos específicos (ex.: por que um campo é somente leitura, o que um cálculo faz). Se estiver com dúvida sobre um arquivo específico, abra-o primeiro — o comentário do topo já resume o que ele faz antes de você ler o código.</p>
+<h2 id="dúvidas">13. Dúvidas</h2>
+<p>Este guia cobre tudo que é preciso para estilizar qualquer tela do <code>frontend/</code> — estrutura de pastas, o que cada arquivo faz, o que é seguro editar, a paleta de cores e o fluxo de navegação completo (seção 5). Alguma dúvida que não esteja aqui, é só perguntar direto pra Vanessa.</p>
+<p>Para entender o projeto como um todo (modelo de negócio, arquitetura técnica completa e o que já está pronto de cada entrega da disciplina), veja a pasta <code>docs/</code> na raiz do projeto — não é necessário pra estilizar, só contexto extra se tiver curiosidade.</p>
+</div>
+</body>
+</html>

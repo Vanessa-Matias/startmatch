@@ -1,0 +1,87 @@
+<!--
+  Tela: Perfil da Startup
+  ========================
+  Formulário longo preenchido depois que a conta de login já existe (tela anterior:
+  cadastro/). É esse perfil que aparece para os investidores na busca.
+
+  #segmentos-list começa vazio no HTML — é preenchido dinamicamente pelo main.ts com
+  um checkbox por segmento de mercado (Fintech, Healthtech, etc.), carregados da API.
+  Cada segmento marcado também tem um rádio "principal" ao lado, que só habilita
+  depois que o checkbox correspondente é marcado.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Perfil da Startup</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <div class="container container--narrow">
+      <div class="spacer-lg"></div>
+      <h1>Perfil da Startup</h1>
+      <p class="text-muted">Essas informações aparecem para investidores na busca.</p>
+
+      <form id="form-startup">
+        <div class="field">
+          <label for="nomeFantasia">Nome fantasia</label>
+          <input class="input" id="nomeFantasia" name="nomeFantasia" type="text" required />
+        </div>
+        <div class="field">
+          <label for="cnpj">CNPJ (opcional)</label>
+          <input class="input" id="cnpj" name="cnpj" type="text" />
+        </div>
+        <div class="field">
+          <label for="descricao">Descrição</label>
+          <textarea class="textarea" id="descricao" name="descricao" required></textarea>
+        </div>
+        <div class="field">
+          <label for="estagio">Estágio</label>
+          <select class="select" id="estagio" name="estagio" required>
+            <option value="ideacao">Ideação</option>
+            <option value="mvp">MVP</option>
+            <option value="operacao">Operação</option>
+            <option value="scale_up">Scale-up</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Segmentos de atuação</label>
+          <p class="form-hint">Marque um ou mais segmentos e escolha qual é o principal.</p>
+          <!-- Preenchido dinamicamente por main.ts (init -> GET /segments) -->
+          <div id="segmentos-list" class="stack"></div>
+        </div>
+        <div class="field">
+          <label for="investimentoPretendido">Investimento pretendido (R$)</label>
+          <input
+            class="input"
+            id="investimentoPretendido"
+            name="investimentoPretendido"
+            type="number"
+            min="0"
+            step="1000"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="cidade">Cidade</label>
+          <input class="input" id="cidade" name="cidade" type="text" required />
+        </div>
+        <div class="field">
+          <label for="uf">UF</label>
+          <!-- Preenchido por populateUfSelect() (scripts/ufs.ts) -->
+          <select class="select" id="uf" name="uf" required></select>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit">Salvar e continuar</button>
+        <p class="form-error" id="form-error"></p>
+      </form>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

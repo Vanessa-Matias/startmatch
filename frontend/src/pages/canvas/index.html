@@ -1,0 +1,60 @@
+<!--
+  Tela: Canvas (Plano de Negócio)
+  =================================
+  Só visível para startups (link no menu do dashboard-startup). Um formulário
+  simples de 4 campos de texto longo, representando um Business Model Canvas
+  simplificado. Sem paginação, sem lista — carrega os dados existentes (se houver) e
+  salva por cima a cada envio (PUT, não POST).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Canvas</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container container--narrow">
+      <h1>Plano de Negócio (Canvas)</h1>
+      <p class="text-muted">Business Model Canvas simplificado da sua startup.</p>
+
+      <form id="form-canvas">
+        <div class="field">
+          <label for="propostaValor">Proposta de valor</label>
+          <textarea class="textarea" id="propostaValor" name="propostaValor"></textarea>
+        </div>
+        <div class="field">
+          <label for="modeloReceita">Modelo de receita</label>
+          <textarea class="textarea" id="modeloReceita" name="modeloReceita"></textarea>
+        </div>
+        <div class="field">
+          <label for="publicoAlvo">Público-alvo</label>
+          <textarea class="textarea" id="publicoAlvo" name="publicoAlvo"></textarea>
+        </div>
+        <div class="field">
+          <label for="estrategiaMonetizacao">Estratégia de monetização</label>
+          <textarea class="textarea" id="estrategiaMonetizacao" name="estrategiaMonetizacao"></textarea>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit">Salvar</button>
+        <p class="form-error" id="form-error"></p>
+        <p class="text-muted" id="form-success"></p>
+      </form>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!--
+  Tela: Plano e assinatura
+  ==========================
+  Tela própria para o plano de assinatura — antes esse conteúdo vivia dentro de
+  Configurações; agora tem sua própria entrada no menu de Startup ("Plano e
+  assinatura") e Investidor ("Plano"), batendo com a hierarquia de telas do
+  fluxograma da designer. Mostra o plano atual (somente leitura) e uma
+  comparação dos planos disponíveis.
+
+  O botão de upgrade fica sempre desabilitado nesta 1ª entrega — a cobrança de
+  planos é escopo da 2ª entrega do projeto.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Plano</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container container--narrow">
+      <h1>Plano e assinatura</h1>
+
+      <div class="card">
+        <div class="card-title">Plano atual</div>
+        <p>Você está no plano <span class="badge" id="plano-atual">—</span>.</p>
+        <button
+          class="btn btn-outline"
+          type="button"
+          disabled
+          title="Cobrança prevista para a 2ª entrega do projeto"
+        >
+          Fazer upgrade de plano
+        </button>
+        <p class="form-hint">A cobrança de planos fica para a 2ª entrega do projeto.</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Planos disponíveis</h2>
+      <!-- Preenchido por main.ts conforme o papel (startup ou investidor) -->
+      <div id="planos-comparacao" class="stack"></div>
+
+      <div class="spacer-lg"></div>
+      <p class="form-error" id="form-error"></p>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

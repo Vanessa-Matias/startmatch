@@ -1,0 +1,95 @@
+<!--
+  Tela: Configurações
+  =====================
+  Tela comum a todos os tipos de usuário logado (startup, investidor, mentor).
+  Três blocos independentes:
+    - "Dados da conta"          -> editar nome (e-mail fica travado, só leitura)
+    - "Avalie o StartMatch"  -> formulário simples de nota (1-5) + comentário,
+                                    usado para coletar feedback de quem testou o site.
+
+  #nav-links começa vazio — main.ts preenche com os links certos de acordo com o
+  tipo de usuário logado (startup e investidor têm menus diferentes; mentor/admin
+  não têm dashboard nesta 1ª entrega, então ficam sem links extras).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Configurações</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts, conforme o tipo do usuário logado -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container container--narrow">
+      <h1>Configurações</h1>
+
+      <div class="card">
+        <div class="card-title">Dados da conta</div>
+        <form id="form-conta">
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input class="input" id="nome" name="nome" type="text" required />
+          </div>
+          <div class="field">
+            <!-- E-mail é só leitura — trocar e-mail não faz parte do escopo desta 1ª entrega -->
+            <label for="email">E-mail</label>
+            <input class="input" id="email" type="email" disabled />
+          </div>
+          <button class="btn btn-primary" type="submit">Salvar</button>
+          <p class="form-error" id="form-conta-error"></p>
+          <p class="text-muted" id="form-conta-success"></p>
+        </form>
+      </div>
+
+      <!--
+        O bloco de "Plano de assinatura" mudou de lugar: agora é a tela própria
+        Plano (src/pages/plano/), que aparece no menu para Startup e Investidor —
+        segue a hierarquia de telas do fluxograma da designer, que separa
+        "Configurações" (conta/avaliação) de "Plano e assinatura" (Startup) /
+        "Plano" (Investidor). #plano-nota é preenchido por main.ts só quando faz
+        sentido para o papel do usuário logado.
+      -->
+      <div class="spacer-lg"></div>
+      <p class="text-muted" id="plano-nota"></p>
+
+      <div class="spacer-lg"></div>
+      <div class="card">
+        <div class="card-title">Avalie o StartMatch (beta)</div>
+        <form id="form-avaliacao">
+          <div class="field">
+            <label for="nota">Nota (1 a 5)</label>
+            <select class="select" id="nota" name="nota" required>
+              <option value="5">5 — Excelente</option>
+              <option value="4">4 — Bom</option>
+              <option value="3">3 — Regular</option>
+              <option value="2">2 — Ruim</option>
+              <option value="1">1 — Péssimo</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="comentario">Comentário (opcional)</label>
+            <textarea class="textarea" id="comentario" name="comentario"></textarea>
+          </div>
+          <button class="btn btn-outline" type="submit">Enviar avaliação</button>
+          <p class="text-muted" id="form-avaliacao-success"></p>
+        </form>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <button class="btn btn-outline btn-block" id="btn-logout" type="button">Sair</button>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

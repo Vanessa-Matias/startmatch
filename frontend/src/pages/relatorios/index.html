@@ -1,0 +1,52 @@
+<!--
+  Tela: Relatórios (Investidor)
+  ================================
+  Nova tela do fluxo — item "Relatórios" do menu do Investidor na hierarquia do
+  fluxograma da designer. Mostra indicadores calculados a partir dos próprios
+  dados do investidor (interesses enviados + matches) — sem precisar de nenhum
+  endpoint novo no backend, já que /interests/sent e /matches já existem.
+
+  O "relatório agregado do ecossistema Porto Digital" (Premium) é mostrado
+  como prévia bloqueada — recurso da 2ª
+  entrega do projeto.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Relatórios</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>Relatórios</h1>
+      <p class="text-muted">Um resumo da sua atividade na plataforma.</p>
+
+      <div id="metricas" class="grid">
+        <p class="text-muted">Calculando…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <div class="card">
+        <div class="card-title">Relatório agregado do ecossistema Porto Digital 🔒</div>
+        <p class="text-muted">
+          Disponível no plano Premium — indicadores consolidados de todo o ecossistema de
+          startups do Porto Digital. Em breve.
+        </p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

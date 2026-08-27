@@ -1,0 +1,188 @@
+/*
+  src/styles/global.css
+  =======================
+  Reset básico do navegador + estilos de elementos HTML "crus" (h1, p, a, ul...) +
+  classes utilitárias de layout usadas em várias telas (.container, .stack, .grid,
+  .text-muted, .spacer-*) + um pequeno "vocabulário de movimento" (seção no fim)
+  reaproveitado em qualquer tela que precise de uma animação de entrada/pulso.
+  Pense nisso como as "regras gerais da casa" — estilo de um componente específico
+  (botão, card, badge) fica em components.css.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--spacing-sm);
+  line-height: 1.25;
+  font-family: var(--font-family-display);
+  letter-spacing: -0.3px;
+}
+
+p {
+  margin: 0 0 var(--spacing-md);
+}
+
+a {
+  color: var(--color-accent);
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Largura máxima do conteúdo, centralizado — usado como wrapper em quase toda tela. */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Versão mais estreita do .container — usada em formulários (login, cadastro). */
+.container--narrow {
+  max-width: 480px;
+}
+
+/* Empilha os filhos em coluna com espaçamento entre eles (ex.: campos de formulário). */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Grade responsiva de cards (usada em listas de resultados de busca, sugestões, matches). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Espaçadores verticais simples — usados no lugar de margin quando se quer um "respiro"
+   visual entre blocos, sem precisar criar uma classe nova toda vez. */
+.spacer-sm {
+  height: var(--spacing-sm);
+}
+
+.spacer-md {
+  height: var(--spacing-md);
+}
+
+.spacer-lg {
+  height: var(--spacing-lg);
+}
+
+.spacer-xl {
+  height: var(--spacing-xl);
+}
+
+/* =============================================================================
+   Vocabulário de movimento — reaproveitado em qualquer tela (Home, Login, etc.)
+   Classes utilitárias: aplique junto de qualquer elemento para ganhar o efeito.
+   Todas respeitam prefers-reduced-motion (usuário que pediu menos animação no
+   sistema operacional não vê nenhuma delas rodando).
+   ============================================================================= */
+@keyframes sm-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes sm-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes sm-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sm-gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Pontinho pulsante — ex.: badge "ao vivo"/status no hero. */
+.sm-pulse-dot {
+  animation: sm-pulse 2.2s ease-in-out infinite;
+}
+
+/* Flutuação suave — ex.: nós de um gráfico decorativo. */
+.sm-node {
+  animation: sm-float 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Texto com gradiente animado (uso pontual — só no destaque do título do hero). */
+.sm-gradient-text {
+  background-size: 200% auto;
+  animation: sm-gradient-shift 6s ease-in-out infinite;
+}
+
+/* Entrada suave (fade + subida). Combine com animation-delay inline para escalonar
+   uma lista de cards. */
+.sm-reveal {
+  opacity: 0;
+  animation: sm-fade-up 0.6s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-pulse-dot,
+  .sm-node,
+  .sm-gradient-text {
+    animation: none !important;
+  }
+  .sm-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

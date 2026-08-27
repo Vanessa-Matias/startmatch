@@ -1,0 +1,71 @@
+<!--
+  Tela: Perfil do Mentor
+  =======================
+  Formulário de cadastro de perfil do mentor. Destaque de negócio: o checkbox
+  "vinculoPortoDigital" — marca se o mentor é funcionário de uma empresa do Porto
+  Digital, o que dá direito ao desconto na assinatura da plataforma (campo
+  Mentor.vinculoPortoDigital no backend).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Perfil do Mentor</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <div class="container container--narrow">
+      <div class="spacer-lg"></div>
+      <h1>Perfil do Mentor</h1>
+
+      <form id="form-mentor">
+        <div class="field">
+          <label for="areaAtuacao">Área de atuação</label>
+          <input class="input" id="areaAtuacao" name="areaAtuacao" type="text" required />
+        </div>
+        <div class="field">
+          <label for="bio">Bio</label>
+          <textarea class="textarea" id="bio" name="bio" required></textarea>
+        </div>
+        <div class="field">
+          <label for="especialidades">Especialidades</label>
+          <input
+            class="input"
+            id="especialidades"
+            name="especialidades"
+            type="text"
+            placeholder="ex.: growth, produto, fundraising"
+            required
+          />
+          <!-- main.ts separa esse texto por vírgula e transforma num array antes de enviar -->
+          <p class="form-hint">Separe por vírgula.</p>
+        </div>
+        <div class="field">
+          <label for="disponibilidade">Disponibilidade</label>
+          <textarea
+            class="textarea"
+            id="disponibilidade"
+            name="disponibilidade"
+            placeholder="ex.: 2 sessões por mês, terças à tarde"
+            required
+          ></textarea>
+        </div>
+        <div class="field checkbox-row">
+          <!-- Flag de negócio: dá direito ao desconto na assinatura (ver modelo de negócio) -->
+          <input id="vinculoPortoDigital" name="vinculoPortoDigital" type="checkbox" />
+          <label for="vinculoPortoDigital">Sou vinculado a uma empresa do Porto Digital</label>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit">Salvar e continuar</button>
+        <p class="form-error" id="form-error"></p>
+      </form>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

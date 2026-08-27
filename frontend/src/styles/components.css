@@ -1,0 +1,425 @@
+/*
+  src/styles/components.css
+  ===========================
+  Estilo dos componentes reutilizáveis usados em várias telas: botões (.btn-*),
+  cards (.card), campos de formulário (.input/.select/.textarea), badges (.badge-*)
+  e a barra de navegação (.navbar). Se você quer mudar a "cara" de todos os botões
+  do site de uma vez, é aqui — não precisa ir tela por tela.
+
+  Como esse arquivo é compartilhado por TODAS as telas (inclusive as que main.ts
+  preenche via innerHTML, como dashboard, busca, matches...), as mudanças de cor e
+  movimento feitas aqui já aparecem em qualquer lugar que use essas classes, sem
+  precisar tocar em nenhum main.ts.
+*/
+
+/* ===== Botões ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px); /* leve "afundada" ao clicar */
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botão principal — usado na maioria dos formulários ("Entrar", "Criar conta"...) */
+.btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -8px rgba(47, 111, 235, 0.5);
+}
+
+/* Botão de destaque — usado para ações de maior impacto, ex.: "Tenho interesse" */
+.btn-accent {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.btn-accent:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -8px rgba(47, 111, 235, 0.5);
+}
+
+/* Botão "fantasma" (sem preenchimento) — usado em ações secundárias, ex.: "Sou Mentor" */
+.btn-outline {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Faz o botão ocupar 100% da largura do container — comum em formulários. */
+.btn-block {
+  width: 100%;
+}
+
+/* ===== Cards ===== */
+/* Usado para: cards de resultado de busca, resumo de perfil no dashboard, mensagens... */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Qualquer .card que também seja um link (ex.: card de resultado de busca) sobe
+   levemente e ganha sombra ao passar o mouse — dá a sensação de interface "viva". */
+a.card:hover,
+.card.is-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: #cdd8f2;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: var(--font-family-display);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Variante maior de .card, usada em grades de destaque (ex.: Recursos) — mais
+   respiro interno e o ícone/título com mais espaço pra "respirar". */
+.card-feature {
+  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+}
+
+/* Círculo com ícone SVG dentro — usado no topo de cards de destaque (Recursos,
+   "Para quem é", Sobre). A cor de fundo/traço do ícone é passada inline por card
+   (ex.: style="background:#eff6ff") pra poder variar azul/verde/vermelho sem
+   precisar de uma classe nova pra cada combinação. */
+.icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+/* Parágrafo maior, logo abaixo de um H2 de seção — resume em uma frase o que a
+   seção entrega, antes de entrar nos cards/detalhes. */
+.section-lead {
+  color: var(--color-text-muted);
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 640px;
+  margin: 0 0 var(--spacing-lg);
+}
+
+/* ===== FAQ (perguntas frequentes) ===== */
+/* Construído com <details>/<summary> nativos — acessível e sem precisar de JS
+   pra abrir/fechar. Uma pergunta por <details class="faq-item">. */
+.faq-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-item + .faq-item {
+  margin-top: var(--spacing-sm);
+}
+
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary .faq-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.faq-item[open] summary .faq-icon {
+  transform: rotate(45deg);
+}
+
+.faq-item p {
+  color: var(--color-text-muted);
+  margin: var(--spacing-sm) 0 0;
+  line-height: 1.6;
+}
+
+/* ===== Formulários ===== */
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+/* Envolve label + input — dá o espaçamento padrão entre campos de um formulário. */
+.field {
+  margin-bottom: var(--spacing-md);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(47, 111, 235, 0.14);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+/* Linha com checkbox/radio + label lado a lado (ex.: "aceito os termos", segmentos). */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 400;
+}
+
+/* Mensagem de erro abaixo de um formulário — fica vazia até dar algum erro. */
+.form-error {
+  color: var(--color-error);
+  font-size: 0.9rem;
+  margin-top: var(--spacing-sm);
+  min-height: 1.2em; /* reserva o espaço mesmo vazia, pra não "pular" o layout quando aparece */
+}
+
+/* Texto de ajuda pequeno abaixo de um campo (ex.: "Mínimo de 8 caracteres"). */
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* ===== Badges (selos pequenos) ===== */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.badge-success {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.badge-accent {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* Usado para mostrar a pontuação de compatibilidade nas sugestões/matches — chip
+   claro em vez de bloco sólido, pra não competir com os botões azuis da tela. */
+.badge-score {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* ===== Navbar (barra de navegação do topo, nas telas autenticadas) ===== */
+.navbar {
+  background: linear-gradient(180deg, #0f2148 0%, #152a54 100%);
+  color: #fff;
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-lg);
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.navbar > .container > a:first-child {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.navbar nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.navbar nav a {
+  opacity: 0.85;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.navbar nav a:hover {
+  opacity: 1;
+}
+
+/* =============================================================================
+   Páginas públicas (Sobre, Como funciona, Recursos, Planos, Onboarding,
+   Cadastro) — mesmo "cabeçalho escuro + rodapé" da Home, num lugar só pra não
+   repetir o mesmo bloco de CSS em cada tela.
+   ============================================================================= */
+
+/* Faixa escura de topo de página (menor que o hero da Home — sem o canvas
+   animado, só um padrão de pontinhos estático via CSS). */
+.page-hero {
+  padding: var(--spacing-2xl) 0 64px;
+  /* Duas camadas de background numa só declaração (nunca duas propriedades
+     "background"/"background-image" separadas — a segunda sobrescreve a
+     primeira e apaga o gradiente escuro por baixo). Pontinhos por cima,
+     gradiente navy embaixo, cobrindo o bloco inteiro. */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px),
+    linear-gradient(180deg, #0f2148 0%, #152a54 100%);
+  background-size: 22px 22px, 100% 100%;
+}
+
+.page-hero h1 {
+  color: #fff;
+}
+
+.page-hero p.lead {
+  color: #a9b4cc;
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0;
+}
+
+.page-hero .back-link {
+  margin-bottom: var(--spacing-sm);
+}
+
+.page-hero .back-link a {
+  color: #a9b4cc;
+}
+
+/* Rótulo pequeno acima de um H2 (ex.: "COMO FUNCIONA", "PARA QUEM É"). */
+.section-eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.section-eyebrow.blue {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.section-eyebrow.green {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+/* Selo numerado (ex.: passos de "Como funciona") — mesma forma do .badge, mas
+   com a fonte de título e cor de destaque, pra parecer mais "passo" que "tag". */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 13px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  flex-shrink: 0;
+}
+
+/* Rodapé escuro, igual em toda página pública. */
+.site-footer {
+  background: #0f2148;
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.site-footer a {
+  color: #a9b4cc;
+}
+
+.site-footer p.copy {
+  color: #5c6a94;
+  font-size: 13px;
+}

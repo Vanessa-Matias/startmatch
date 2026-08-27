@@ -1,0 +1,185 @@
+<!--
+  Tela: Como funciona (Área Pública)
+  =====================================
+  Parte da "Etapa 1 — Entrada na plataforma" do fluxograma: mostra visualmente o
+  processo -> Criar perfil -> Buscar oportunidades -> Demonstrar interesse ->
+  Gerar Match, detalhado passo a passo.
+
+  IDENTIDADE VISUAL (atualização v2 — mais sofisticada): timeline vertical
+  ligando os passos (linha + .step-badge), mais respiro entre os blocos, e uma
+  seção de Perguntas Frequentes (.faq-item, via <details>/<summary> nativo —
+  sem JS) no final, cobrindo dúvidas comuns que não cabem no passo a passo.
+  Nenhuma lógica mudou (main.ts continua vazio).
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Como funciona</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+
+      /* Timeline vertical: linha contínua atrás dos .step-badge, ligando os
+         6 passos numa sequência visual em vez de uma lista solta de cards. */
+      .timeline {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 21px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: linear-gradient(180deg, #bfdbfe, #e2e5ea);
+      }
+      .timeline-item {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+      }
+      .timeline-item .step-badge {
+        position: relative;
+        z-index: 1;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+      }
+      .timeline-item .timeline-body {
+        padding-top: 6px;
+      }
+      .timeline-item strong {
+        font-family: var(--font-family-display);
+        display: block;
+        margin-bottom: 2px;
+        font-size: 1.02rem;
+      }
+
+      .faq-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav>
+          <a href="../home/index.html">Home</a>
+          <a href="../sobre/index.html">Sobre</a>
+          <a href="./index.html">Como funciona</a>
+          <a href="../recursos/index.html">Recursos</a>
+          <a href="../planos/index.html">Planos</a>
+          <a href="../login/index.html">Entrar</a>
+          <a class="btn btn-accent" href="../onboarding/index.html">Criar conta</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="page-hero">
+      <div class="container">
+        <span class="section-eyebrow blue" style="background: rgba(47,111,235,0.14); border-color: rgba(47,111,235,0.4); color: #a9c8ff">PASSO A PASSO</span>
+        <h1>Como funciona</h1>
+        <p class="lead">O caminho principal da plataforma, do primeiro acesso ao negócio fechado.</p>
+      </div>
+    </section>
+
+    <div class="container container--narrow">
+      <div class="spacer-xl"></div>
+
+      <ol class="timeline" style="list-style: none; margin: 0; padding: 0">
+        <li class="timeline-item sm-reveal">
+          <span class="step-badge">1</span>
+          <div class="timeline-body"><strong>Crie sua conta</strong><span class="text-muted">Escolha seu perfil: Startup, Investidor ou Mentor.</span></div>
+        </li>
+        <li class="timeline-item sm-reveal" style="animation-delay: 0.05s">
+          <span class="step-badge">2</span>
+          <div class="timeline-body"><strong>Complete seu perfil</strong><span class="text-muted">Segmento e estágio (startup), tese e faixa de investimento (investidor), ou área de atuação (mentor).</span></div>
+        </li>
+        <li class="timeline-item sm-reveal" style="animation-delay: 0.1s">
+          <span class="step-badge">3</span>
+          <div class="timeline-body"><strong>Busque oportunidades</strong><span class="text-muted">Filtros por segmento, estágio, localização e faixa de investimento.</span></div>
+        </li>
+        <li class="timeline-item sm-reveal" style="animation-delay: 0.15s">
+          <span class="step-badge">4</span>
+          <div class="timeline-body"><strong>Demonstre interesse</strong><span class="text-muted">Clique em "Tenho interesse" no perfil que te chamou atenção.</span></div>
+        </li>
+        <li class="timeline-item sm-reveal" style="animation-delay: 0.2s">
+          <span class="step-badge">5</span>
+          <div class="timeline-body"><strong>Match</strong><span class="text-muted">Quando o interesse é mútuo, o algoritmo calcula a compatibilidade e cria a conexão.</span></div>
+        </li>
+        <li class="timeline-item sm-reveal" style="animation-delay: 0.25s">
+          <span class="step-badge">6</span>
+          <div class="timeline-body"><strong>Converse e feche negócio</strong><span class="text-muted">Cada match abre uma conversa dentro da própria plataforma.</span></div>
+        </li>
+      </ol>
+
+      <div class="spacer-lg"></div>
+      <div class="card card-feature">
+        <div class="icon-circle" style="background: #eff6ff">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+        </div>
+        <div class="card-title">Como o match é calculado</div>
+        <p class="text-muted">
+          O algoritmo de compatibilidade combina três critérios: sobreposição de segmentos de
+          atuação/interesse, compatibilidade da faixa de investimento com o valor pretendido pela
+          startup, e proximidade de localização (mesma cidade, mesma UF, ou nenhuma).
+        </p>
+      </div>
+
+      <div class="spacer-xl"></div>
+
+      <span class="section-eyebrow blue">DÚVIDAS FREQUENTES</span>
+      <h2>Perguntas frequentes</h2>
+      <p class="section-lead">O que mais perguntam antes de criar a conta.</p>
+
+      <div class="faq-section">
+        <details class="faq-item sm-reveal">
+          <summary>O StartMatch é gratuito?<span class="faq-icon">+</span></summary>
+          <p>Sim — o plano Básico é gratuito para Startups e Investidores, com perfil completo e busca com filtros. Os planos Plus e Premium liberam recursos extras, como interesses ilimitados e prioridade no algoritmo de match (ver <a href="../planos/index.html">Planos</a>).</p>
+        </details>
+        <details class="faq-item sm-reveal" style="animation-delay: 0.05s">
+          <summary>Preciso ser do Porto Digital para usar a plataforma?<span class="faq-icon">+</span></summary>
+          <p>Não. A plataforma é aberta a startups, investidores e mentores de qualquer lugar — mas mentores vinculados a empresas do ecossistema Porto Digital têm condições especiais, como desconto no plano e badge exclusivo.</p>
+        </details>
+        <details class="faq-item sm-reveal" style="animation-delay: 0.1s">
+          <summary>Como funciona a mentoria?<span class="faq-icon">+</span></summary>
+          <p>Startups podem agendar sessões com mentores do ecossistema diretamente pela plataforma. A funcionalidade completa de agendamento chega na 2ª entrega do projeto — hoje o recurso aparece como prévia no dashboard.</p>
+        </details>
+        <details class="faq-item sm-reveal" style="animation-delay: 0.15s">
+          <summary>Meus dados estão seguros?<span class="faq-icon">+</span></summary>
+          <p>Sim. O cadastro exige consentimento explícito para uso de dados, alinhado à LGPD, e cada tipo de consentimento (termos de uso, privacidade) fica registrado individualmente.</p>
+        </details>
+      </div>
+
+      <div class="spacer-xl"></div>
+      <p style="text-align:center"><a class="btn btn-primary" href="../onboarding/index.html">Criar conta grátis</a></p>
+      <div class="spacer-xl"></div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          <a href="../home/index.html">Home</a> ·
+          <a href="../sobre/index.html">Sobre</a> ·
+          <a href="./index.html">Como funciona</a> ·
+          <a href="../recursos/index.html">Recursos</a> ·
+          <a href="../planos/index.html">Planos</a>
+        </p>
+        <p class="copy">StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).</p>
+      </div>
+    </footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "StartMatch",
+  "short_name": "StartMatch",
+  "description": "Matchmaking entre startups, investidores-anjo e mentores do Porto Digital.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#152a54",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

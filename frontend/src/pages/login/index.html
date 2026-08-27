@@ -1,0 +1,164 @@
+<!--
+  Tela: Login ("Entrar")
+  =======================
+  Formulário simples de e-mail + senha. O <form id="form-login"> é capturado pelo
+  main.ts para tratar o envio via JavaScript (em vez de recarregar a página).
+
+  #form-error é onde a mensagem de erro (senha errada, e-mail inexistente etc.)
+  aparece — começa vazia e só ganha texto se o login falhar.
+
+  IDENTIDADE VISUAL (atualização): layout em duas colunas — painel de marca à
+  esquerda (mesmo fundo de rede de pontos animada da Home) e formulário à
+  direita. Os ids/name usados pelo main.ts (#form-login, #email, #senha,
+  #form-error) continuam exatamente os mesmos.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Entrar</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      .login-split {
+        display: grid;
+        grid-template-columns: 0.85fr 1fr;
+        min-height: 100vh;
+      }
+      .login-brand {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .login-brand a {
+        color: #fff;
+        font-family: var(--font-family-display);
+        font-weight: 700;
+        font-size: 1.15rem;
+        text-decoration: none;
+      }
+      #particle-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .login-brand > * {
+        position: relative;
+        z-index: 1;
+      }
+      .login-brand h2 {
+        color: #fff;
+        font-size: 26px;
+        line-height: 1.3;
+        max-width: 380px;
+      }
+      .login-brand ul {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 380px;
+      }
+      .login-brand li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #c7d0e6;
+        font-size: 14.5px;
+      }
+      .login-brand .check {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .login-brand footer {
+        color: #5c6a94;
+        font-size: 13px;
+      }
+      .login-form-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+      .login-form-side .container--narrow {
+        max-width: 380px;
+        padding: 0;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: var(--spacing-lg);
+      }
+      @media (max-width: 860px) {
+        .login-split {
+          grid-template-columns: 1fr;
+        }
+        .login-brand {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-split">
+      <div class="login-brand">
+        <a href="../home/index.html">StartMatch</a>
+
+        <div>
+          <h2>Conectando startups do Porto Digital a investidores e mentores.</h2>
+          <div class="spacer-md"></div>
+          <ul>
+            <li><span class="check" style="background: rgba(47,111,235,0.18)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Perfil completo por segmento e estágio</li>
+            <li><span class="check" style="background: rgba(34,197,94,0.18)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Busca com filtros e sugestões de compatibilidade</li>
+            <li><span class="check" style="background: rgba(220,38,38,0.14)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Match e conversa direta pelo chat</li>
+          </ul>
+        </div>
+
+        <footer>StartMatch — ecossistema Porto Digital (Recife).</footer>
+        <canvas id="particle-bg"></canvas>
+      </div>
+
+      <div class="login-form-side">
+        <div class="container--narrow sm-reveal">
+          <p class="text-muted back-link"><a href="../home/index.html">&larr; Voltar para o site</a></p>
+          <h1>Entrar</h1>
+          <p class="text-muted">Acesse sua conta StartMatch.</p>
+          <div class="spacer-md"></div>
+
+          <form id="form-login">
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input class="input" id="email" name="email" type="email" required />
+            </div>
+            <div class="field">
+              <label for="senha">Senha</label>
+              <input class="input" id="senha" name="senha" type="password" required />
+            </div>
+
+            <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+            <p class="form-error" id="form-error"></p>
+          </form>
+
+          <p class="text-muted">
+            Ainda não tem conta? <a href="../onboarding/index.html">Cadastre-se</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

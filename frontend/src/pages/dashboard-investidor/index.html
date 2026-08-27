@@ -1,0 +1,52 @@
+<!--
+  Tela: Dashboard do Investidor
+  ==============================
+  Equivalente ao dashboard-startup, mas do ponto de vista do investidor. Dois blocos
+  de cards em vez de três:
+    - #sugestoes      -> startups compatíveis, sugeridas por algoritmo
+    - #oportunidades  -> as mesmas sugestões, filtrando as que o investidor AINDA NÃO
+                         demonstrou interesse (ver main.ts)
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Dashboard</title>
+    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="resumo-perfil" class="card">
+        <p class="text-muted">Carregando perfil…</p>
+      </section>
+
+      <div class="spacer-lg"></div>
+      <h2>Startups sugeridas para você</h2>
+      <div id="sugestoes" class="grid">
+        <p class="text-muted">Carregando sugestões…</p>
+      </div>
+
+      <div class="spacer-lg"></div>
+      <h2>Oportunidades em aberto</h2>
+      <p class="text-muted">Sugestões que você ainda não contatou.</p>
+      <div id="oportunidades" class="grid">
+        <p class="text-muted">Carregando oportunidades…</p>
+      </div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
