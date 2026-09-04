@@ -44,7 +44,12 @@
       <div class="card">
         <div class="field">
           <label for="texto">Buscar por texto</label>
-          <input class="input" id="texto" type="text" placeholder="Nome, descrição, tese…" />
+          <input
+            class="input"
+            id="texto"
+            type="text"
+            placeholder="Nome, descrição, tese…"
+          />
         </div>
 
         <div class="grid">
@@ -70,8 +75,20 @@
           <div class="field" id="filtro-investimento" hidden>
             <label for="investimentoMin">Faixa de investimento (R$)</label>
             <div class="stack" style="flex-direction: row; gap: 8px">
-              <input class="input" id="investimentoMin" type="number" min="0" placeholder="Mín." />
-              <input class="input" id="investimentoMax" type="number" min="0" placeholder="Máx." />
+              <input
+                class="input"
+                id="investimentoMin"
+                type="number"
+                min="0"
+                placeholder="Mín."
+              />
+              <input
+                class="input"
+                id="investimentoMax"
+                type="number"
+                min="0"
+                placeholder="Máx."
+              />
             </div>
           </div>
           <div class="field">
@@ -88,7 +105,11 @@
         <p class="text-muted">Carregando resultados…</p>
       </div>
       <div class="spacer-md"></div>
-      <div id="pagination" class="stack" style="flex-direction: row; justify-content: center; gap: 8px"></div>
+      <div
+        id="pagination"
+        class="stack"
+        style="flex-direction: row; justify-content: center; gap: 8px"
+      ></div>
     </div>
     <script type="module" src="./main.ts"></script>
   </body>

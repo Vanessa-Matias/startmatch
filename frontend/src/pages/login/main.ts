@@ -43,7 +43,7 @@ const form = document.getElementById('form-login') as HTMLFormElement;
 const errorEl = document.getElementById('form-error') as HTMLParagraphElement;
 
 form.addEventListener('submit', async (event) => {
-  event.preventDefault(); // impede o recarregamento padrão do formulário
+  event.preventDefault();
   errorEl.textContent = '';
 
   const formData = new FormData(form);
@@ -52,26 +52,29 @@ form.addEventListener('submit', async (event) => {
 
   try {
     const usuario = await login(email, senha);
-    const checkPath = PROFILE_CHECK_PATH[usuario.tipo];
 
-    if (!checkPath) {
-      window.location.href = dashboardPathForRole(usuario.tipo);
+    // ADMIN NÃO PASSA PELO CADASTRO DE PERFIL
+    if (usuario.tipo === 'admin') {
+      window.location.href = '../dashboard-admin/index.html';
       return;
     }
 
+    const checkPath = PROFILE_CHECK_PATH[usuario.tipo];
+
     try {
-      await api.get(checkPath);
-      // Perfil já existe -> vai direto para o dashboard.
+      await api.get(checkPath!);
       window.location.href = dashboardPathForRole(usuario.tipo);
     } catch (profileError) {
       if (profileError instanceof ApiError && profileError.status === 404) {
-        // Conta criada, mas perfil ainda não preenchido -> manda completar o cadastro.
         window.location.href = CADASTRO_PERFIL_PATH[usuario.tipo];
       } else {
         throw profileError;
       }
     }
   } catch (error) {
-    errorEl.textContent = error instanceof ApiError ? error.message : 'Erro ao entrar.';
+    errorEl.textContent =
+      error instanceof ApiError
+        ? error.message
+        : 'Erro ao entrar.';
   }
 });

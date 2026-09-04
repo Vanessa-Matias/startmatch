@@ -27,7 +27,13 @@
       <form id="form-mentor">
         <div class="field">
           <label for="areaAtuacao">Área de atuação</label>
-          <input class="input" id="areaAtuacao" name="areaAtuacao" type="text" required />
+          <input
+            class="input"
+            id="areaAtuacao"
+            name="areaAtuacao"
+            type="text"
+            required
+          />
         </div>
         <div class="field">
           <label for="bio">Bio</label>
@@ -58,11 +64,20 @@
         </div>
         <div class="field checkbox-row">
           <!-- Flag de negócio: dá direito ao desconto na assinatura (ver modelo de negócio) -->
-          <input id="vinculoPortoDigital" name="vinculoPortoDigital" type="checkbox" />
-          <label for="vinculoPortoDigital">Sou vinculado a uma empresa do Porto Digital</label>
+          <input
+            id="vinculoPortoDigital"
+            name="vinculoPortoDigital"
+            type="checkbox"
+          />
+          <label for="vinculoPortoDigital"
+            >Sou vinculado a uma empresa parceira do ecossistema
+            StartMatch.</label
+          >
         </div>
 
-        <button class="btn btn-primary btn-block" type="submit">Salvar e continuar</button>
+        <button class="btn btn-primary btn-block" type="submit">
+          Salvar e continuar
+        </button>
         <p class="form-error" id="form-error"></p>
       </form>
     </div>

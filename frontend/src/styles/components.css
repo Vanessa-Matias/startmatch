@@ -1,18 +1,25 @@
 /*
   src/styles/components.css
   ===========================
-  Estilo dos componentes reutilizáveis usados em várias telas: botões (.btn-*),
-  cards (.card), campos de formulário (.input/.select/.textarea), badges (.badge-*)
-  e a barra de navegação (.navbar). Se você quer mudar a "cara" de todos os botões
-  do site de uma vez, é aqui — não precisa ir tela por tela.
+  Estilos dos componentes reutilizáveis usados em várias telas.
 
-  Como esse arquivo é compartilhado por TODAS as telas (inclusive as que main.ts
-  preenche via innerHTML, como dashboard, busca, matches...), as mudanças de cor e
-  movimento feitas aqui já aparecem em qualquer lugar que use essas classes, sem
-  precisar tocar em nenhum main.ts.
+  Este arquivo é compartilhado por todas as páginas autenticadas e públicas.
+
+  Componentes principais:
+  - Botões
+  - Cards
+  - Formulários
+  - Badges
+  - Navbar
+  - Cards de interesses
+  - Componentes de perfil
+  - Modal
 */
 
-/* ===== Botões ===== */
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -25,12 +32,16 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
     box-shadow 0.15s ease;
 }
 
 .btn:active {
-  transform: translateY(1px); /* leve "afundada" ao clicar */
+  transform: translateY(1px);
 }
 
 .btn:disabled {
@@ -38,7 +49,8 @@
   cursor: not-allowed;
 }
 
-/* Botão principal — usado na maioria dos formulários ("Entrar", "Criar conta"...) */
+/* Botão principal */
+
 .btn-primary {
   background: var(--color-accent);
   color: #fff;
@@ -50,7 +62,8 @@
   box-shadow: 0 10px 20px -8px rgba(47, 111, 235, 0.5);
 }
 
-/* Botão de destaque — usado para ações de maior impacto, ex.: "Tenho interesse" */
+/* Botão de destaque */
+
 .btn-accent {
   background: var(--color-accent);
   color: #fff;
@@ -62,7 +75,8 @@
   box-shadow: 0 10px 20px -8px rgba(47, 111, 235, 0.5);
 }
 
-/* Botão "fantasma" (sem preenchimento) — usado em ações secundárias, ex.: "Sou Mentor" */
+/* Botão outline */
+
 .btn-outline {
   background: transparent;
   border-color: var(--color-border);
@@ -74,24 +88,28 @@
   color: var(--color-accent);
 }
 
-/* Faz o botão ocupar 100% da largura do container — comum em formulários. */
+/* Botão bloco */
+
 .btn-block {
   width: 100%;
 }
 
-/* ===== Cards ===== */
-/* Usado para: cards de resultado de busca, resumo de perfil no dashboard, mensagens... */
+/* =========================================================
+   CARDS
+   ========================================================= */
+
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
-/* Qualquer .card que também seja um link (ex.: card de resultado de busca) sobe
-   levemente e ganha sombra ao passar o mouse — dá a sensação de interface "viva". */
 a.card:hover,
 .card.is-interactive:hover {
   transform: translateY(-4px);
@@ -106,16 +124,14 @@ a.card:hover,
   margin-bottom: var(--spacing-sm);
 }
 
-/* Variante maior de .card, usada em grades de destaque (ex.: Recursos) — mais
-   respiro interno e o ícone/título com mais espaço pra "respirar". */
 .card-feature {
   padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
 }
 
-/* Círculo com ícone SVG dentro — usado no topo de cards de destaque (Recursos,
-   "Para quem é", Sobre). A cor de fundo/traço do ícone é passada inline por card
-   (ex.: style="background:#eff6ff") pra poder variar azul/verde/vermelho sem
-   precisar de uma classe nova pra cada combinação. */
+/* =========================================================
+   ÍCONES
+   ========================================================= */
+
 .icon-circle {
   width: 52px;
   height: 52px;
@@ -127,8 +143,10 @@ a.card:hover,
   flex-shrink: 0;
 }
 
-/* Parágrafo maior, logo abaixo de um H2 de seção — resume em uma frase o que a
-   seção entrega, antes de entrar nos cards/detalhes. */
+/* =========================================================
+   TEXTOS DE SEÇÃO
+   ========================================================= */
+
 .section-lead {
   color: var(--color-text-muted);
   font-size: 17px;
@@ -137,9 +155,10 @@ a.card:hover,
   margin: 0 0 var(--spacing-lg);
 }
 
-/* ===== FAQ (perguntas frequentes) ===== */
-/* Construído com <details>/<summary> nativos — acessível e sem precisar de JS
-   pra abrir/fechar. Uma pergunta por <details class="faq-item">. */
+/* =========================================================
+   FAQ
+   ========================================================= */
+
 .faq-item {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -193,7 +212,10 @@ a.card:hover,
   line-height: 1.6;
 }
 
-/* ===== Formulários ===== */
+/* =========================================================
+   FORMULÁRIOS
+   ========================================================= */
+
 label {
   display: block;
   font-weight: 600;
@@ -201,7 +223,6 @@ label {
   margin-bottom: 4px;
 }
 
-/* Envolve label + input — dá o espaçamento padrão entre campos de um formulário. */
 .field {
   margin-bottom: var(--spacing-md);
 }
@@ -217,7 +238,9 @@ label {
   color: var(--color-text);
   font-family: inherit;
   font-size: 1rem;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .input:focus,
@@ -233,7 +256,6 @@ label {
   min-height: 96px;
 }
 
-/* Linha com checkbox/radio + label lado a lado (ex.: "aceito os termos", segmentos). */
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -241,22 +263,23 @@ label {
   font-weight: 400;
 }
 
-/* Mensagem de erro abaixo de um formulário — fica vazia até dar algum erro. */
 .form-error {
   color: var(--color-error);
   font-size: 0.9rem;
   margin-top: var(--spacing-sm);
-  min-height: 1.2em; /* reserva o espaço mesmo vazia, pra não "pular" o layout quando aparece */
+  min-height: 1.2em;
 }
 
-/* Texto de ajuda pequeno abaixo de um campo (ex.: "Mínimo de 8 caracteres"). */
 .form-hint {
   color: var(--color-text-muted);
   font-size: 0.85rem;
   margin-top: 4px;
 }
 
-/* ===== Badges (selos pequenos) ===== */
+/* =========================================================
+   BADGES
+   ========================================================= */
+
 .badge {
   display: inline-block;
   padding: 2px 10px;
@@ -277,18 +300,23 @@ label {
   color: #fff;
 }
 
-/* Usado para mostrar a pontuação de compatibilidade nas sugestões/matches — chip
-   claro em vez de bloco sólido, pra não competir com os botões azuis da tela. */
 .badge-score {
   background: #ecfdf5;
   color: #047857;
 }
 
-/* ===== Navbar (barra de navegação do topo, nas telas autenticadas) ===== */
+/* =========================================================
+   NAVBAR AUTENTICADA
+   ========================================================= */
+
 .navbar {
-  background: linear-gradient(180deg, #0f2148 0%, #152a54 100%);
+  background: linear-gradient(
+    180deg,
+    #0f2148 0%,
+    #152a54 100%
+  );
   color: #fff;
-  padding: var(--spacing-md) 0;
+  padding: 14px 0;
   margin-bottom: var(--spacing-lg);
 }
 
@@ -296,14 +324,51 @@ label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--spacing-sm);
 }
 
+/*
+  LOGO STARTMATCH
+
+  O HTML pode continuar com:
+
+  <a href="../home/index.html">StartMatch</a>
+
+  A imagem real fica em:
+
+  public/icons/icon.png
+
+  O arquivo é quadrado e possui espaço vazio ao redor
+  do logotipo. Por isso o background é propositalmente
+  maior que a área do link.
+*/
+
 .navbar > .container > a:first-child {
-  font-family: var(--font-family-display);
-  font-weight: 700;
-  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 220px;
+  height: 68px;
+
+  flex: 0 0 220px;
+  flex-shrink: 0;
+
+  font-size: 0;
+  line-height: 0;
+
+  background-image: url('/icons/icon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 260px 260px;
+
+  text-decoration: none;
+}
+
+.navbar > .container > a:first-child:hover {
+  text-decoration: none;
+  opacity: 0.96;
 }
 
 .navbar a {
@@ -315,13 +380,16 @@ label {
 .navbar nav {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--spacing-md);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .navbar nav a {
   opacity: 0.85;
   font-weight: 500;
+  white-space: nowrap;
   transition: opacity 0.15s ease;
 }
 
@@ -329,23 +397,25 @@ label {
   opacity: 1;
 }
 
-/* =============================================================================
-   Páginas públicas (Sobre, Como funciona, Recursos, Planos, Onboarding,
-   Cadastro) — mesmo "cabeçalho escuro + rodapé" da Home, num lugar só pra não
-   repetir o mesmo bloco de CSS em cada tela.
-   ============================================================================= */
+/* =========================================================
+   PÁGINAS PÚBLICAS
+   ========================================================= */
 
-/* Faixa escura de topo de página (menor que o hero da Home — sem o canvas
-   animado, só um padrão de pontinhos estático via CSS). */
 .page-hero {
   padding: var(--spacing-2xl) 0 64px;
-  /* Duas camadas de background numa só declaração (nunca duas propriedades
-     "background"/"background-image" separadas — a segunda sobrescreve a
-     primeira e apaga o gradiente escuro por baixo). Pontinhos por cima,
-     gradiente navy embaixo, cobrindo o bloco inteiro. */
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px),
-    linear-gradient(180deg, #0f2148 0%, #152a54 100%);
-  background-size: 22px 22px, 100% 100%;
+  background-image:
+    radial-gradient(
+      rgba(255, 255, 255, 0.08) 1.2px,
+      transparent 1.2px
+    ),
+    linear-gradient(
+      180deg,
+      #0f2148 0%,
+      #152a54 100%
+    );
+  background-size:
+    22px 22px,
+    100% 100%;
 }
 
 .page-hero h1 {
@@ -367,7 +437,10 @@ label {
   color: #a9b4cc;
 }
 
-/* Rótulo pequeno acima de um H2 (ex.: "COMO FUNCIONA", "PARA QUEM É"). */
+/* =========================================================
+   SECTION EYEBROW
+   ========================================================= */
+
 .section-eyebrow {
   display: inline-flex;
   width: fit-content;
@@ -391,8 +464,10 @@ label {
   color: #047857;
 }
 
-/* Selo numerado (ex.: passos de "Como funciona") — mesma forma do .badge, mas
-   com a fonte de título e cor de destaque, pra parecer mais "passo" que "tag". */
+/* =========================================================
+   STEP BADGE
+   ========================================================= */
+
 .step-badge {
   display: inline-flex;
   align-items: center;
@@ -408,7 +483,10 @@ label {
   flex-shrink: 0;
 }
 
-/* Rodapé escuro, igual em toda página pública. */
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .site-footer {
   background: #0f2148;
   padding: var(--spacing-lg) 0;
@@ -422,4 +500,1227 @@ label {
 .site-footer p.copy {
   color: #5c6a94;
   font-size: 13px;
+}
+
+/* =========================================================
+   NAVBAR PÚBLICA
+   ========================================================= */
+
+.public-nav {
+  position: relative;
+  z-index: 20;
+  margin-bottom: 0;
+  padding: 14px 0;
+  background: linear-gradient(
+    180deg,
+    #0f2148 0%,
+    #152a54 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 18px rgba(6, 14, 36, 0.12);
+}
+
+.public-nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: var(--spacing-sm);
+}
+
+/*
+  LOGO STARTMATCH — NAVBAR PÚBLICA
+
+  O HTML pode continuar usando:
+
+  <a class="brand" ...>StartMatch</a>
+*/
+
+.public-nav .brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 220px;
+  height: 68px;
+
+  flex: 0 0 220px;
+  flex-shrink: 0;
+
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+
+  background-image: url('/icons/icon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 260px 260px;
+
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.public-nav .brand:hover {
+  color: transparent;
+  opacity: 0.96;
+}
+
+.public-nav nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  position: relative;
+  z-index: 21;
+}
+
+.public-nav nav a {
+  position: relative;
+  z-index: 22;
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.public-nav nav a:hover {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.public-nav nav a:not(.btn)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 10px;
+  background: #60a5fa;
+  transition: width 0.2s ease;
+}
+
+.public-nav nav a:not(.btn):hover::after {
+  width: 100%;
+}
+
+.public-nav nav .btn {
+  margin-left: 2px;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   COMPONENTES — INTERESSES
+   ========================================================= */
+
+/*
+  Estes componentes são usados tanto pela tela:
+
+  interesses-startup
+
+  quanto pela tela:
+
+  interesses-investidor
+
+  A estrutura visual é a mesma.
+
+  O conteúdo muda de acordo com o papel.
+*/
+
+.interesses-section {
+  margin-top: var(--spacing-xl);
+}
+
+.interesses-section-title {
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-family-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Card principal de seleção */
+
+.interesses-preferencias {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.interesses-preferencias-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.interesses-preferencias-title {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.interesses-preferencias-description {
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+/* Contador */
+
+.interesses-counter {
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e8eef7;
+  color: #34445f;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Lista de segmentos */
+
+.interesses-segmentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--spacing-md);
+}
+
+/* Segmento selecionável */
+
+.interesse-segmento {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.interesse-segmento:hover {
+  border-color: #b8c7e3;
+  background: #f8faff;
+  transform: translateY(-1px);
+}
+
+.interesse-segmento input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Prioridade */
+
+.interesse-prioridade {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+}
+
+.interesse-prioridade input {
+  width: 48px;
+  padding: 4px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* Ações da área de interesses */
+
+.interesses-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+}
+
+/* =========================================================
+   GRID DE INTERESSES
+   ========================================================= */
+
+.interesses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* =========================================================
+   CARD DE INTERESSE
+   ========================================================= */
+
+.interesse-card {
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.interesse-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: #cdd8f2;
+}
+
+.interesse-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Avatar */
+
+.interesse-avatar {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e9eef8;
+  color: #34445f;
+  font-family: var(--font-family-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* Pessoa */
+
+.interesse-person {
+  min-width: 0;
+}
+
+.interesse-name {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.interesse-location {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* Data */
+
+.interesse-date {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin-top: var(--spacing-sm);
+}
+
+/* Rodapé */
+
+.interesse-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.interesse-status {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+/*
+  O Ver perfil dentro do card continua visualmente
+  como botão, mas o card inteiro pode ser um <a>.
+*/
+
+.interesse-footer .btn {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   PERFIS
+   ========================================================= */
+
+/*
+  Componentes compartilhados pelas páginas:
+
+  perfil-startup
+  perfil-investidor
+*/
+
+/* Cabeçalho do perfil */
+
+.perfil-startup-header,
+.perfil-investidor-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.perfil-startup-header h1,
+.perfil-investidor-header h1 {
+  margin-bottom: 4px;
+}
+
+/* Corpo */
+
+.perfil-startup-body,
+.perfil-investidor-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Seções */
+
+.perfil-startup-body section,
+.perfil-investidor-body section {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil-startup-body section:last-child,
+.perfil-investidor-body section:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.perfil-startup-body h2,
+.perfil-investidor-body h2 {
+  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-family-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.perfil-startup-body p,
+.perfil-investidor-body p {
+  color: var(--color-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Segmentos dentro do perfil */
+
+.perfil-startup-segmentos,
+.perfil-investidor-segmentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.modal {
+  width: min(100%, 520px);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-header h2,
+.modal-header h3 {
+  margin: 0;
+  font-family: var(--font-family-display);
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: var(--color-text);
+}
+
+.modal-body {
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .public-nav .container {
+    gap: 14px;
+  }
+
+  .public-nav nav {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .public-nav nav a {
+    font-size: 13px;
+  }
+
+  .public-nav nav .btn {
+    padding: 7px 12px;
+  }
+
+  .interesses-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .public-nav {
+    padding: 12px 0 13px;
+    box-shadow: 0 3px 14px rgba(6, 14, 36, 0.16);
+  }
+
+  .public-nav .container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .public-nav .brand {
+    display: inline-flex;
+    width: 220px;
+    height: 64px;
+    flex: 0 0 64px;
+    align-self: center;
+    background-size: 250px 250px;
+  }
+
+  .public-nav nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    row-gap: 3px;
+    flex-wrap: wrap;
+  }
+
+  .public-nav nav a {
+    font-size: 11px;
+    line-height: 1.3;
+    padding: 5px 7px;
+    white-space: nowrap;
+  }
+
+  .public-nav nav a:not(.btn)::before {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 10px;
+    margin-right: 7px;
+    background: rgba(255, 255, 255, 0.16);
+    vertical-align: -1px;
+  }
+
+  .public-nav nav a:first-child::before {
+    display: none;
+  }
+
+  .public-nav nav .btn {
+    margin: 4px 5px 0;
+    padding: 7px 12px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
+
+  .navbar .container {
+    flex-wrap: wrap;
+  }
+
+  .navbar nav {
+    flex-wrap: wrap;
+  }
+
+  .interesses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .perfil-startup-header,
+  .perfil-investidor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .interesse-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .interesse-footer .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+
+  /* Navbar geral */
+
+  .navbar nav .nav-logout {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .navbar {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 12px 0;
+  }
+
+  .navbar .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Logo */
+
+  .navbar > .container > a:first-child {
+    width: 220px;
+    height: 64px;
+    flex: 0 0 64px;
+    max-width: none;
+    align-self: center;
+    text-align: center;
+    background-size: 250px 250px;
+  }
+
+  /* Menu */
+
+  .navbar nav {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3px;
+    white-space: normal;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  /* Links */
+
+  .navbar nav a {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 5px 6px;
+    max-width: 100%;
+  }
+
+  /* Navbar pública */
+
+  .public-nav {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .public-nav .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .public-nav .brand {
+    width: 220px;
+    height: 64px;
+    flex: 0 0 64px;
+    max-width: none;
+    align-self: center;
+    text-align: center;
+    background-size: 250px 250px;
+  }
+
+  .public-nav nav {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    white-space: normal;
+  }
+
+  .public-nav nav a {
+    font-size: 12px;
+    padding: 5px 6px;
+    white-space: nowrap;
+  }
+
+  .public-nav nav .btn {
+    padding: 7px 11px;
+    margin: 2px;
+  }
+
+  /* Interesses */
+
+  .interesses-preferencias {
+    padding: var(--spacing-md);
+  }
+
+  .interesses-segmentos {
+    gap: 7px;
+  }
+
+  .interesse-segmento {
+    font-size: 0.85rem;
+    padding: 8px 11px;
+  }
+
+  .interesses-actions {
+    justify-content: stretch;
+  }
+
+  .interesses-actions .btn {
+    width: 100%;
+  }
+
+  /* Modal */
+
+  .modal-backdrop {
+    padding: 14px;
+  }
+
+  .modal {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 390px) {
+  .public-nav {
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+
+  .public-nav nav a {
+    font-size: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .public-nav nav a:not(.btn)::before {
+    margin-right: 5px;
+  }
+
+  .public-nav nav .btn {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+}
+
+/* =========================================================
+   BOTÃO SAIR — NAVBAR AUTENTICADA
+   ========================================================= */
+
+.navbar nav .nav-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 7px;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.navbar nav .nav-logout:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+.navbar nav .nav-logout:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
+   INTERESSES
+   ========================================================= */
+
+/*
+  Estrutura geral das telas de interesses.
+  Usada tanto por Startup quanto por Investidor.
+*/
+
+.interesses-page {
+  padding-bottom: 40px;
+}
+
+.interesses-header {
+  margin: 28px 0 20px;
+}
+
+.interesses-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+/* =========================================================
+   CARD DE PREFERÊNCIAS
+   ========================================================= */
+
+.preferencias-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.preferencias-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.preferencias-card-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+}
+
+.preferencias-card-header p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   CONTADOR
+   ========================================================= */
+
+.total-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #e8edf5;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   SEGMENTOS
+   ========================================================= */
+
+.segmentos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--spacing-md);
+}
+
+.segmento-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.segmento-chip:hover {
+  background: #f0fdfa;
+  border-color: #0f766e;
+  transform: translateY(-1px);
+}
+
+.segmento-chip input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #0f766e;
+}
+
+.segmento-chip.selected {
+  background: #e6fffa;
+  border-color: #0f766e;
+  color: #115e59;
+}
+
+/* Número da prioridade */
+
+.priority-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.segmento-chip.selected .priority-badge {
+  display: inline-flex;
+}
+
+/* =========================================================
+   BOTÃO SALVAR
+   ========================================================= */
+
+.preferencias-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-lg);
+}
+
+.preferencias-actions .btn-primary {
+  background: #0f766e;
+  color: #fff;
+  border-color: #0f766e;
+}
+
+.preferencias-actions .btn-primary:hover:not(:disabled) {
+  background: #0d655e;
+  border-color: #0d655e;
+}
+
+/* =========================================================
+   RESULTADOS
+   ========================================================= */
+
+.interesses-resultados {
+  margin-top: var(--spacing-xl);
+}
+
+.resultados-title {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+}
+
+.interesses-resultados .section-lead {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* =========================================================
+   GRID DOS CARDS
+   ========================================================= */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* =========================================================
+   CARD DE STARTUP / INVESTIDOR
+   ========================================================= */
+
+.interesse-profile-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  opacity: 1;
+}
+
+.interesse-profile-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: #cdd8f2;
+}
+
+.interesse-profile-card.fade-out {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+/* =========================================================
+   CABEÇALHO DO CARD
+   ========================================================= */
+
+.interesse-profile-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.interesse-profile-info h3 {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.interesse-profile-info p {
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* =========================================================
+   CORPO
+   ========================================================= */
+
+.interesse-profile-body {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.interesse-profile-body strong {
+  color: var(--color-text);
+}
+
+/* =========================================================
+   BOTÕES DOS CARDS
+   ========================================================= */
+
+.interesse-profile-actions {
+  display: grid;
+  grid-template-columns:
+    1fr 1fr 1fr;
+  gap: 7px;
+  margin-top: auto;
+}
+
+.interesse-profile-actions button {
+  min-width: 0;
+  padding: 7px 8px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.interesse-profile-actions button:hover {
+  transform: translateY(-1px);
+}
+
+/* Ver perfil */
+
+.btn-ver {
+  background: #f1f5f9;
+  border-color: #e2e8f0 !important;
+  color: #334155;
+}
+
+.btn-ver:hover {
+  background: #e2e8f0;
+}
+
+/* Aceitar */
+
+.btn-aceitar {
+  background: #0f766e;
+  color: #fff;
+}
+
+.btn-aceitar:hover {
+  background: #0d655e;
+}
+
+/* Recusar */
+
+.btn-recusar {
+  background: #991b1b;
+  color: #fff;
+}
+
+.btn-recusar:hover {
+  background: #7f1d1d;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+}
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .preferencias-card {
+    padding: var(--spacing-md);
+  }
+
+  .preferencias-card-header {
+    align-items: flex-start;
+  }
+
+  .segmentos-grid {
+    gap: 8px;
+  }
+
+  .segmento-chip {
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .interesse-profile-actions {
+    grid-template-columns:
+      1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .interesses-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .preferencias-card-header {
+    flex-direction: column;
+  }
+
+  .total-badge {
+    align-self: flex-end;
+  }
+
+  .interesse-profile-actions button {
+    font-size: 0.72rem;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 }

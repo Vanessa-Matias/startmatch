@@ -1,52 +1,135 @@
 <!--
   Tela: Relatórios (Investidor)
   ================================
-  Nova tela do fluxo — item "Relatórios" do menu do Investidor na hierarquia do
-  fluxograma da designer. Mostra indicadores calculados a partir dos próprios
-  dados do investidor (interesses enviados + matches) — sem precisar de nenhum
-  endpoint novo no backend, já que /interests/sent e /matches já existem.
 
-  O "relatório agregado do ecossistema Porto Digital" (Premium) é mostrado
-  como prévia bloqueada — recurso da 2ª
-  entrega do projeto.
+  Nova tela do fluxo — item "Relatórios" do menu do Investidor na hierarquia do
+  fluxograma da designer.
+
+  Mostra indicadores calculados a partir dos próprios
+  dados do investidor (interesses enviados + matches).
+
+  O relatório agregado do ecossistema Porto Digital (Premium)
+  é mostrado como prévia bloqueada — recurso da 2ª entrega do projeto.
 -->
+
 <!doctype html>
+
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Relatórios</title>
+
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#152a54" />
+
+    <meta name="theme-color" content="#0f2148" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================
+         CARDS DOS RELATÓRIOS
+         ========================= */
+
+      .relatorios-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .relatorios-card {
+        min-height: 150px;
+        box-sizing: border-box;
+
+        text-align: center;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .relatorios-card-number {
+        min-height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1.8rem;
+        font-weight: 700;
+
+        margin-bottom: var(--spacing-xs);
+
+        text-align: center;
+      }
+
+      .relatorios-card-title {
+        font-size: 0.95rem;
+        font-weight: 500;
+
+        margin-bottom: var(--spacing-sm);
+
+        text-align: center;
+      }
+
+      .relatorios-card-description {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+
+        max-width: 260px;
+
+        text-align: center;
+      }
+
+      /* =========================
+         RESPONSIVIDADE
+         ========================= */
+
+      @media (max-width: 900px) {
+        .relatorios-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        .relatorios-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
     <div class="container">
       <h1>Relatórios</h1>
-      <p class="text-muted">Um resumo da sua atividade na plataforma.</p>
 
-      <div id="metricas" class="grid">
+      <p class="text-muted">
+        Visão geral do seu desempenho e conexões na plataforma.
+      </p>
+
+      <div id="metricas" class="relatorios-grid">
         <p class="text-muted">Calculando…</p>
       </div>
-
-      <div class="spacer-lg"></div>
-      <div class="card">
-        <div class="card-title">Relatório agregado do ecossistema Porto Digital 🔒</div>
-        <p class="text-muted">
-          Disponível no plano Premium — indicadores consolidados de todo o ecossistema de
-          startups do Porto Digital. Em breve.
-        </p>
-      </div>
     </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

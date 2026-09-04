@@ -1,71 +1,148 @@
 // Tela: Dashboard do Investidor — lógica
-// =========================================
-// Parecido com o dashboard-startup, mas com uma etapa extra: depois de buscar as
-// sugestões, cruza com a lista de interesses já ENVIADOS (GET /interests/sent) para
-// separar "Oportunidades em aberto" (sugestões que o investidor ainda não contatou)
-// das sugestões gerais.
+// ======================================
+//
+// Carrega os dados básicos do investidor
+// e exibe as informações do próprio perfil
+// no dashboard.
+//
+// As áreas de sugestões e oportunidades
+// continuam bloqueadas para usuários que
+// ainda não possuem plano.
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
-import type { Interesse, Investidor, Suggestion } from '../../scripts/types';
+import type { Investidor } from '../../scripts/types';
 
 const usuario = requireAuth(['investidor']);
-renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
-const resumoEl = document.getElementById('resumo-perfil') as HTMLElement;
-const sugestoesEl = document.getElementById('sugestoes') as HTMLDivElement;
-const oportunidadesEl = document.getElementById('oportunidades') as HTMLDivElement;
+renderNav(
+  document.getElementById('nav-links') as HTMLElement,
+  usuario.tipo,
+);
+
+const resumoEl =
+  document.getElementById('resumo-perfil') as HTMLElement;
+
+const tipoInvestidorEl =
+  document.getElementById(
+    'card-tipo-investidor',
+  ) as HTMLElement;
+
+const localizacaoInvestidorEl =
+  document.getElementById(
+    'card-localizacao-investidor',
+  ) as HTMLElement;
+
+const investimentoInvestidorEl =
+  document.getElementById(
+    'card-investimento-investidor',
+  ) as HTMLElement;
+
+const planoInvestidorEl =
+  document.getElementById(
+    'card-plano-investidor',
+  ) as HTMLElement;
+
+
+// Tradução dos tipos de investidor para
+// textos mais amigáveis.
+
+const TIPO_INVESTIDOR_LABEL: Record<string, string> = {
+  anjo: 'Investidor Anjo',
+  fundo: 'Fundo',
+  corporate: 'Corporate',
+  aceleradora: 'Aceleradora',
+  venture_capital: 'Venture Capital',
+};
+
+
+// Formata valores monetários em reais.
+
+function formatMoeda(valor: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(valor);
+}
+
+
+// Renderiza os quatro cards principais
+// com os dados reais do investidor.
+
+function renderCards(investidor: Investidor): void {
+  tipoInvestidorEl.textContent =
+    TIPO_INVESTIDOR_LABEL[investidor.tipo] ??
+    investidor.tipo ??
+    '—';
+
+  localizacaoInvestidorEl.textContent =
+    investidor.cidade && investidor.uf
+      ? `${investidor.cidade}/${investidor.uf}`
+      : '—';
+
+  investimentoInvestidorEl.textContent =
+    `${formatMoeda(investidor.investimentoMin)} – ` +
+    `${formatMoeda(investidor.investimentoMax)}`;
+
+  planoInvestidorEl.textContent =
+    investidor.planoAssinatura || '—';
+}
+
+
+// Renderiza o resumo do perfil.
 
 function renderResumo(investidor: Investidor): void {
   resumoEl.innerHTML = `
-    <div class="card-title">${investidor.tipo.toUpperCase()} · ${investidor.cidade}/${investidor.uf}</div>
-    <p>${investidor.teseInvestimento}</p>
-    <p class="text-muted">Faixa: R$ ${investidor.investimentoMin.toLocaleString('pt-BR')} – R$ ${investidor.investimentoMax.toLocaleString('pt-BR')}</p>
-    <span class="badge">Plano ${investidor.planoAssinatura}</span>
+    <div class="card-title">
+      ${
+        TIPO_INVESTIDOR_LABEL[investidor.tipo] ??
+        investidor.tipo
+      }
+      ·
+      ${investidor.cidade}/${investidor.uf}
+    </div>
+
+    <p>
+      ${investidor.teseInvestimento}
+    </p>
+
+    <p class="text-muted">
+      Faixa de investimento:
+      ${formatMoeda(investidor.investimentoMin)}
+      –
+      ${formatMoeda(investidor.investimentoMax)}
+    </p>
+
+    <span class="badge">
+      Plano ${investidor.planoAssinatura}
+    </span>
   `;
 }
 
-// Função genérica reutilizada tanto para "sugestões" quanto para "oportunidades" —
-// recebe o container e a mensagem a mostrar quando a lista está vazia.
-function renderCards(container: HTMLDivElement, sugestoes: Suggestion[], emptyMessage: string): void {
-  if (sugestoes.length === 0) {
-    container.innerHTML = `<p class="text-muted">${emptyMessage}</p>`;
-    return;
-  }
-
-  container.innerHTML = sugestoes
-    .map((s) => {
-      const startup = s.startup!;
-      return `
-        <a class="card" href="../perfil/index.html?tipo=startup&id=${startup.id}" style="text-decoration:none;color:inherit">
-          <span class="badge badge-score">${s.score} pts</span>
-          <div class="card-title">${startup.nomeFantasia}</div>
-          <p class="text-muted">${startup.cidade}/${startup.uf}</p>
-          <p>${startup.descricao}</p>
-        </a>
-      `;
-    })
-    .join('');
-}
 
 async function init(): Promise<void> {
-  const [investidor, sugestoes, enviados] = await Promise.all([
-    api.get<Investidor>('/investors/me'),
-    api.get<Suggestion[]>('/matches/suggestions'),
-    api.get<Interesse[]>('/interests/sent'),
-  ]);
+  // Busca os dados reais do investidor
+  // logado, seguindo a mesma lógica usada
+  // no Dashboard da Startup.
 
+  const investidor =
+    await api.get<Investidor>('/investors/me');
+
+  renderCards(investidor);
   renderResumo(investidor);
-  renderCards(sugestoesEl, sugestoes, 'Nenhuma sugestão disponível no momento.');
-
-  // "Oportunidades em aberto" = sugestões cujo id de startup NÃO está no conjunto
-  // de startups para as quais já foi enviado interesse.
-  const startupIdsContatados = new Set(enviados.map((i) => i.startupId));
-  const oportunidades = sugestoes.filter((s) => !startupIdsContatados.has(s.startup!.id));
-  renderCards(oportunidadesEl, oportunidades, 'Você já demonstrou interesse em todas as sugestões.');
 }
 
+
 init().catch((error) => {
-  resumoEl.innerHTML = `<p class="form-error">${error instanceof ApiError ? error.message : 'Erro ao carregar dashboard.'}</p>`;
+  resumoEl.innerHTML = `
+    <p class="form-error">
+      ${
+        error instanceof ApiError
+          ? error.message
+          : 'Erro ao carregar dashboard.'
+      }
+    </p>
+  `;
 });

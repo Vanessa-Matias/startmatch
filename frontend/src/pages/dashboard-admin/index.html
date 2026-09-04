@@ -1,64 +1,407 @@
 <!--
   Tela: Dashboard do Administrador
-  ===================================
-  Etapa 7 do fluxograma da designer ("Área Administrativa") — tela que não
-  aparece para usuários comuns. Indicadores gerais da plataforma, vindos de
-  GET /admin/metrics (endpoint novo, admin.controller.ts): total de startups,
-  investidores, mentores e matches, com detalhamento por plano/estágio.
+  =================================
+  Dashboard geral da plataforma.
+  Exibe indicadores gerais e atalhos para as áreas administrativas.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Dashboard Admin</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =====================================================
+       DASHBOARD ADMIN
+       ===================================================== */
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f6f9;
+        color: #152a54;
+        min-width: 0;
+      }
+      /* Navbar centralizada em src/styles/components.css */
+
+      /* =====================================================
+       ÁREA PRINCIPAL
+       ===================================================== */
+
+      .admin-page {
+        width: min(1100px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      /* =====================================================
+       CABEÇALHO
+       ===================================================== */
+
+      .admin-dashboard-header {
+        margin-bottom: 24px;
+      }
+
+      .admin-dashboard-header h1 {
+        margin: 0 0 8px;
+        color: #152a54;
+        font-size: 28px;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .admin-dashboard-header p {
+        margin: 0;
+        color: #7b8799;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* =====================================================
+       INDICADORES
+       ===================================================== */
+
+      .admin-indicators {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .admin-stat {
+        min-height: 145px;
+        padding: 24px;
+
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 12px;
+
+        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.06);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .admin-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.09);
+      }
+
+      .admin-stat-number {
+        color: #152a54;
+        font-size: 32px;
+        line-height: 1;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .admin-stat-title {
+        color: #26344b;
+        font-size: 16px;
+        line-height: 1.3;
+        font-weight: 600;
+        margin-bottom: 7px;
+      }
+
+      .admin-stat-description {
+        color: #8a94a5;
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      /* =====================================================
+       ATALHOS
+       ===================================================== */
+
+      .admin-section {
+        margin-top: 40px;
+      }
+
+      .admin-section-title {
+        margin: 0 0 16px;
+        color: #152a54;
+        font-size: 21px;
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .admin-section-description {
+        display: none;
+      }
+
+      .admin-shortcuts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .admin-shortcut {
+        display: block;
+        min-height: 115px;
+        padding: 22px;
+
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 12px;
+
+        color: inherit;
+        text-decoration: none;
+
+        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.05);
+
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .admin-shortcut:hover {
+        color: inherit;
+        text-decoration: none;
+        transform: translateY(-2px);
+        border-color: #c8d4e5;
+        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.08);
+      }
+
+      .admin-shortcut .card-title {
+        color: #26344b;
+        font-size: 16px;
+        line-height: 1.3;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .admin-shortcut p {
+        margin: 0;
+        color: #8a94a5;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      /* =====================================================
+       TABLET
+       ===================================================== */
+
+      @media (max-width: 900px) {
+        .admin-page {
+          width: min(100% - 40px, 760px);
+        }
+
+        .admin-indicators,
+        .admin-shortcuts {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      /* =====================================================
+       CELULAR / PWA
+       ===================================================== */
+
+      @media (max-width: 700px) {
+        /* A faixa azul NÃO desaparece */
+        .admin-page {
+          width: calc(100% - 28px);
+          padding: 26px 0 36px;
+        }
+
+        .admin-dashboard-header {
+          margin-bottom: 20px;
+        }
+
+        .admin-dashboard-header h1 {
+          font-size: 25px;
+        }
+
+        .admin-dashboard-header p {
+          font-size: 14px;
+        }
+
+        .admin-indicators,
+        .admin-shortcuts {
+          gap: 14px;
+        }
+
+        .admin-stat {
+          min-height: 135px;
+          padding: 20px;
+        }
+
+        .admin-stat-number {
+          font-size: 30px;
+        }
+
+        .admin-stat-title {
+          font-size: 15px;
+        }
+
+        .admin-stat-description {
+          font-size: 12px;
+        }
+
+        .admin-section {
+          margin-top: 32px;
+        }
+
+        .admin-section-title {
+          font-size: 20px;
+        }
+
+        .admin-shortcut {
+          min-height: 110px;
+          padding: 20px;
+        }
+      }
+
+      /* =====================================================
+       CELULAR PEQUENO
+       ===================================================== */
+
+      @media (max-width: 520px) {
+        .admin-page {
+          width: calc(100% - 24px);
+          padding-top: 22px;
+          padding-bottom: 30px;
+        }
+
+        /*
+        No celular os cards ficam em uma coluna,
+        mantendo um tamanho confortável para toque.
+      */
+
+        .admin-indicators,
+        .admin-shortcuts {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-stat {
+          min-height: 125px;
+          padding: 20px;
+        }
+
+        .admin-shortcut {
+          min-height: 105px;
+        }
+      }
+
+      /* =====================================================
+       CELULAR MUITO PEQUENO
+       ===================================================== */
+
+      @media (max-width: 360px) {
+        .admin-page {
+          width: calc(100% - 20px);
+        }
+
+        .admin-dashboard-header h1 {
+          font-size: 22px;
+        }
+
+        .admin-dashboard-header p {
+          font-size: 13px;
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <header class="navbar">
+    <!-- =====================================================
+       NAVBAR
+       ===================================================== -->
+
+    <header class="navbar admin-navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a class="admin-brand" href="../home/index.html"> StartMatch </a>
+
+        <!--
+        Preenchido dinamicamente pelo main.ts.
+        No celular continua visível e pode rolar
+        horizontalmente.
+      -->
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Dashboard geral</h1>
-      <p class="text-muted">Visão consolidada da plataforma.</p>
+    <!-- =====================================================
+       CONTEÚDO PRINCIPAL
+       ===================================================== -->
 
-      <div id="indicadores" class="grid">
+    <main class="admin-page">
+      <!-- Cabeçalho -->
+
+      <section class="admin-dashboard-header">
+        <h1>Dashboard geral</h1>
+
+        <p>Visão consolidada da plataforma.</p>
+      </section>
+
+      <!-- =====================================================
+         INDICADORES
+         O conteúdo é preenchido pelo main.ts
+         ===================================================== -->
+
+      <section id="indicadores" class="admin-indicators">
         <p class="text-muted">Carregando indicadores…</p>
-      </div>
+      </section>
 
-      <div class="spacer-lg"></div>
-      <h2>Atalhos</h2>
-      <div class="grid">
-        <a class="card" href="../admin-usuarios/index.html" style="text-decoration:none;color:inherit">
-          <div class="card-title">Usuários</div>
-          <p class="text-muted">Gestão de contas da plataforma.</p>
-        </a>
-        <a class="card" href="../admin-planos/index.html" style="text-decoration:none;color:inherit">
-          <div class="card-title">Planos</div>
-          <p class="text-muted">Distribuição de assinaturas.</p>
-        </a>
-        <a class="card" href="../admin-relatorios/index.html" style="text-decoration:none;color:inherit">
-          <div class="card-title">Relatórios</div>
-          <p class="text-muted">Indicadores detalhados.</p>
-        </a>
-        <a class="card" href="../admin-lgpd/index.html" style="text-decoration:none;color:inherit">
-          <div class="card-title">Governança e LGPD</div>
-          <p class="text-muted">Dados pessoais tratados e base legal.</p>
-        </a>
-        <a class="card" href="../admin-auditoria/index.html" style="text-decoration:none;color:inherit">
-          <div class="card-title">Auditoria</div>
-          <p class="text-muted">Registro de eventos da plataforma.</p>
-        </a>
-      </div>
-    </div>
+      <!-- =====================================================
+         ATALHOS
+         ===================================================== -->
+
+      <section class="admin-section">
+        <h2 class="admin-section-title">Atalhos</h2>
+
+        <div class="admin-shortcuts">
+          <a class="card admin-shortcut" href="../admin-usuarios/index.html">
+            <div class="card-title">Usuários</div>
+
+            <p>Gestão de contas da plataforma.</p>
+          </a>
+
+          <a class="card admin-shortcut" href="../admin-planos/index.html">
+            <div class="card-title">Planos</div>
+
+            <p>Distribuição de assinaturas.</p>
+          </a>
+
+          <a class="card admin-shortcut" href="../admin-relatorios/index.html">
+            <div class="card-title">Relatórios</div>
+
+            <p>Indicadores detalhados.</p>
+          </a>
+
+          <a class="card admin-shortcut" href="../admin-lgpd/index.html">
+            <div class="card-title">Governança e LGPD</div>
+
+            <p>Dados pessoais tratados e base legal.</p>
+          </a>
+
+          <a class="card admin-shortcut" href="../admin-auditoria/index.html">
+            <div class="card-title">Auditoria</div>
+
+            <p>Registro de eventos da plataforma.</p>
+          </a>
+        </div>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

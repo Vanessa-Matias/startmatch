@@ -1,13 +1,16 @@
 /*
   src/styles/global.css
   =======================
+
   Reset básico do navegador + estilos de elementos HTML "crus" (h1, p, a, ul...) +
   classes utilitárias de layout usadas em várias telas (.container, .stack, .grid,
   .text-muted, .spacer-*) + um pequeno "vocabulário de movimento" (seção no fim)
   reaproveitado em qualquer tela que precise de uma animação de entrada/pulso.
+
   Pense nisso como as "regras gerais da casa" — estilo de um componente específico
   (botão, card, badge) fica em components.css.
 */
+
 *,
 *::before,
 *::after {
@@ -86,6 +89,7 @@ ul {
 
 /* Espaçadores verticais simples — usados no lugar de margin quando se quer um "respiro"
    visual entre blocos, sem precisar criar uma classe nova toda vez. */
+
 .spacer-sm {
   height: var(--spacing-sm);
 }
@@ -108,12 +112,14 @@ ul {
    Todas respeitam prefers-reduced-motion (usuário que pediu menos animação no
    sistema operacional não vê nenhuma delas rodando).
    ============================================================================= */
+
 @keyframes sm-pulse {
   0%,
   100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.45;
     transform: scale(1.35);
@@ -125,6 +131,7 @@ ul {
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-7px);
   }
@@ -135,6 +142,7 @@ ul {
     opacity: 0;
     transform: translateY(14px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -146,6 +154,7 @@ ul {
   100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -181,8 +190,15 @@ ul {
   .sm-gradient-text {
     animation: none !important;
   }
+
   .sm-reveal {
     animation: none !important;
     opacity: 1 !important;
   }
+}
+
+/* Remove a faixa branca entre a navbar e o conteúdo em todas as telas */
+.navbar {
+  margin-bottom: 0 !important;
+  border-bottom: 0 !important;
 }

@@ -1,50 +1,561 @@
-<!--
-  Tela: Agenda (Mentor)
-  =======================
-  Mostra a disponibilidade cadastrada pelo mentor e as próximas sessões
-  agendadas. O agendamento propriamente dito (Etapa 6 do fluxograma: Startup
-  solicita -> Mentor aceita -> vira sessão na agenda) depende de uma entidade de
-  "sessão de mentoria" que ainda não existe no backend nesta 1ª entrega — por
-  isso a lista de sessões aparece vazia, pronta
-  para receber dados reais quando esse recurso for implementado.
--->
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StartMatch — Agenda</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#152a54" />
+
+    <title>Agenda | StartMatch</title>
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================================================
+         AGENDA
+         ========================================================= */
+
+      .agenda-page {
+        max-width: 1100px;
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-2xl);
+      }
+
+      .agenda-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .agenda-header h1 {
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .agenda-header p {
+        margin: 0;
+        color: var(--color-text-muted);
+      }
+
+      /* =========================================================
+         RESUMO
+         ========================================================= */
+
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .dashboard-stat {
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .dashboard-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .dashboard-stat-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      /* =========================================================
+         SEÇÕES
+         ========================================================= */
+
+      .agenda-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .agenda-section-header {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .agenda-section-header h2 {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .agenda-section-header p {
+        margin: 0;
+      }
+
+      /* =========================================================
+         SUA DISPONIBILIDADE
+         ========================================================= */
+
+      .agenda-disponibilidade {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--spacing-lg);
+      }
+
+      .agenda-disponibilidade-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .agenda-btn-status {
+        margin-top: 0;
+        min-width: 150px;
+        flex-shrink: 0;
+      }
+      .agenda-btn-status.is-inactive {
+        background: var(--color-error);
+        border-color: var(--color-error);
+        color: #ffffff;
+      }
+
+      .agenda-btn-status.is-inactive:hover {
+        background: #c0392b;
+        border-color: #c0392b;
+      }
+
+      /* =========================================================
+         DIAS E HORÁRIOS RESUMIDOS
+         ========================================================= */
+
+      .agenda-horarios {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+      }
+
+      .agenda-horario {
+        padding: var(--spacing-md);
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+      }
+
+      .agenda-horario-label {
+        display: block;
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+      }
+
+      .agenda-horario strong {
+        font-size: 0.95rem;
+      }
+
+      /* =========================================================
+         CONFIGURAÇÃO DA DISPONIBILIDADE
+         ========================================================= */
+
+      .agenda-disponibilidade-config {
+        margin-top: var(--spacing-md);
+      }
+
+      .agenda-config-header {
+        padding-bottom: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .agenda-config-header h3 {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .agenda-config-header p {
+        margin: 0;
+      }
+
+      .agenda-config-group {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .agenda-config-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      /* =========================================================
+         DIAS DA SEMANA
+         ========================================================= */
+
+      .agenda-dias {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: var(--spacing-sm);
+      }
+
+      .agenda-dia {
+        position: relative;
+        cursor: pointer;
+      }
+
+      .agenda-dia input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .agenda-dia span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 8px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .agenda-dia:hover span {
+        border-color: var(--color-accent);
+      }
+
+      .agenda-dia input:checked + span {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: #ffffff;
+      }
+
+      /* =========================================================
+         CAMPOS DE HORÁRIO
+         ========================================================= */
+
+      .agenda-horario-form {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        gap: var(--spacing-md);
+      }
+
+      .agenda-horario-form .field {
+        margin-bottom: 0;
+      }
+
+      .agenda-horario-separador {
+        padding-bottom: 11px;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      .agenda-config-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--color-border);
+      }
+
+      .agenda-config-footer .btn {
+        min-width: 190px;
+      }
+
+      /* =========================================================
+         RESPONSIVO
+         ========================================================= */
+
+      @media (max-width: 800px) {
+        .dashboard-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .agenda-dias {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 600px) {
+        .agenda-disponibilidade {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .agenda-btn-status {
+          width: 100%;
+        }
+
+        .agenda-horarios {
+          grid-template-columns: 1fr;
+        }
+
+        .agenda-horario-form {
+          grid-template-columns: 1fr;
+          gap: var(--spacing-sm);
+        }
+
+        .agenda-horario-separador {
+          display: none;
+        }
+
+        .agenda-config-footer .btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .agenda-dias {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
   </head>
+
   <body>
+    <!-- =======================================================
+         NAVBAR
+         ======================================================= -->
+
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container container--narrow">
-      <h1>Agenda</h1>
+    <!-- =======================================================
+         CONTEÚDO
+         ======================================================= -->
 
-      <div class="card">
-        <div class="card-title">Sua disponibilidade</div>
-        <p id="disponibilidade" class="text-muted">Carregando…</p>
-      </div>
+    <main class="container agenda-page">
+      <!-- Cabeçalho -->
 
-      <div class="spacer-lg"></div>
-      <h2>Próximas sessões</h2>
-      <div id="sessoes" class="stack">
-        <p class="text-muted">
-          Nenhuma sessão agendada ainda — o agendamento de mentorias chega na 2ª entrega do
-          projeto.
+      <header class="agenda-header">
+        <h1>Agenda</h1>
+
+        <p>
+          Organize sua disponibilidade e acompanhe suas sessões de mentoria no
+          StartMatch.
         </p>
-      </div>
-    </div>
+      </header>
+
+      <!-- =====================================================
+           RESUMO
+           ===================================================== -->
+
+      <section class="dashboard-stats">
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="resumo-disponibilidade">
+            Ativa
+          </div>
+
+          <p class="dashboard-stat-label">Sua disponibilidade</p>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="resumo-sessoes">0</div>
+
+          <p class="dashboard-stat-label">Próximas sessões</p>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="resumo-status">Disponível</div>
+
+          <p class="dashboard-stat-label">Status da agenda</p>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           SUA DISPONIBILIDADE
+           ===================================================== -->
+
+      <section class="agenda-section">
+        <div class="agenda-section-header">
+          <h2>Sua disponibilidade</h2>
+
+          <p class="text-muted">
+            Informe os dias e horários em que você está disponível para realizar
+            mentorias.
+          </p>
+        </div>
+
+        <!-- Card de disponibilidade -->
+
+        <div class="card agenda-disponibilidade">
+          <div class="agenda-disponibilidade-info">
+            <div
+              class="agenda-disponibilidade-status"
+              id="status-disponibilidade"
+            >
+              <span class="agenda-status-dot" id="status-dot"></span>
+
+              <span id="texto-status-disponibilidade">
+                Disponibilidade ativa
+              </span>
+            </div>
+
+            <p
+              id="disponibilidade"
+              class="text-muted agenda-disponibilidade-text"
+            >
+              Você está disponível para realizar mentorias.
+            </p>
+
+            <div class="agenda-horarios">
+              <div class="agenda-horario">
+                <span class="agenda-horario-label"> Dias disponíveis </span>
+
+                <strong id="dias-selecionados"> Segunda a sexta </strong>
+              </div>
+
+              <div class="agenda-horario">
+                <span class="agenda-horario-label"> Horário disponível </span>
+
+                <strong id="horarios-selecionados"> 14:00 às 18:00 </strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão Disponível / Não disponível -->
+
+          <button
+            type="button"
+            class="btn btn-primary agenda-btn-status"
+            id="btn-alternar-disponibilidade"
+            aria-pressed="true"
+          >
+            Disponível
+          </button>
+        </div>
+
+        <!-- ===================================================
+             CONFIGURAÇÃO DOS DIAS E HORÁRIOS
+             =================================================== -->
+
+        <div
+          class="card agenda-disponibilidade-config"
+          id="config-disponibilidade"
+        >
+          <div class="agenda-config-header">
+            <h3>Defina sua disponibilidade</h3>
+
+            <p class="text-muted">
+              Selecione os dias e informe o período em que você poderá realizar
+              mentorias.
+            </p>
+          </div>
+
+          <!-- Dias -->
+
+          <div class="agenda-config-group">
+            <label class="agenda-config-label"> Dias disponíveis </label>
+
+            <div class="agenda-dias">
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="segunda" checked />
+
+                <span> Seg </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="terca" checked />
+
+                <span> Ter </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="quarta" checked />
+
+                <span> Qua </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="quinta" checked />
+
+                <span> Qui </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="sexta" checked />
+
+                <span> Sex </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="sabado" />
+
+                <span> Sáb </span>
+              </label>
+
+              <label class="agenda-dia">
+                <input type="checkbox" name="dia" value="domingo" />
+
+                <span> Dom </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Horários -->
+
+          <div class="agenda-config-group">
+            <label class="agenda-config-label"> Horário disponível </label>
+
+            <div class="agenda-horario-form">
+              <div class="field">
+                <label for="horario-inicio"> Início </label>
+
+                <input
+                  class="input"
+                  id="horario-inicio"
+                  type="time"
+                  value="14:00"
+                />
+              </div>
+
+              <div class="agenda-horario-separador">às</div>
+
+              <div class="field">
+                <label for="horario-fim"> Fim </label>
+
+                <input
+                  class="input"
+                  id="horario-fim"
+                  type="time"
+                  value="18:00"
+                />
+              </div>
+            </div>
+
+            <p class="form-error" id="erro-disponibilidade"></p>
+          </div>
+
+          <!-- Salvar -->
+
+          <div class="agenda-config-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="salvar-disponibilidade"
+            >
+              Salvar disponibilidade
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- =======================================================
+         SCRIPT
+         ======================================================= -->
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

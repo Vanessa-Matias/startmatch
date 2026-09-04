@@ -1,50 +1,589 @@
 <!--
-  Tela: Certificados (Mentor)
-  ==============================
-  Certificado de horas de mentoria, exportável (ex.: para LinkedIn) — parte do
-  modelo de negócio para mentores vinculados ao Porto Digital. Depende do
-  histórico de sessões
-  (historico-mentorias/), que ainda não tem backend nesta 1ª entrega — o botão de
-  exportar fica desabilitado até lá.
+  Tela: Certificado de Mentoria (Mentor)
+  ======================================
+
+  Permite ao mentor selecionar entre diferentes certificados
+  de períodos distintos de atuação.
+
+  Nesta primeira entrega, os certificados são demonstrativos
+  e ficam somente no frontend.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StartMatch — Certificados</title>
+
+    <title>StartMatch — Certificado de Mentoria</title>
+
     <link rel="manifest" href="/manifest.json" />
+
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* ==========================================
+       Cabeçalho
+       ========================================== */
+
+      .certificado-page-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .certificado-page-header h1 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .certificado-page-header p {
+        max-width: 760px;
+      }
+
+      /* ==========================================
+       Seleção do certificado
+       ========================================== */
+
+      .certificado-seletor {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .certificado-seletor-card {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+      }
+
+      .certificado-seletor-card label {
+        margin-bottom: 0;
+      }
+
+      .certificado-seletor-card .select {
+        max-width: 100%;
+      }
+
+      .certificado-seletor-ajuda {
+        margin-top: 4px;
+        font-size: 0.85rem;
+      }
+
+      /* ==========================================
+       Indicadores
+       ========================================== */
+
+      .certificado-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .certificado-stat {
+        min-height: 130px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .certificado-stat-value {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--color-primary);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .certificado-stat-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* ==========================================
+       Documento
+       ========================================== */
+
+      .certificado-documento {
+        position: relative;
+        overflow: hidden;
+        padding: 0;
+        margin-bottom: var(--spacing-xl);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+      }
+
+      .certificado-documento::before {
+        content: '';
+        display: block;
+        height: 8px;
+        background: var(--color-primary);
+      }
+
+      .certificado-conteudo {
+        padding: var(--spacing-xl);
+        text-align: center;
+      }
+
+      .certificado-marca {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-accent);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .certificado-titulo {
+        margin: 0 0 var(--spacing-md);
+        font-family: var(--font-display);
+        font-size: 2rem;
+        color: var(--color-primary);
+      }
+
+      .certificado-subtitulo {
+        max-width: 650px;
+        margin: 0 auto var(--spacing-lg);
+        color: var(--color-text-muted);
+        line-height: 1.6;
+      }
+
+      .certificado-nome {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--color-text);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .certificado-funcao {
+        max-width: 720px;
+        margin: 0 auto var(--spacing-xl);
+        color: var(--color-text-muted);
+        line-height: 1.6;
+      }
+
+      .certificado-dados {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+        max-width: 800px;
+        margin: 0 auto var(--spacing-xl);
+      }
+
+      .certificado-dado {
+        padding: var(--spacing-md);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-bg);
+      }
+
+      .certificado-dado-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--color-text-muted);
+        font-size: 0.82rem;
+      }
+
+      .certificado-dado strong {
+        color: var(--color-primary);
+        font-size: 1rem;
+      }
+
+      .certificado-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: var(--color-success);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .certificado-status::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--color-success);
+      }
+
+      .certificado-status--pendente {
+        background: #fef3c7;
+        color: var(--color-warning);
+      }
+
+      .certificado-status--pendente::before {
+        background: var(--color-warning);
+      }
+
+      .certificado-rodape {
+        padding-top: var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+
+      /* ==========================================
+       Informações complementares
+       ========================================== */
+
+      .certificado-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .certificado-info h2 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .certificado-info p {
+        line-height: 1.6;
+      }
+
+      .certificado-detalhes {
+        display: grid;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+      }
+
+      .certificado-detalhe-item {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .certificado-detalhe-item:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .certificado-detalhe-item span {
+        color: var(--color-text-muted);
+      }
+
+      .certificado-detalhe-item strong {
+        text-align: right;
+      }
+
+      /* ==========================================
+       Exportação
+       ========================================== */
+
+      .certificado-exportacao {
+        margin-bottom: var(--spacing-xl);
+        text-align: center;
+      }
+
+      .certificado-exportacao h2 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .certificado-exportacao p {
+        max-width: 650px;
+        margin: 0 auto var(--spacing-lg);
+      }
+
+      .certificado-exportacao .btn {
+        min-width: 220px;
+      }
+
+      /* ==========================================
+       Responsividade
+       ========================================== */
+
+      @media (max-width: 900px) {
+        .certificado-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .certificado-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .certificado-dados {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .certificado-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .certificado-conteudo {
+          padding: var(--spacing-lg);
+        }
+
+        .certificado-titulo {
+          font-size: 1.6rem;
+        }
+
+        .certificado-nome {
+          font-size: 1.3rem;
+        }
+
+        .certificado-detalhe-item {
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .certificado-detalhe-item strong {
+          text-align: left;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container container--narrow">
-      <h1>Certificado de mentoria</h1>
-      <div class="card">
-        <div class="card-title">Certificado de horas</div>
+    <main class="container">
+      <!-- ==========================================
+         Cabeçalho
+         ========================================== -->
+
+      <section class="certificado-page-header">
+        <h1>Certificados de mentoria</h1>
+
         <p class="text-muted">
-          Exporte um certificado com o total de horas de mentoria realizadas na plataforma —
-          disponível assim que você tiver sessões registradas no histórico.
+          Selecione um certificado para consultar os detalhes da sua atuação
+          como mentor na plataforma StartMatch.
         </p>
+      </section>
+
+      <!-- ==========================================
+         Seletor
+         ========================================== -->
+
+      <section class="card certificado-seletor">
+        <div class="certificado-seletor-card">
+          <label for="seletor-certificado"> Selecionar certificado </label>
+
+          <select id="seletor-certificado" class="select"></select>
+
+          <p class="text-muted certificado-seletor-ajuda">
+            Cada certificado corresponde a um período específico de atuação e
+            reúne somente as sessões daquele período.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================
+         Indicadores do certificado selecionado
+         ========================================== -->
+
+      <section class="certificado-stats">
+        <article class="card certificado-stat">
+          <strong id="certificado-horas" class="certificado-stat-value">
+            0h
+          </strong>
+
+          <span class="certificado-stat-label"> Horas de mentoria </span>
+        </article>
+
+        <article class="card certificado-stat">
+          <strong id="certificado-sessoes" class="certificado-stat-value">
+            0
+          </strong>
+
+          <span class="certificado-stat-label"> Sessões realizadas </span>
+        </article>
+
+        <article class="card certificado-stat">
+          <strong id="certificado-startups" class="certificado-stat-value">
+            0
+          </strong>
+
+          <span class="certificado-stat-label"> Startups atendidas </span>
+        </article>
+
+        <article class="card certificado-stat">
+          <strong id="certificado-status-resumo" class="certificado-stat-value">
+            Ativo
+          </strong>
+
+          <span class="certificado-stat-label"> Status do certificado </span>
+        </article>
+      </section>
+
+      <!-- ==========================================
+         Certificado selecionado
+         ========================================== -->
+
+      <section class="card certificado-documento">
+        <div class="certificado-conteudo">
+          <div class="certificado-marca">StartMatch</div>
+
+          <h2 id="certificado-titulo" class="certificado-titulo">
+            Certificado de Mentoria
+          </h2>
+
+          <p class="certificado-subtitulo">Certificamos que</p>
+
+          <div id="certificado-nome" class="certificado-nome">
+            Mentor StartMatch
+          </div>
+
+          <p class="certificado-funcao">
+            atuou como mentor na plataforma StartMatch, contribuindo para o
+            desenvolvimento de startups e empreendedores durante o período
+            certificado.
+          </p>
+
+          <div class="certificado-dados">
+            <div class="certificado-dado">
+              <span class="certificado-dado-label"> Período </span>
+
+              <strong id="certificado-periodo"> Setembro de 2026 </strong>
+            </div>
+
+            <div class="certificado-dado">
+              <span class="certificado-dado-label"> Horas registradas </span>
+
+              <strong id="certificado-horas-documento"> 0 horas </strong>
+            </div>
+
+            <div class="certificado-dado">
+              <span class="certificado-dado-label"> Sessões concluídas </span>
+
+              <strong id="certificado-sessoes-documento"> 0 sessões </strong>
+            </div>
+          </div>
+
+          <div id="certificado-status" class="certificado-status">Ativo</div>
+
+          <div class="certificado-rodape">
+            Este certificado representa o registro da atuação de mentoria
+            realizada dentro da plataforma StartMatch. Os dados apresentados
+            correspondem ao período selecionado.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+         Informações da atuação
+         ========================================== -->
+
+      <section class="certificado-grid">
+        <article class="card certificado-info">
+          <h2 class="card-title">Resumo da atuação</h2>
+
+          <p class="text-muted">
+            Confira os principais dados relacionados à sua atuação como mentor
+            durante o período deste certificado.
+          </p>
+
+          <div class="certificado-detalhes">
+            <div class="certificado-detalhe-item">
+              <span> Data inicial </span>
+
+              <strong id="certificado-data-inicio"> 01/09/2026 </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Data final </span>
+
+              <strong id="certificado-data-fim"> 30/09/2026 </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Área principal </span>
+
+              <strong id="certificado-area"> Estratégia e crescimento </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Formato das mentorias </span>
+
+              <strong id="certificado-formato"> Online </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Startups atendidas </span>
+
+              <strong id="certificado-startups-detalhe"> 0 </strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card certificado-info">
+          <h2 class="card-title">Identificação do certificado</h2>
+
+          <p class="text-muted">
+            Utilize os dados abaixo para identificar o certificado selecionado
+            e, futuramente, validar sua experiência de mentoria.
+          </p>
+
+          <div class="certificado-detalhes">
+            <div class="certificado-detalhe-item">
+              <span> Número de registro </span>
+
+              <strong id="certificado-registro"> SM-MENTOR-001 </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Situação </span>
+
+              <strong> Regular </strong>
+            </div>
+
+            <div class="certificado-detalhe-item">
+              <span> Plataforma </span>
+
+              <strong> StartMatch </strong>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ==========================================
+         Exportação
+         ========================================== -->
+
+      <section class="card certificado-exportacao">
+        <h2 class="card-title">Exportar certificado</h2>
+
+        <p class="text-muted">
+          A exportação permitirá gerar uma versão digital do certificado
+          selecionado para uso profissional e compartilhamento em plataformas
+          como o LinkedIn.
+        </p>
+
         <button
+          id="btn-exportar-certificado"
           class="btn btn-primary"
           type="button"
           disabled
-          title="Disponível assim que o histórico de sessões existir"
+          title="A exportação será disponibilizada quando o histórico real estiver integrado"
         >
           Exportar certificado
         </button>
-      </div>
-    </div>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

@@ -20,7 +20,7 @@ const listEl = document.getElementById('mentores-list') as HTMLDivElement;
 
 function renderCard(mentor: Mentor): string {
   const badgePorto = mentor.vinculoPortoDigital
-    ? '<span class="badge badge-success">Mentor Porto Digital</span>'
+    ? '<span class="badge badge-success">Mentor da Rede Parceira</span>'
     : '';
   return `
     <div class="card">

@@ -1,0 +1,424 @@
+<!--
+  Tela: Interesses para Investidores
+  ==================================
+  Preferências de investimento e Startups compatíveis.
+-->
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>StartMatch — Interesses</title>
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      .busca-card {
+        background: #ffffff;
+        border: 1px solid var(--color-border, #e2e8f0);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        margin-bottom: 8px;
+      }
+
+      .busca-card .field {
+        margin: 0;
+      }
+
+      .busca-card label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .busca-card .input {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .interesses-page {
+        padding-bottom: 40px;
+      }
+
+      .interesses-header {
+        margin: 28px 0 20px;
+      }
+
+      .interesses-header h1 {
+        margin-bottom: 4px;
+        font-size: 1.8rem;
+      }
+
+      .interesses-header p {
+        margin: 0;
+        color: var(--color-muted, #666);
+      }
+
+      /* Card de Preferências / Segmentos */
+      .preferencias-card {
+        background: #ffffff;
+        border: 1px solid var(--color-border, #e2e8f0);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        margin-bottom: 36px;
+      }
+
+      .preferencias-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .preferencias-card-header h2 {
+        font-size: 1.1rem;
+        margin: 0 0 4px;
+      }
+
+      .preferencias-card-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--color-muted, #666);
+      }
+
+      .total-badge {
+        background: #e2e8f0;
+        color: #334155;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Grid de Chips/Segmentos */
+      .segmentos-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .segmento-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 8px 14px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+        font-size: 0.92rem;
+      }
+
+      .segmento-chip:hover {
+        border-color: #0f766e;
+        background: #f0fdf4;
+      }
+
+      .segmento-chip input[type='checkbox'] {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        accent-color: #0f766e;
+      }
+
+      .segmento-chip.selected {
+        background: #e6fffa;
+        border-color: #0f766e;
+        font-weight: 600;
+      }
+
+      .priority-badge {
+        display: none;
+        background: #0f766e;
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 999px;
+      }
+
+      .segmento-chip.selected .priority-badge {
+        display: inline-block;
+      }
+
+      .preferencias-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .btn-primary {
+        background: #0f766e;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        background: #0d655e;
+      }
+
+      /* Grid de Startups Compatíveis */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .investor-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+      }
+
+      .investor-card.fade-out {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      .investor-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .investor-info h3 {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      .investor-info p {
+        margin: 2px 0 0;
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      .investor-card-body {
+        font-size: 0.85rem;
+        color: #475569;
+        margin-bottom: 14px;
+      }
+
+      .investor-card-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .investor-card-actions button {
+        flex: 1;
+        padding: 6px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .btn-ver {
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      .btn-ver:hover {
+        background: #e2e8f0;
+      }
+
+      .btn-aceitar {
+        background: #0f766e;
+        color: white;
+      }
+
+      .btn-aceitar:hover {
+        background: #0d655e;
+      }
+
+      .btn-recusar {
+        background: #991b1b;
+        color: white;
+      }
+
+      .btn-recusar:hover {
+        background: #7f1d1d;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 32px;
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        color: #64748b;
+      }
+
+      /* Modal de Perfil */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-content {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 480px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .btn-close-modal {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #64748b;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container interesses-page">
+      <div class="interesses-header">
+        <h1>Interesses</h1>
+      </div>
+      <!-- BUSCA POR TEXTO -->
+      <section class="busca-card">
+        <div class="field">
+          <label for="texto">Buscar por texto</label>
+
+          <input
+            class="input"
+            id="texto"
+            type="text"
+            placeholder="Nome, descrição, tese..."
+          />
+        </div>
+      </section>
+      <!-- PAINEL DE PREFERÊNCIAS / SEGMENTOS DE INTERESSE -->
+      <section class="preferencias-card">
+        <div class="preferencias-card-header">
+          <div>
+            <h2>Segmentos de interesse</h2>
+
+            <p>
+              Marque os segmentos e defina a prioridade (1 = mais prioritário).
+            </p>
+          </div>
+
+          <span class="total-badge" id="selected-count">0</span>
+        </div>
+
+        <div class="segmentos-grid" id="segmentos-container"></div>
+
+        <div class="preferencias-actions">
+          <button
+            class="btn-primary"
+            id="btn-salvar-preferencias"
+            type="button"
+          >
+            Salvar Preferências
+          </button>
+        </div>
+      </section>
+
+      <!-- STARTUPS COM SEGMENTOS COMPATÍVEIS -->
+      <section>
+        <h2 style="font-size: 1.2rem; margin-bottom: 16px">
+          Startups com Segmentos Compatíveis
+        </h2>
+
+        <div class="cards-grid" id="startups-grid"></div>
+      </section>
+    </main>
+
+    <!-- MODAL PARA VER PERFIL -->
+    <div class="modal-overlay" id="modal-perfil">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-nome">Nome da Startup</h2>
+
+          <button class="btn-close-modal" id="btn-fechar-modal" type="button">
+            &times;
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <p id="modal-empresa" style="color: #64748b; margin-top: 0"></p>
+
+          <hr
+            style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0"
+          />
+
+          <p>
+            <strong>Atua em:</strong>
+            <span id="modal-aportes"></span>
+          </p>
+
+          <p>
+            <strong>Status:</strong>
+            Disponível para novas conexões.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,22 +1,484 @@
 <!--
   Tela: Relatórios (Admin)
-  ===========================
-  Etapa 7 do fluxograma — item "Relatórios". Visão mais detalhada dos mesmos
-  indicadores do dashboard-admin, com detalhamento por estágio de startup e por
-  tipo de usuário.
+  =========================
+  Relatório administrativo consolidado da plataforma.
+  Esta tela é exclusiva do perfil Admin.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Relatórios (Admin)</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================
+         CABEÇALHO
+         ========================= */
+
+      .admin-relatorios-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-relatorios-header h1 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .admin-relatorios-header p {
+        max-width: 760px;
+        line-height: 1.6;
+        margin-bottom: 0;
+      }
+
+      .admin-relatorios-date {
+        margin-top: var(--spacing-sm);
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+      }
+
+      /* =========================
+         RESUMO
+         ========================= */
+
+      .admin-relatorios-resumo {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-relatorios-resumo-item {
+        padding: var(--spacing-lg);
+        text-align: center;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .admin-relatorios-resumo-numero {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--color-primary);
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .admin-relatorios-resumo-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* =========================
+         SEÇÕES
+         ========================= */
+
+      .admin-relatorios-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-relatorios-section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .admin-relatorios-section-header h2 {
+        margin: 0;
+      }
+
+      .admin-relatorios-section-description {
+        margin: 4px 0 0;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* =========================
+         TABELAS
+         ========================= */
+
+      .admin-relatorios-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .admin-relatorios-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .admin-relatorios-table th,
+      .admin-relatorios-table td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .admin-relatorios-table th {
+        background: var(--color-bg);
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .admin-relatorios-table td {
+        font-size: 0.95rem;
+      }
+
+      .admin-relatorios-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .admin-relatorios-table tbody tr:hover {
+        background: var(--color-bg);
+      }
+
+      .admin-relatorios-table-value {
+        text-align: right !important;
+        font-weight: 700;
+      }
+
+      .admin-relatorios-table-total td {
+        font-weight: 700;
+        background: var(--color-bg);
+      }
+
+      /* =========================
+         BARRA DE PROPORÇÃO
+         ========================= */
+
+      .admin-relatorios-proporcao {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .admin-relatorios-barra {
+        flex: 1;
+        min-width: 80px;
+        height: 7px;
+        overflow: hidden;
+        background: var(--color-border);
+        border-radius: 999px;
+      }
+
+      .admin-relatorios-barra-fill {
+        height: 100%;
+        width: 0;
+        background: var(--color-accent);
+        border-radius: 999px;
+        transition: width 0.3s ease;
+      }
+
+      .admin-relatorios-percentual {
+        min-width: 48px;
+        text-align: right;
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+      }
+
+      /* =========================
+         HISTÓRICO ACUMULADO
+         ========================= */
+
+      .admin-relatorios-historico {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-relatorios-historico-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md) var(--spacing-lg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        color: var(--color-text);
+        font: inherit;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .admin-relatorios-historico-toggle:hover {
+        border-color: var(--color-accent);
+        background: var(--color-bg);
+      }
+
+      .admin-relatorios-historico-toggle-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .admin-relatorios-historico-toggle-title {
+        color: var(--color-primary);
+        font-size: 1rem;
+      }
+
+      .admin-relatorios-historico-toggle-icon {
+        flex-shrink: 0;
+        color: var(--color-text-muted);
+        font-size: 1.1rem;
+        transition: transform 0.2s ease;
+      }
+
+      .admin-relatorios-historico-toggle[aria-expanded='true']
+        .admin-relatorios-historico-toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      .admin-relatorios-historico-content {
+        display: none;
+        margin-top: var(--spacing-md);
+      }
+
+      .admin-relatorios-historico-content.is-open {
+        display: block;
+      }
+
+      .admin-relatorios-historico-panel {
+        width: 100%;
+        box-sizing: border-box;
+        padding: var(--spacing-lg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* =========================
+         FILTRO DO HISTÓRICO
+         ========================= */
+
+      .admin-relatorios-historico-filtros {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--spacing-md);
+        width: 100%;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .admin-relatorios-historico-filtro {
+        width: 220px;
+        min-width: 220px;
+        max-width: 100%;
+        margin-bottom: 0;
+      }
+
+      .admin-relatorios-historico-filtro label {
+        display: block;
+        width: 100%;
+        margin-bottom: 6px;
+      }
+
+      .admin-relatorios-historico-filtro .select {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      /* =========================
+         TABELA DO HISTÓRICO
+         ========================= */
+
+      .admin-relatorios-historico-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+      }
+
+      .admin-relatorios-historico-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .admin-relatorios-historico-table th,
+      .admin-relatorios-historico-table td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .admin-relatorios-historico-table th {
+        background: var(--color-bg);
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .admin-relatorios-historico-table td {
+        font-size: 0.9rem;
+      }
+
+      .admin-relatorios-historico-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .admin-relatorios-historico-table-value {
+        text-align: right !important;
+        font-weight: 600;
+      }
+
+      /* =========================
+         RODAPÉ
+         ========================= */
+
+      .admin-relatorios-footer {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      /* =========================
+         ESTADOS
+         ========================= */
+
+      .admin-relatorios-empty {
+        padding: var(--spacing-lg);
+        text-align: center;
+        color: var(--color-text-muted);
+      }
+
+      /* =========================
+         RESPONSIVO
+         ========================= */
+
+      @media (max-width: 900px) {
+        .admin-relatorios-resumo {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-relatorios-historico-filtros {
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+        }
+
+        .admin-relatorios-historico-filtro {
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        .admin-relatorios-historico-filtro .select {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+          box-sizing: border-box;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .admin-relatorios-resumo {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-relatorios-section-header {
+          display: block;
+        }
+
+        .admin-relatorios-section-description {
+          margin-top: 6px;
+        }
+
+        .admin-relatorios-table th,
+        .admin-relatorios-table td,
+        .admin-relatorios-historico-table th,
+        .admin-relatorios-historico-table td {
+          padding: 12px;
+        }
+
+        .admin-relatorios-historico-toggle {
+          padding: var(--spacing-md);
+        }
+
+        /* =========================
+           FILTRO NO CELULAR
+           ========================= */
+
+        .admin-relatorios-historico-panel {
+          width: 100%;
+          max-width: 100%;
+          padding: var(--spacing-md);
+          box-sizing: border-box;
+          overflow: hidden;
+        }
+
+        .admin-relatorios-historico-filtros {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+          max-width: 100%;
+          gap: var(--spacing-sm);
+          margin-bottom: var(--spacing-lg);
+          box-sizing: border-box;
+        }
+
+        .admin-relatorios-historico-filtro {
+          display: block;
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          margin: 0;
+          box-sizing: border-box;
+        }
+
+        .admin-relatorios-historico-filtro label {
+          display: block;
+          width: 100%;
+          margin-bottom: 6px;
+          box-sizing: border-box;
+        }
+
+        .admin-relatorios-historico-filtro .select {
+          display: block;
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          height: auto;
+          box-sizing: border-box;
+        }
+
+        .admin-relatorios-historico-table-wrapper {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: auto;
+          box-sizing: border-box;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
@@ -25,24 +487,240 @@
       </div>
     </header>
 
-    <div class="container">
-      <h1>Relatórios</h1>
-      <p class="text-muted">
-        Indicadores consolidados do momento. Um histórico de crescimento ao longo do tempo é
-        um recurso planejado para a 2ª entrega do projeto (depende de série histórica de dados).
-      </p>
+    <main class="container">
+      <!-- =========================
+           CABEÇALHO
+           ========================= -->
 
-      <h2>Usuários por tipo</h2>
-      <div id="usuarios-tipo" class="grid">
-        <p class="text-muted">Carregando…</p>
-      </div>
+      <header class="admin-relatorios-header">
+        <h1>Relatórios</h1>
 
-      <div class="spacer-lg"></div>
-      <h2>Startups por estágio</h2>
-      <div id="startups-estagio" class="grid">
-        <p class="text-muted">Carregando…</p>
-      </div>
-    </div>
+        <p class="text-muted">
+          Relatório consolidado dos principais indicadores administrativos da
+          plataforma StartMatch.
+        </p>
+
+        <div class="admin-relatorios-date">Situação atual da plataforma</div>
+      </header>
+
+      <!-- =========================
+           RESUMO EXECUTIVO
+           ========================= -->
+
+      <section class="admin-relatorios-resumo">
+        <div class="admin-relatorios-resumo-item">
+          <span id="total-usuarios" class="admin-relatorios-resumo-numero">
+            —
+          </span>
+
+          <span class="admin-relatorios-resumo-label"> Total de usuários </span>
+        </div>
+
+        <div class="admin-relatorios-resumo-item">
+          <span id="total-startups" class="admin-relatorios-resumo-numero">
+            —
+          </span>
+
+          <span class="admin-relatorios-resumo-label">
+            Startups cadastradas
+          </span>
+        </div>
+
+        <div class="admin-relatorios-resumo-item">
+          <span id="total-investidores" class="admin-relatorios-resumo-numero">
+            —
+          </span>
+
+          <span class="admin-relatorios-resumo-label"> Investidores </span>
+        </div>
+
+        <div class="admin-relatorios-resumo-item">
+          <span id="total-mentores" class="admin-relatorios-resumo-numero">
+            —
+          </span>
+
+          <span class="admin-relatorios-resumo-label"> Mentores </span>
+        </div>
+      </section>
+
+      <!-- =========================
+           USUÁRIOS
+           ========================= -->
+
+      <section class="admin-relatorios-section">
+        <div class="admin-relatorios-section-header">
+          <div>
+            <h2>Distribuição de usuários</h2>
+
+            <p class="admin-relatorios-section-description">
+              Quantidade de usuários cadastrados por tipo de perfil.
+            </p>
+          </div>
+        </div>
+
+        <div class="admin-relatorios-table-wrapper">
+          <table class="admin-relatorios-table">
+            <thead>
+              <tr>
+                <th>Tipo de usuário</th>
+
+                <th>Participação</th>
+
+                <th class="admin-relatorios-table-value">Quantidade</th>
+              </tr>
+            </thead>
+
+            <tbody id="usuarios-tipo">
+              <tr>
+                <td colspan="3" class="admin-relatorios-empty">Carregando…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =========================
+           STARTUPS
+           ========================= -->
+
+      <section class="admin-relatorios-section">
+        <div class="admin-relatorios-section-header">
+          <div>
+            <h2>Distribuição de startups</h2>
+
+            <p class="admin-relatorios-section-description">
+              Quantidade de startups cadastradas em cada estágio.
+            </p>
+          </div>
+        </div>
+
+        <div class="admin-relatorios-table-wrapper">
+          <table class="admin-relatorios-table">
+            <thead>
+              <tr>
+                <th>Estágio da startup</th>
+
+                <th>Participação</th>
+
+                <th class="admin-relatorios-table-value">Quantidade</th>
+              </tr>
+            </thead>
+
+            <tbody id="startups-estagio">
+              <tr>
+                <td colspan="3" class="admin-relatorios-empty">Carregando…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =========================
+           HISTÓRICO ACUMULADO
+           ========================= -->
+
+      <section class="admin-relatorios-historico">
+        <button
+          id="btn-historico"
+          type="button"
+          class="admin-relatorios-historico-toggle"
+          aria-expanded="false"
+          aria-controls="historico-content"
+        >
+          <span class="admin-relatorios-historico-toggle-text">
+            <span class="admin-relatorios-historico-toggle-title">
+              Histórico acumulado
+            </span>
+          </span>
+
+          <span
+            class="admin-relatorios-historico-toggle-icon"
+            aria-hidden="true"
+          >
+            ▼
+          </span>
+        </button>
+
+        <div
+          id="historico-content"
+          class="admin-relatorios-historico-content"
+          hidden
+        >
+          <div class="admin-relatorios-historico-panel">
+            <div class="admin-relatorios-section-header">
+              <div>
+                <h2>Histórico acumulado</h2>
+              </div>
+            </div>
+
+            <!-- =========================
+                 FILTRO
+                 ========================= -->
+
+            <div class="admin-relatorios-historico-filtros">
+              <div class="field admin-relatorios-historico-filtro">
+                <label for="historico-periodo"> Período </label>
+
+                <select id="historico-periodo" class="select">
+                  <option value="todos">Todos os períodos</option>
+
+                  <option value="mensal">Mensal</option>
+
+                  <option value="trimestral">Trimestral</option>
+
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- =========================
+                 TABELA DO HISTÓRICO
+                 ========================= -->
+
+            <div class="admin-relatorios-historico-table-wrapper">
+              <table class="admin-relatorios-historico-table">
+                <thead>
+                  <tr>
+                    <th>Período</th>
+
+                    <th class="admin-relatorios-historico-table-value">
+                      Usuários
+                    </th>
+
+                    <th class="admin-relatorios-historico-table-value">
+                      Startups
+                    </th>
+
+                    <th class="admin-relatorios-historico-table-value">
+                      Investidores
+                    </th>
+
+                    <th class="admin-relatorios-historico-table-value">
+                      Mentores
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody id="historico-relatorio">
+                  <tr>
+                    <td colspan="5" class="admin-relatorios-empty">
+                      Nenhum dado histórico disponível no momento.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================
+           RODAPÉ
+           ========================= -->
+
+      <footer class="admin-relatorios-footer"></footer>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

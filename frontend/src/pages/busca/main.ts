@@ -53,7 +53,11 @@ for (const uf of UFS) {
 
 function renderStartupCard(startup: Startup): string {
   return `
-    <a class="card" href="../perfil/index.html?tipo=startup&id=${startup.id}" style="text-decoration:none;color:inherit">
+    <a
+      class="card"
+      href="../perfil-startup/index.html?id=${startup.id}"
+      style="text-decoration:none;color:inherit"
+    >
       <div class="card-title">${startup.nomeFantasia}</div>
       <p class="text-muted">${startup.cidade}/${startup.uf}</p>
       <p>${startup.descricao}</p>
@@ -63,7 +67,7 @@ function renderStartupCard(startup: Startup): string {
 
 function renderInvestorCard(investidor: Investidor): string {
   return `
-    <a class="card" href="../perfil/index.html?tipo=investidor&id=${investidor.id}" style="text-decoration:none;color:inherit">
+    <a class="card" href="../perfil-investidor/index.html?id=${investidor.id}" style="text-decoration:none;color:inherit">
       <div class="card-title">${investidor.tipo.toUpperCase()} · ${investidor.cidade}/${investidor.uf}</div>
       <p>${investidor.teseInvestimento}</p>
     </a>

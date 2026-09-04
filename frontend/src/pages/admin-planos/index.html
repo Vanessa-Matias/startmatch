@@ -1,51 +1,442 @@
 <!--
   Tela: Gestão de planos (Admin)
   =================================
-  Etapa 7 do fluxograma — item "Gestão de planos". Mostra quantos usuários
-  (startups e investidores) estão em cada plano de assinatura, a partir de
-  GET /admin/metrics. A tabela de referência dos planos é conteúdo estático,
-  igual à tela pública Planos.
+  Exibe os cards de planos e permite:
+  - Visualizar a quantidade de usuários em cada plano;
+  - Clicar em um card para filtrar os usuários daquele plano;
+  - Pesquisar exclusivamente por nome;
+  - Visualizar Startups, Investidores e Mentores;
+  - Manter os cards sempre visíveis.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Gestão de planos</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
+    <!-- CSS global do projeto -->
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
+
+    <!--
+      O components.css é responsável pela aparência
+      da navbar e dos componentes reutilizáveis.
+    -->
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =====================================================
+         BASE
+         ===================================================== */
+
+      body {
+        margin: 0;
+        background: #f4f6f9;
+        color: #152a54;
+      }
+
+      /* =====================================================
+         PÁGINA
+         ===================================================== */
+
+      .plans-page {
+        width: min(1100px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      .plans-header {
+        margin-bottom: 28px;
+      }
+
+      .plans-header h1 {
+        margin: 0 0 8px;
+        color: #152a54;
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      .plans-header p {
+        margin: 0;
+        color: #7b8799;
+        font-size: 14px;
+      }
+
+      /* =====================================================
+         SEÇÕES
+         ===================================================== */
+
+      .plan-section {
+        margin-bottom: 42px;
+      }
+
+      .plan-section-title {
+        margin: 0 0 14px;
+        color: #152a54;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      /* =====================================================
+         CARDS DOS PLANOS
+         ===================================================== */
+
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .plan-card {
+        min-height: 125px;
+        padding: 22px;
+        box-sizing: border-box;
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.06);
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .plan-card:hover {
+        transform: translateY(-2px);
+        border-color: #b9c8df;
+        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.1);
+      }
+
+      .plan-card.active {
+        border: 2px solid #152a54;
+        box-shadow: 0 5px 16px rgba(15, 33, 72, 0.12);
+      }
+
+      .plan-card-number {
+        color: #152a54;
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .plan-card-name {
+        color: #26344b;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .plan-card-hint {
+        margin-top: 8px;
+        color: #8a94a5;
+        font-size: 12px;
+      }
+
+      /* =====================================================
+         ÁREA DE FILTRO
+         ===================================================== */
+
+      .plan-filter-area {
+        display: none;
+        margin-top: 18px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.05);
+      }
+
+      .plan-filter-area.visible {
+        display: block;
+      }
+
+      .filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 16px;
+      }
+
+      .filter-title {
+        margin: 0;
+        color: #152a54;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .filter-input {
+        width: 100%;
+        max-width: 380px;
+        padding: 11px 13px;
+        border: 1px solid #d6dce5;
+        border-radius: 7px;
+        font-size: 13px;
+        color: #26344b;
+        box-sizing: border-box;
+        outline: none;
+      }
+
+      .filter-input:focus {
+        border-color: #152a54;
+      }
+
+      /* =====================================================
+         LISTA DE USUÁRIOS
+         ===================================================== */
+
+      .users-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .user-card {
+        padding: 16px;
+        background: #f8f9fb;
+        border: 1px solid #e1e6ed;
+        border-radius: 8px;
+      }
+
+      .user-card-name {
+        margin: 0 0 5px;
+        color: #152a54;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .user-card-info {
+        margin: 3px 0;
+        color: #7b8799;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .user-card-plan {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 8px;
+        background: #e8edf5;
+        border-radius: 5px;
+        color: #152a54;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .empty-message {
+        margin: 0;
+        padding: 18px;
+        background: #f8f9fb;
+        border-radius: 8px;
+        color: #7b8799;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      /* =====================================================
+         LINK FINAL
+         ===================================================== */
+
+      .public-plans-link {
+        margin-top: 10px;
+        color: #7b8799;
+        font-size: 13px;
+      }
+
+      .public-plans-link a {
+        color: #175dcc;
+      }
+
+      /* =====================================================
+         RESPONSIVIDADE
+         ===================================================== */
+
+      @media (max-width: 900px) {
+        .plans-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .users-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .plans-page {
+          width: calc(100% - 28px);
+          padding-top: 24px;
+        }
+
+        .plans-header h1 {
+          font-size: 24px;
+        }
+
+        .plans-header p {
+          font-size: 13px;
+        }
+
+        .filter-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .filter-input {
+          max-width: none;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .plans-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .plan-card {
+          min-height: 115px;
+        }
+
+        .plan-filter-area {
+          padding: 15px;
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <header class="navbar">
+    <!-- =====================================================
+         NAVBAR
+         =====================================================
+
+         A aparência da navbar vem EXCLUSIVAMENTE
+         do components.css.
+    -->
+    <header class="navbar admin-navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a class="admin-brand" href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Gestão de planos</h1>
+    <!-- =====================================================
+         CONTEÚDO
+         ===================================================== -->
 
-      <h2>Startups por plano</h2>
-      <div id="startups-planos" class="grid">
-        <p class="text-muted">Carregando…</p>
-      </div>
+    <main class="plans-page">
+      <header class="plans-header">
+        <h1>Gestão de planos</h1>
 
-      <div class="spacer-lg"></div>
-      <h2>Investidores por plano</h2>
-      <div id="investidores-planos" class="grid">
-        <p class="text-muted">Carregando…</p>
-      </div>
+        <p>
+          Visualize e filtre os usuários de acordo com o plano de assinatura.
+        </p>
+      </header>
 
-      <div class="spacer-lg"></div>
-      <p class="text-muted">
+      <!-- =====================================================
+           STARTUPS
+           ===================================================== -->
+
+      <section class="plan-section">
+        <h2 class="plan-section-title">Startups por plano</h2>
+
+        <div id="startups-planos" class="plans-grid">
+          <p class="text-muted">Carregando…</p>
+        </div>
+
+        <div id="startups-filtro" class="plan-filter-area">
+          <div class="filter-header">
+            <h3 id="startups-filtro-titulo" class="filter-title">Startups</h3>
+
+            <input
+              id="startups-pesquisa"
+              class="filter-input"
+              type="search"
+              placeholder="Pesquisar startup por nome..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div id="startups-lista" class="users-list"></div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           INVESTIDORES
+           ===================================================== -->
+
+      <section class="plan-section">
+        <h2 class="plan-section-title">Investidores por plano</h2>
+
+        <div id="investidores-planos" class="plans-grid">
+          <p class="text-muted">Carregando…</p>
+        </div>
+
+        <div id="investidores-filtro" class="plan-filter-area">
+          <div class="filter-header">
+            <h3 id="investidores-filtro-titulo" class="filter-title">
+              Investidores
+            </h3>
+
+            <input
+              id="investidores-pesquisa"
+              class="filter-input"
+              type="search"
+              placeholder="Pesquisar investidor por nome..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div id="investidores-lista" class="users-list"></div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           MENTORES
+           ===================================================== -->
+
+      <section class="plan-section">
+        <h2 class="plan-section-title">Mentores por plano</h2>
+
+        <div id="mentores-planos" class="plans-grid">
+          <p class="text-muted">Carregando…</p>
+        </div>
+
+        <div id="mentores-filtro" class="plan-filter-area">
+          <div class="filter-header">
+            <h3 id="mentores-filtro-titulo" class="filter-title">Mentores</h3>
+
+            <input
+              id="mentores-pesquisa"
+              class="filter-input"
+              type="search"
+              placeholder="Pesquisar mentor por nome..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div id="mentores-lista" class="users-list"></div>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           LINK PARA PLANOS PÚBLICOS
+           ===================================================== -->
+
+      <p class="public-plans-link">
         Para os valores e benefícios de cada plano, veja a página pública
-        <a href="../planos/index.html">Planos</a>.
+        <a href="../planos/index.html"> Planos </a>.
       </p>
-    </div>
+    </main>
+
+    <!-- =====================================================
+         JAVASCRIPT / TYPESCRIPT
+         ===================================================== -->
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

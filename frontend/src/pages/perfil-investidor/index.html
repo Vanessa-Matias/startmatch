@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>StartMatch — Perfil do Investidor</title>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta name="theme-color" content="#152a54" />
+
+    <link rel="stylesheet" href="../../styles/variables.css" />
+
+    <link rel="stylesheet" href="../../styles/global.css" />
+
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <link rel="stylesheet" href="../../styles/perfil-investidor.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html"> StartMatch </a>
+
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="perfil-detalhe">
+        <p class="text-muted">Carregando perfil do investidor…</p>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <button class="btn btn-accent btn-block" id="btn-interesse" type="button">
+        Tenho interesse
+      </button>
+
+      <p class="form-error" id="form-error"></p>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

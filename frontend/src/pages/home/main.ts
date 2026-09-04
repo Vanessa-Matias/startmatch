@@ -1,15 +1,35 @@
 // Tela: Home — lógica
 // =====================
-// Página de apresentação pura (marketing) — não busca dados da API nem exige
-// login. Os botões de call-to-action são links comuns (<a href>), sem lógica de
-// formulário por trás.
 //
-// A única coisa que este arquivo faz é ligar o fundo animado de "rede de pontos"
-// atrás do hero (puramente decorativo — ver scripts/particleNetwork.ts).
+// Página pública do StartMatch.
+// Não faz chamadas à API e não exige autenticação.
+//
+// Responsabilidade:
+// Inicializar o fundo animado de partículas do Hero.
 
 import { initParticleNetwork } from '../../scripts/particleNetwork';
 
-const canvas = document.getElementById('particle-bg');
-if (canvas instanceof HTMLCanvasElement) {
-  initParticleNetwork(canvas);
+function iniciarParticulas(): void {
+  const canvas = document.getElementById('particle-bg');
+
+  if (!(canvas instanceof HTMLCanvasElement)) {
+    console.warn('Canvas #particle-bg não encontrado.');
+    return;
+  }
+
+  try {
+    initParticleNetwork(canvas);
+  } catch (erro) {
+    console.error(
+      'Não foi possível iniciar a animação de partículas:',
+      erro
+    );
+  }
+}
+
+// Garante que o canvas exista antes de iniciar a animação.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', iniciarParticulas);
+} else {
+  iniciarParticulas();
 }

@@ -1,46 +1,453 @@
 <!--
   Tela: Histórico de mentorias
-  ===============================
-  Combina dois itens da hierarquia de telas do fluxograma da designer para o
-  papel Mentor: "Histórico de mentorias" e "Horas realizadas" (fazem sentido
-  juntos — a mesma tabela de sessões alimenta o total de horas). Ainda sem
-  backend nesta 1ª entrega — estrutura pronta
-  para os dados reais.
+  =============================
+
+  Histórico das sessões realizadas pelo mentor.
+
+  Nesta primeira entrega, os dados são demonstrativos e ficam somente
+  no frontend, pois ainda não existe entidade/end-point de sessões
+  de mentoria no backend.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Histórico de mentorias</title>
+
     <link rel="manifest" href="/manifest.json" />
+
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================
+         Página
+         ========================= */
+
+      .historico-page {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-2xl);
+      }
+
+      .historico-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .historico-header h1 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .historico-header p {
+        margin: 0;
+      }
+
+      /* =========================
+         Indicadores
+         ========================= */
+
+      .historico-stats {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .historico-stat {
+        width: 100%;
+        max-width: 250px;
+        min-height: 145px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+      }
+
+      .historico-stat-value {
+        margin-bottom: 4px;
+
+        font-family: var(--font-display);
+        font-size: 1.65rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .historico-stat-label {
+        margin: 0;
+
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* =========================
+         Resumo
+         ========================= */
+
+      .historico-resumo {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .historico-resumo-card {
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1.5fr)
+          minmax(260px, 1fr);
+
+        gap: var(--spacing-xl);
+        align-items: center;
+      }
+
+      .historico-resumo h2 {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .historico-resumo p {
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .historico-progresso {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .historico-progresso-topo {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+
+        font-size: 0.9rem;
+      }
+
+      .historico-progresso-topo span:first-child {
+        color: var(--color-text-muted);
+      }
+
+      .historico-progresso-barra {
+        width: 100%;
+        height: 9px;
+
+        overflow: hidden;
+
+        border-radius: 999px;
+        background: #e8edf5;
+      }
+
+      .historico-progresso-barra span {
+        display: block;
+
+        width: 0;
+        height: 100%;
+
+        border-radius: inherit;
+        background: var(--color-accent);
+      }
+
+      /* =========================
+         Cabeçalho das sessões
+         ========================= */
+
+      .historico-sessoes-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .historico-sessoes-header h2 {
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .historico-sessoes-header p {
+        margin: 0;
+      }
+
+      .historico-sessoes-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      /* =========================
+         Sessão
+         ========================= */
+
+      .historico-sessao {
+        padding: var(--spacing-lg);
+      }
+
+      .historico-sessao-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .historico-sessao-empresa {
+        min-width: 0;
+      }
+
+      .historico-sessao-empresa h3 {
+        margin: 0 0 4px;
+
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+      }
+
+      .historico-sessao-empresa p {
+        margin: 0;
+
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      .historico-sessao-detalhes {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        gap: var(--spacing-md);
+
+        padding-top: var(--spacing-md);
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .historico-detalhe {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .historico-detalhe-label {
+        color: var(--color-text-muted);
+        font-size: 0.78rem;
+      }
+
+      .historico-detalhe strong {
+        font-size: 0.9rem;
+      }
+
+      .historico-sessao-tema {
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-md);
+
+        border-radius: var(--radius);
+        background: var(--color-bg);
+      }
+
+      .historico-sessao-tema span {
+        display: block;
+
+        margin-bottom: 4px;
+
+        color: var(--color-text-muted);
+        font-size: 0.78rem;
+      }
+
+      .historico-sessao-tema strong {
+        font-size: 0.9rem;
+      }
+
+      /* =========================
+         Avaliação da sessão
+         ========================= */
+
+      .historico-avaliacao {
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .historico-estrelas {
+        letter-spacing: 2px;
+        color: #f5a623;
+        font-size: 0.95rem;
+      }
+
+      .historico-avaliacao span:last-child {
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+      }
+
+      /* =========================
+         Responsividade
+         ========================= */
+
+      @media (max-width: 1100px) {
+        .historico-stats {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 250px));
+
+          justify-content: center;
+        }
+
+        .historico-stat {
+          max-width: 250px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .historico-resumo-card {
+          grid-template-columns: 1fr;
+        }
+
+        .historico-sessao-detalhes {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 600px) {
+        .historico-page {
+          padding-top: var(--spacing-lg);
+        }
+
+        .historico-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .historico-stat {
+          width: 100%;
+          max-width: none;
+        }
+
+        .historico-sessoes-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .historico-sessao-header {
+          flex-direction: column;
+        }
+
+        .historico-sessao-detalhes {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Histórico de mentorias</h1>
+    <main class="container historico-page">
+      <!-- Cabeçalho -->
+      <header class="historico-header">
+        <h1>Histórico de mentorias</h1>
 
-      <div class="card">
-        <div class="card-title">Horas realizadas</div>
-        <p><span class="badge">0h</span> <span class="text-muted">até agora</span></p>
-      </div>
+        <p class="text-muted">
+          Acompanhe suas sessões realizadas, horas de mentoria e a evolução do
+          seu trabalho com startups.
+        </p>
+      </header>
 
-      <div class="spacer-lg"></div>
-      <h2>Sessões</h2>
-      <div id="historico-list" class="stack">
-        <p class="text-muted">Nenhuma sessão registrada ainda.</p>
-      </div>
-    </div>
+      <!-- Indicadores principais -->
+      <section class="historico-stats" aria-label="Resumo do histórico">
+        <div class="card historico-stat">
+          <div class="historico-stat-value" id="horas-realizadas">0h</div>
+
+          <p class="historico-stat-label">Horas realizadas</p>
+        </div>
+
+        <div class="card historico-stat">
+          <div class="historico-stat-value" id="mentorias-concluidas">0</div>
+
+          <p class="historico-stat-label">Mentorias concluídas</p>
+        </div>
+
+        <div class="card historico-stat">
+          <div class="historico-stat-value" id="startups-atendidas">0</div>
+
+          <p class="historico-stat-label">Startups atendidas</p>
+        </div>
+
+        <div class="card historico-stat">
+          <div class="historico-stat-value" id="sessoes-realizadas">0</div>
+
+          <p class="historico-stat-label">Sessões realizadas</p>
+        </div>
+      </section>
+
+      <!-- Resumo da atuação -->
+      <section class="historico-resumo">
+        <div class="card historico-resumo-card">
+          <div>
+            <h2>Sua atuação como mentor</h2>
+
+            <p class="text-muted">
+              Utilize seu histórico para acompanhar a quantidade de mentorias
+              realizadas e entender o impacto do seu trabalho junto às startups
+              da plataforma.
+            </p>
+          </div>
+
+          <div class="historico-progresso">
+            <div class="historico-progresso-topo">
+              <span> Meta mensal de mentorias </span>
+
+              <strong id="meta-mentorias"> 0 / 5 </strong>
+            </div>
+
+            <div
+              class="historico-progresso-barra"
+              aria-label="Progresso da meta mensal"
+            >
+              <span id="progresso-mentorias"></span>
+            </div>
+
+            <span class="text-muted">
+              Continue realizando mentorias para acompanhar sua evolução.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Histórico das sessões -->
+      <section>
+        <div class="historico-sessoes-header">
+          <div>
+            <h2>Sessões realizadas</h2>
+
+            <p class="text-muted">Histórico das suas mentorias concluídas.</p>
+          </div>
+        </div>
+
+        <div id="historico-list" class="historico-sessoes-list">
+          <p class="text-muted">Nenhuma sessão registrada ainda.</p>
+        </div>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

@@ -1,52 +1,234 @@
-<!--
-  Tela: Dashboard do Investidor
-  ==============================
-  Equivalente ao dashboard-startup, mas do ponto de vista do investidor. Dois blocos
-  de cards em vez de três:
-    - #sugestoes      -> startups compatíveis, sugeridas por algoritmo
-    - #oportunidades  -> as mesmas sugestões, filtrando as que o investidor AINDA NÃO
-                         demonstrou interesse (ver main.ts)
--->
 <!doctype html>
+
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Dashboard</title>
-    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#152a54" />
+
+    <meta name="theme-color" content="#0f2148" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* Dashboard simples */
+
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .dashboard-stat {
+        text-align: center;
+        min-height: 90px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .dashboard-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-xs);
+
+        min-height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+      }
+
+      .dashboard-stat-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Cards de recursos bloqueados */
+
+      .locked-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .locked-card:hover {
+        text-decoration: none;
+      }
+
+      @media (max-width: 720px) {
+        .dashboard-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        .dashboard-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
-        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+        <a href="../home/index.html"> StartMatch </a>
+
+        <!-- Preenchido dinamicamente por main.ts -->
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
     <div class="container">
-      <section id="resumo-perfil" class="card">
+      <h1 style="font-size: 1.7rem; margin-bottom: var(--spacing-lg)">
+        Dashboard
+      </h1>
+
+      <!-- =========================
+           DADOS DO INVESTIDOR
+           ========================= -->
+
+      <section class="dashboard-stats" id="dados-conta">
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-tipo-investidor">—</div>
+
+          <div class="dashboard-stat-label">Tipo de investidor</div>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-localizacao-investidor">
+            —
+          </div>
+
+          <div class="dashboard-stat-label">Localização</div>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-investimento-investidor">
+            —
+          </div>
+
+          <div class="dashboard-stat-label">Faixa de investimento</div>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-plano-investidor">—</div>
+
+          <div class="dashboard-stat-label">Plano atual</div>
+        </div>
+      </section>
+
+      <!-- =========================
+           RESUMO DO PERFIL
+           ========================= -->
+
+      <section id="resumo-perfil" class="card card-feature">
         <p class="text-muted">Carregando perfil…</p>
       </section>
 
-      <div class="spacer-lg"></div>
+      <div class="spacer-xl"></div>
+
+      <!-- =========================
+           STARTUPS SUGERIDAS
+           ========================= -->
+
       <h2>Startups sugeridas para você</h2>
-      <div id="sugestoes" class="grid">
-        <p class="text-muted">Carregando sugestões…</p>
+
+      <div class="spacer-sm"></div>
+
+      <div id="sugestoes">
+        <a class="card card-feature locked-card" href="../plano/index.html">
+          <div class="icon-circle" style="background: #eff6ff">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#2f6feb"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+
+              <path d="M8 12h8"></path>
+            </svg>
+          </div>
+
+          <div class="card-title">Recurso disponível nos planos</div>
+
+          <p class="text-muted">
+            Assine um plano para acessar startups sugeridas de acordo com o seu
+            perfil de investimento.
+          </p>
+
+          <span class="badge"> Ver planos → </span>
+        </a>
       </div>
 
-      <div class="spacer-lg"></div>
+      <div class="spacer-xl"></div>
+
+      <!-- =========================
+           OPORTUNIDADES
+           ========================= -->
+
       <h2>Oportunidades em aberto</h2>
-      <p class="text-muted">Sugestões que você ainda não contatou.</p>
-      <div id="oportunidades" class="grid">
-        <p class="text-muted">Carregando oportunidades…</p>
+
+      <p class="text-muted">
+        Encontre startups que ainda não foram contatadas por você.
+      </p>
+
+      <div class="spacer-sm"></div>
+
+      <div id="oportunidades">
+        <a class="card card-feature locked-card" href="../plano/index.html">
+          <div class="icon-circle" style="background: #ecfdf5">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#16a34a"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="9"></circle>
+
+              <path d="M9 12l2 2 4-4"></path>
+            </svg>
+          </div>
+
+          <div class="card-title">Recurso disponível nos planos</div>
+
+          <p class="text-muted">
+            Assine um plano para visualizar novas oportunidades de investimento
+            que combinam com o seu perfil.
+          </p>
+
+          <span class="badge"> Ver planos → </span>
+        </a>
       </div>
+
+      <div class="spacer-xl"></div>
     </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

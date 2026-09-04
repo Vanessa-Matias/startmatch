@@ -1,70 +1,458 @@
 <!--
   Tela: Governança e LGPD (Admin)
   ==================================
-  Etapa 7 do fluxograma — item "Governança e LGPD". Conteúdo espelha o
-  levantamento inicial de dados pessoais feito pelo projeto — é uma tela de
-  referência/consulta nesta 1ª entrega (não lista consentimentos individuais por
-  usuário ainda; isso é um recurso futuro que dependeria de um novo endpoint
-  agregando a tabela consentimento_lgpd por usuário).
+  Painel administrativo para acompanhamento
+  das práticas de proteção de dados.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Governança e LGPD</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      .admin-lgpd-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-lgpd-header h1 {
+        margin-bottom: 4px;
+      }
+
+      .admin-lgpd-header p {
+        margin: 0;
+      }
+
+      .admin-lgpd-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-lgpd-section-header {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .admin-lgpd-section-title {
+        margin: 0 0 4px;
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+      }
+
+      .admin-lgpd-section-description {
+        margin: 0;
+        color: var(--color-text-muted);
+      }
+
+      /* Indicadores */
+
+      .admin-lgpd-indicators {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .admin-lgpd-indicator {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .admin-lgpd-indicator-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+
+      .admin-lgpd-indicator-value {
+        font-family: var(--font-display);
+        font-size: 1.45rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .admin-lgpd-status {
+        display: inline-flex;
+        width: fit-content;
+        margin-top: 8px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(22, 163, 74, 0.1);
+        color: var(--color-success);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      /* Tabela */
+
+      .admin-lgpd-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .admin-lgpd-table {
+        width: 100%;
+        min-width: 720px;
+        border-collapse: collapse;
+      }
+
+      .admin-lgpd-table th,
+      .admin-lgpd-table td {
+        padding: 14px 16px;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .admin-lgpd-table th {
+        background: var(--color-bg);
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .admin-lgpd-table td {
+        font-size: 0.92rem;
+      }
+
+      .admin-lgpd-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .admin-lgpd-data {
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .admin-lgpd-law {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: rgba(47, 111, 235, 0.1);
+        color: var(--color-accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      /* Controles */
+
+      .admin-lgpd-controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+
+      .admin-lgpd-control {
+        height: 100%;
+      }
+
+      .admin-lgpd-control-title {
+        margin: 0 0 6px;
+        font-family: var(--font-display);
+        font-size: 1rem;
+      }
+
+      .admin-lgpd-control-description {
+        margin: 0 0 var(--spacing-md);
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .admin-lgpd-control-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        padding-top: var(--spacing-sm);
+        border-top: 1px solid var(--color-border);
+      }
+
+      .admin-lgpd-footer {
+        padding: var(--spacing-md) 0 var(--spacing-xl);
+      }
+
+      .admin-lgpd-footer p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 1000px) {
+        .admin-lgpd-indicators {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 750px) {
+        .admin-lgpd-controls {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .admin-lgpd-indicators {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-lgpd-table-wrapper {
+          border-radius: var(--radius);
+        }
+
+        .admin-lgpd-table th,
+        .admin-lgpd-table td {
+          padding: 12px;
+        }
+
+        .admin-lgpd-control-footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a> 
+        <a href="../home/index.html">StartMatch</a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Governança e LGPD</h1>
-      <p class="text-muted">Levantamento de dados pessoais tratados pela plataforma.</p>
+    <main class="container">
+      <!-- Cabeçalho -->
+      <header class="admin-lgpd-header">
+        <h1>Governança e LGPD</h1>
 
-      <div class="stack">
-        <div class="card">
-          <div class="card-title">Nome, e-mail, senha (hash)</div>
-          <p class="text-muted">Finalidade: autenticação e identificação da conta.</p>
-          <p class="text-muted">Base legal: execução de contrato. Retenção: enquanto a conta existir.</p>
-        </div>
-        <div class="card">
-          <div class="card-title">Dados de perfil (startup, investidor, mentor)</div>
-          <p class="text-muted">Finalidade: exibir perfil e viabilizar busca/match.</p>
-          <p class="text-muted">Base legal: execução de contrato / interesse legítimo. Retenção: enquanto a conta existir.</p>
-        </div>
-        <div class="card">
-          <div class="card-title">Mensagens entre usuários com match</div>
-          <p class="text-muted">Finalidade: comunicação entre as partes.</p>
-          <p class="text-muted">Base legal: execução de contrato. Retenção: enquanto o match existir.</p>
-        </div>
-        <div class="card">
-          <div class="card-title">Registro de consentimento</div>
-          <p class="text-muted">Finalidade: comprovar aceite de termos/privacidade.</p>
-          <p class="text-muted">Base legal: obrigação legal. Retenção: 5 anos após encerramento da conta.</p>
-        </div>
-        <div class="card">
-          <div class="card-title">Avaliação beta</div>
-          <p class="text-muted">Finalidade: melhoria do produto (uso opcional).</p>
-          <p class="text-muted">Base legal: consentimento. Retenção: enquanto o produto estiver em beta.</p>
-        </div>
-      </div>
+        <p class="text-muted">
+          Acompanhamento administrativo das práticas de proteção de dados.
+        </p>
+      </header>
 
-      <div class="spacer-lg"></div>
-      <p class="text-muted">
-        Um painel de consentimentos por usuário é um recurso planejado para uma
-        fase futura do projeto.
-      </p>
-    </div>
+      <!-- Indicadores -->
+      <section class="admin-lgpd-indicators">
+        <article class="card admin-lgpd-indicator">
+          <span class="admin-lgpd-indicator-label"> Dados mapeados </span>
+
+          <strong class="admin-lgpd-indicator-value"> 5 categorias </strong>
+        </article>
+
+        <article class="card admin-lgpd-indicator">
+          <span class="admin-lgpd-indicator-label"> Bases legais </span>
+
+          <strong class="admin-lgpd-indicator-value"> 4 </strong>
+        </article>
+
+        <article class="card admin-lgpd-indicator">
+          <span class="admin-lgpd-indicator-label"> Consentimentos </span>
+
+          <strong class="admin-lgpd-indicator-value"> Controlados </strong>
+        </article>
+
+        <article class="card admin-lgpd-indicator">
+          <span class="admin-lgpd-indicator-label"> Situação </span>
+
+          <strong class="admin-lgpd-indicator-value"> Em conformidade </strong>
+
+          <span class="admin-lgpd-status"> Ativo </span>
+        </article>
+      </section>
+
+      <!-- Mapeamento de dados -->
+      <section class="admin-lgpd-section">
+        <div class="admin-lgpd-section-header">
+          <h2 class="admin-lgpd-section-title">Mapeamento de dados</h2>
+
+          <p class="admin-lgpd-section-description">
+            Dados pessoais tratados atualmente pela plataforma.
+          </p>
+        </div>
+
+        <div class="admin-lgpd-table-wrapper">
+          <table class="admin-lgpd-table">
+            <thead>
+              <tr>
+                <th>Dados</th>
+                <th>Finalidade</th>
+                <th>Base legal</th>
+                <th>LGPD</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>
+                  <span class="admin-lgpd-data">
+                    Nome, e-mail e senha (hash)
+                  </span>
+                </td>
+
+                <td>Identificação e acesso.</td>
+
+                <td>Execução de contrato</td>
+
+                <td>
+                  <span class="admin-lgpd-law"> Art. 7º, V </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <span class="admin-lgpd-data"> Dados de perfil </span>
+                </td>
+
+                <td>Perfil, busca e match.</td>
+
+                <td>Contrato / Interesse legítimo</td>
+
+                <td>
+                  <span class="admin-lgpd-law"> Art. 7º, V e IX </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <span class="admin-lgpd-data"> Mensagens </span>
+                </td>
+
+                <td>Comunicação entre usuários.</td>
+
+                <td>Execução de contrato</td>
+
+                <td>
+                  <span class="admin-lgpd-law"> Art. 7º, V </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <span class="admin-lgpd-data">
+                    Registro de consentimento
+                  </span>
+                </td>
+
+                <td>Comprovação de aceite.</td>
+
+                <td>Obrigação legal</td>
+
+                <td>
+                  <span class="admin-lgpd-law"> Art. 7º, II </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <span class="admin-lgpd-data"> Avaliação beta </span>
+                </td>
+
+                <td>Melhoria do produto.</td>
+
+                <td>Consentimento</td>
+
+                <td>
+                  <span class="admin-lgpd-law"> Art. 7º, I </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Controles de governança -->
+      <section class="admin-lgpd-section">
+        <div class="admin-lgpd-section-header">
+          <h2 class="admin-lgpd-section-title">Controles de governança</h2>
+
+          <p class="admin-lgpd-section-description">
+            Pontos de controle para acompanhamento administrativo.
+          </p>
+        </div>
+
+        <div class="admin-lgpd-controls">
+          <article class="card admin-lgpd-control">
+            <h3 class="admin-lgpd-control-title">Base legal</h3>
+
+            <p class="admin-lgpd-control-description">
+              Cada tratamento deve possuir uma base legal definida.
+            </p>
+
+            <div class="admin-lgpd-control-footer">
+              <span class="admin-lgpd-status"> Mapeado </span>
+
+              <span class="admin-lgpd-law"> Art. 7º </span>
+            </div>
+          </article>
+
+          <article class="card admin-lgpd-control">
+            <h3 class="admin-lgpd-control-title">Retenção de dados</h3>
+
+            <p class="admin-lgpd-control-description">
+              Dados devem ser mantidos somente pelo período necessário.
+            </p>
+
+            <div class="admin-lgpd-control-footer">
+              <span class="admin-lgpd-status"> Definido </span>
+
+              <span class="admin-lgpd-law"> Art. 16 </span>
+            </div>
+          </article>
+
+          <article class="card admin-lgpd-control">
+            <h3 class="admin-lgpd-control-title">Consentimento</h3>
+
+            <p class="admin-lgpd-control-description">
+              Registro dos consentimentos quando essa for a base legal.
+            </p>
+
+            <div class="admin-lgpd-control-footer">
+              <span class="admin-lgpd-status"> Controlado </span>
+
+              <span class="admin-lgpd-law"> Art. 8º </span>
+            </div>
+          </article>
+
+          <article class="card admin-lgpd-control">
+            <h3 class="admin-lgpd-control-title">Segurança</h3>
+
+            <p class="admin-lgpd-control-description">
+              Proteção dos dados contra acessos não autorizados.
+            </p>
+
+            <div class="admin-lgpd-control-footer">
+              <span class="admin-lgpd-status"> Ativo </span>
+
+              <span class="admin-lgpd-law"> Art. 46 </span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Referência legal -->
+      <footer class="admin-lgpd-footer">
+        <p class="text-muted">
+          Referência: Lei nº 13.709/2018 — Lei Geral de Proteção de Dados
+          Pessoais (LGPD).
+        </p>
+      </footer>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

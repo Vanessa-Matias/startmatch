@@ -1,95 +1,1629 @@
-<!--
-  Tela: Configurações
-  =====================
-  Tela comum a todos os tipos de usuário logado (startup, investidor, mentor).
-  Três blocos independentes:
-    - "Dados da conta"          -> editar nome (e-mail fica travado, só leitura)
-    - "Avalie o StartMatch"  -> formulário simples de nota (1-5) + comentário,
-                                    usado para coletar feedback de quem testou o site.
-
-  #nav-links começa vazio — main.ts preenche com os links certos de acordo com o
-  tipo de usuário logado (startup e investidor têm menus diferentes; mentor/admin
-  não têm dashboard nesta 1ª entrega, então ficam sem links extras).
--->
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Configurações</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================================================
+         CONFIGURAÇÕES
+         ========================================================= */
+
+      .config-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-2xl);
+      }
+
+      .config-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .config-eyebrow {
+        margin: 0 0 6px;
+        color: var(--color-accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .config-header h1 {
+        margin: 0 0 8px;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        line-height: 1.2;
+        color: var(--color-text);
+      }
+
+      .config-subtitle {
+        max-width: 620px;
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.98rem;
+        line-height: 1.6;
+      }
+
+      /* =========================================================
+         CARDS
+         ========================================================= */
+
+      .config-card {
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .config-card-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .config-card-title {
+        margin: 0 0 5px;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--color-text);
+      }
+
+      .config-card-description {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      /* =========================================================
+         DADOS DA CONTA
+         ========================================================= */
+
+      .config-account-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+      }
+
+      .config-readonly {
+        background: #f8fafc !important;
+        color: var(--color-text-muted) !important;
+        cursor: not-allowed;
+      }
+
+      .config-account-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: var(--spacing-sm);
+      }
+
+      .config-message {
+        margin: var(--spacing-sm) 0 0;
+        font-size: 0.88rem;
+        line-height: 1.4;
+      }
+
+      #form-conta-success:not(:empty) {
+        color: var(--color-success);
+      }
+
+      #form-conta-error:not(:empty) {
+        color: var(--color-error);
+      }
+
+      /* =========================================================
+         CONFORMIDADE LEGAL E LGPD
+         ========================================================= */
+
+      .config-legal {
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .config-legal-header {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .config-legal-title {
+        margin: 0 0 6px;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--color-text);
+      }
+
+      .config-legal-description {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .config-legal-item {
+        overflow: hidden;
+        margin-top: 10px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+      }
+
+      .config-legal-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+
+        padding: 14px 16px;
+
+        border: 0;
+        background: transparent;
+
+        color: var(--color-text);
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        text-align: left;
+
+        cursor: pointer;
+
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .config-legal-button:hover {
+        background: #f8faff;
+        color: var(--color-accent);
+      }
+
+      .config-legal-button:focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: -2px;
+      }
+
+      .config-legal-icon {
+        flex-shrink: 0;
+
+        width: 22px;
+        height: 22px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--color-text-muted);
+        font-size: 1.15rem;
+        font-weight: 400;
+      }
+
+      .config-legal-button:hover .config-legal-icon {
+        color: var(--color-accent);
+      }
+
+      .config-legal-content {
+        display: none;
+
+        padding: 0 16px 16px;
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .config-legal-item.is-open .config-legal-content {
+        display: block;
+      }
+
+      .config-legal-content p {
+        margin: 14px 0 0;
+
+        color: var(--color-text-muted);
+        font-size: 0.87rem;
+        line-height: 1.65;
+      }
+
+      .config-legal-content strong {
+        color: var(--color-text);
+        font-weight: 700;
+      }
+
+      /* =========================================================
+         INFORMAÇÕES
+         ========================================================= */
+
+      .config-info-section {
+        margin-bottom: var(--spacing-lg);
+        padding: 20px;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+
+        background: var(--color-surface);
+
+        box-shadow: var(--shadow-sm);
+      }
+
+      .config-info-title {
+        margin: 0 0 6px;
+
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+
+        color: var(--color-text);
+      }
+
+      .config-info-description {
+        margin: 0 0 14px;
+
+        color: var(--color-text-muted);
+        font-size: 0.86rem;
+        line-height: 1.5;
+      }
+
+      /* =========================================================
+         PLANO
+         ========================================================= */
+
+      #plano-nota:empty {
+        display: none;
+      }
+
+      .config-plan-note {
+        margin: 0 0 var(--spacing-lg);
+        padding: 14px 16px;
+
+        border: 1px solid #dbe5f5;
+        border-left: 3px solid var(--color-accent);
+        border-radius: var(--radius);
+
+        background: #f7faff;
+
+        color: var(--color-text-muted);
+        font-size: 0.86rem;
+        line-height: 1.5;
+      }
+
+      .config-plan-note a {
+        color: var(--color-accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .config-plan-note a:hover {
+        text-decoration: underline;
+      }
+
+      /* =========================================================
+         AVALIAÇÃO
+         ========================================================= */
+
+      .config-feedback {
+        margin-top: var(--spacing-xl);
+        margin-bottom: 0;
+      }
+
+      .config-rating-field {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .config-stars {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .config-star {
+        appearance: none;
+
+        border: 0;
+        background: transparent;
+
+        padding: 0;
+        margin: 0;
+
+        color: #d7dce3;
+
+        cursor: pointer;
+
+        font-family: Arial, sans-serif;
+        font-size: 2.1rem;
+        line-height: 1;
+
+        transition:
+          color 0.15s ease,
+          transform 0.15s ease;
+      }
+
+      .config-star:hover {
+        color: #f5a623;
+        transform: scale(1.08);
+      }
+
+      .config-star.is-active {
+        color: #f5a623;
+      }
+
+      .config-star:focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      .config-rating-label {
+        min-height: 20px;
+
+        margin: 8px 0 0;
+
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+      }
+
+      .config-feedback .textarea {
+        min-height: 120px;
+      }
+
+      .config-feedback-actions {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .config-success-message {
+        min-height: 1.2em;
+
+        margin: var(--spacing-sm) 0 0;
+
+        color: var(--color-success);
+        font-size: 0.88rem;
+      }
+
+      /* =========================================================
+         SEGURANÇA E ACESSO
+         Somente Startup / Investidor / Mentor
+         ========================================================= */
+
+      .config-security {
+        margin-bottom: var(--spacing-lg);
+
+        padding: var(--spacing-lg);
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+
+        background: var(--color-surface);
+
+        box-shadow: var(--shadow-sm);
+      }
+
+      .config-security-grid {
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        gap: var(--spacing-md);
+      }
+
+      .config-security-item {
+        padding: 16px;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+
+        background: #f8fafc;
+      }
+
+      .config-security-item h3 {
+        margin: 0 0 6px;
+
+        font-family: var(--font-display);
+        font-size: 0.98rem;
+
+        color: var(--color-text);
+      }
+
+      .config-security-item p {
+        margin: 0 0 14px;
+
+        color: var(--color-text-muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .config-security-email {
+        margin-bottom: 12px;
+
+        padding: 10px 12px;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+
+        background: var(--color-surface);
+
+        color: var(--color-text);
+
+        font-size: 0.9rem;
+
+        word-break: break-word;
+      }
+
+      .config-security-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+      }
+
+      .config-request-form {
+        margin-top: 14px;
+
+        padding-top: 14px;
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .config-request-form[hidden] {
+        display: none;
+      }
+
+      .config-security-message {
+        min-height: 1.2em;
+
+        margin: 10px 0 0;
+
+        font-size: 0.84rem;
+        line-height: 1.4;
+      }
+
+      .config-security-message.is-error {
+        color: var(--color-error);
+      }
+
+      .config-security-message.is-success {
+        color: var(--color-success);
+      }
+
+      .config-user-requests {
+        margin-top: var(--spacing-lg);
+
+        padding-top: var(--spacing-lg);
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .config-request-list {
+        display: grid;
+
+        gap: 10px;
+
+        margin-top: 14px;
+      }
+
+      .config-request-row {
+        display: grid;
+
+        grid-template-columns: 1fr auto;
+
+        gap: 12px;
+
+        align-items: center;
+
+        padding: 12px 14px;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+
+        background: #f8fafc;
+      }
+
+      .config-request-row strong {
+        display: block;
+
+        margin-bottom: 3px;
+
+        color: var(--color-text);
+
+        font-size: 0.88rem;
+      }
+
+      .config-request-row span {
+        color: var(--color-text-muted);
+
+        font-size: 0.8rem;
+      }
+
+      .config-request-complete {
+        display: block;
+
+        margin-top: 4px;
+
+        color: var(--color-success);
+
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .config-request-status {
+        white-space: nowrap;
+
+        padding: 5px 10px;
+
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+
+        background: var(--color-surface);
+
+        color: var(--color-text-muted);
+
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+
+      /* =========================================================
+         ADMINISTRAÇÃO
+         Tudo dentro da mesma tela de Configurações
+         ========================================================= */
+
+      .admin-config {
+        display: none;
+
+        width: 100%;
+      }
+
+      .admin-config.is-visible {
+        display: block;
+      }
+
+      .admin-config-panel {
+        width: 100%;
+
+        margin-bottom: var(--spacing-lg);
+
+        padding: var(--spacing-lg);
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+
+        background: var(--color-surface);
+
+        box-shadow: var(--shadow-sm);
+      }
+
+      .admin-config-panel-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .admin-config-panel-header h2 {
+        margin: 0 0 6px;
+
+        font-family: var(--font-display);
+
+        font-size: 1.2rem;
+
+        color: var(--color-text);
+      }
+
+      .admin-config-panel-header p {
+        margin: 0;
+
+        color: var(--color-text-muted);
+
+        font-size: 0.86rem;
+
+        line-height: 1.5;
+      }
+
+      .admin-config-form {
+        display: grid;
+
+        gap: var(--spacing-md);
+      }
+
+      .admin-config-form-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: var(--spacing-md);
+      }
+
+      .admin-config-actions {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: var(--spacing-sm);
+      }
+
+      .admin-config-note {
+        margin: 0;
+
+        color: var(--color-text-muted);
+
+        font-size: 0.82rem;
+
+        line-height: 1.5;
+      }
+
+      .admin-config-message {
+        min-height: 1.2em;
+
+        margin: 0;
+
+        font-size: 0.84rem;
+      }
+
+      .admin-config-message.is-error {
+        color: var(--color-error);
+      }
+
+      .admin-config-message.is-success {
+        color: var(--color-success);
+      }
+
+      /* =========================================================
+         ADMINISTRAÇÃO DA PLATAFORMA
+         ========================================================= */
+
+      .admin-platform {
+        width: 100%;
+
+        margin-top: var(--spacing-xl);
+
+        padding-top: var(--spacing-xl);
+
+        border-top: 1px solid var(--color-border);
+      }
+
+      .admin-platform-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .admin-platform-header h2 {
+        margin: 0 0 6px;
+
+        font-family: var(--font-display);
+
+        font-size: 1.15rem;
+
+        color: var(--color-text);
+      }
+
+      .admin-platform-header p {
+        margin: 0;
+
+        color: var(--color-text-muted);
+
+        font-size: 0.84rem;
+
+        line-height: 1.5;
+      }
+
+      /* =========================================================
+         RESUMO
+         ========================================================= */
+
+      .admin-request-summary {
+        display: grid;
+
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        gap: var(--spacing-md);
+
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .admin-request-stat {
+        min-width: 0;
+
+        padding: 16px;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+
+        background: var(--color-bg);
+      }
+
+      .admin-request-stat-label {
+        margin: 0 0 6px;
+
+        color: var(--color-text-muted);
+
+        font-size: 0.76rem;
+      }
+
+      .admin-request-stat-value {
+        margin: 0;
+
+        font-family: var(--font-display);
+
+        font-size: 1.45rem;
+        font-weight: 700;
+
+        color: var(--color-text);
+      }
+
+      /* =========================================================
+         FILTROS
+         ========================================================= */
+
+      .admin-request-filters {
+        display: grid;
+
+        grid-template-columns:
+          minmax(220px, 280px)
+          auto;
+
+        gap: var(--spacing-md);
+
+        align-items: end;
+
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .admin-request-filters .field {
+        margin: 0;
+      }
+
+      .admin-request-filters .btn {
+        align-self: end;
+        min-height: 42px;
+        margin-bottom: 0;
+      }
+
+      /* =========================================================
+         TABELA
+         ========================================================= */
+
+      .admin-request-table-wrap {
+        width: 100%;
+
+        overflow-x: auto;
+
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+
+        background: var(--color-surface);
+      }
+
+      .admin-request-table {
+        width: 100%;
+
+        min-width: 980px;
+
+        border-collapse: collapse;
+      }
+
+      .admin-request-table th,
+      .admin-request-table td {
+        padding: 13px 12px;
+
+        border-bottom: 1px solid var(--color-border);
+
+        text-align: left;
+
+        vertical-align: middle;
+
+        font-size: 0.8rem;
+      }
+
+      .admin-request-table th {
+        background: #f8fafc;
+
+        color: var(--color-text-muted);
+
+        font-size: 0.72rem;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.04em;
+
+        white-space: nowrap;
+      }
+
+      .admin-request-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .admin-request-table tbody tr:hover {
+        background: #fbfdff;
+      }
+
+      .admin-request-table td strong {
+        display: block;
+
+        margin-bottom: 2px;
+
+        color: var(--color-text);
+      }
+
+      .admin-request-table td small {
+        color: var(--color-text-muted);
+      }
+
+      .admin-request-table td:nth-child(1) {
+        min-width: 105px;
+
+        white-space: nowrap;
+      }
+
+      .admin-request-table td:nth-child(2) {
+        min-width: 160px;
+      }
+
+      .admin-request-table td:nth-child(3),
+      .admin-request-table td:nth-child(4) {
+        min-width: 210px;
+
+        word-break: break-word;
+      }
+
+      .admin-request-table td:nth-child(5) {
+        min-width: 120px;
+      }
+
+      .admin-request-table td:nth-child(6) {
+        min-width: 220px;
+      }
+
+      .admin-request-status {
+        display: inline-block;
+
+        padding: 5px 9px;
+
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+
+        background: var(--color-surface);
+
+        color: var(--color-text-muted);
+
+        font-size: 0.72rem;
+        font-weight: 700;
+
+        white-space: nowrap;
+      }
+
+      .admin-request-actions {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 6px;
+      }
+
+      .admin-request-actions .btn {
+        padding: 7px 10px;
+
+        font-size: 0.74rem;
+
+        white-space: nowrap;
+      }
+
+      .admin-request-empty {
+        padding: 28px 12px !important;
+
+        text-align: center !important;
+
+        color: var(--color-text-muted);
+      }
+
+      /* =========================================================
+         CONTROLE DE VISIBILIDADE
+         ========================================================= */
+
+      .config-security-hidden {
+        display: none !important;
+      }
+
+      /* =========================================================
+         ADMIN — LAYOUT MAIS LARGO
+         ========================================================= */
+
+      body.admin-config-page .config-page {
+        max-width: 1180px;
+      }
+
+      body.admin-config-page .config-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      /* =========================================================
+         RESPONSIVIDADE
+         ========================================================= */
+
+      @media (max-width: 900px) {
+        .admin-request-table {
+          min-width: 900px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .config-security-grid,
+        .admin-config-form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-request-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-request-filters {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-request-filters .btn {
+          width: fit-content;
+        }
+
+        .config-page {
+          padding-top: var(--spacing-lg);
+        }
+
+        .config-account-grid {
+          grid-template-columns: 1fr;
+
+          gap: 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .config-request-row {
+          grid-template-columns: 1fr;
+        }
+
+        .config-page {
+          padding-bottom: var(--spacing-xl);
+        }
+
+        .config-card,
+        .config-legal,
+        .config-info-section {
+          padding: var(--spacing-md);
+        }
+
+        .config-header h1 {
+          font-size: 1.75rem;
+        }
+
+        .config-stars {
+          gap: 4px;
+        }
+
+        .config-star {
+          font-size: 1.9rem;
+        }
+
+        .config-account-actions,
+        .config-feedback-actions {
+          justify-content: stretch;
+        }
+
+        .config-account-actions .btn,
+        .config-feedback-actions .btn {
+          width: 100%;
+        }
+
+        .admin-config-panel {
+          padding: var(--spacing-md);
+        }
+
+        .admin-request-summary {
+          gap: 8px;
+        }
+
+        .admin-request-stat {
+          padding: 12px;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
-        <!-- Preenchido dinamicamente por main.ts, conforme o tipo do usuário logado -->
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container container--narrow">
-      <h1>Configurações</h1>
+    <main class="container">
+      <div class="config-page">
+        <!-- =====================================================
+             CABEÇALHO
+             ===================================================== -->
 
-      <div class="card">
-        <div class="card-title">Dados da conta</div>
-        <form id="form-conta">
-          <div class="field">
-            <label for="nome">Nome</label>
-            <input class="input" id="nome" name="nome" type="text" required />
+        <header class="config-header">
+          <p class="config-eyebrow">Sua conta</p>
+
+          <h1>Configurações</h1>
+
+          <p class="config-subtitle">
+            Gerencie seus dados, consulte informações importantes e acompanhe as
+            configurações da sua conta.
+          </p>
+        </header>
+
+        <!-- =====================================================
+             ADMIN
+             DADOS PESSOAIS + ADMINISTRAÇÃO DA PLATAFORMA
+             TUDO NA MESMA TELA
+             ===================================================== -->
+
+        <section class="admin-config" id="admin-config">
+          <div class="admin-config-panel">
+            <!-- DADOS PESSOAIS -->
+
+            <div class="admin-config-panel-header">
+              <h2>Dados Pessoais</h2>
+
+              <p>Atualize os dados básicos da sua conta de administrador.</p>
+            </div>
+
+            <form class="admin-config-form" id="form-admin-dados">
+              <div class="admin-config-form-grid">
+                <div class="field">
+                  <label for="admin-nome"> Nome </label>
+
+                  <input
+                    class="input"
+                    id="admin-nome"
+                    type="text"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="admin-email"> E-mail </label>
+
+                  <input
+                    class="input"
+                    id="admin-email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+              </div>
+
+              <p class="admin-config-note">
+                Você pode atualizar o e-mail da sua própria conta quando
+                necessário.
+              </p>
+
+              <div class="admin-config-actions">
+                <button class="btn btn-primary" type="submit">
+                  Salvar alterações
+                </button>
+              </div>
+
+              <p
+                class="admin-config-message"
+                id="admin-dados-message"
+                aria-live="polite"
+              ></p>
+            </form>
+
+            <!-- =================================================
+                 ADMINISTRAÇÃO DA PLATAFORMA
+                 ================================================= -->
+
+            <div class="admin-platform">
+              <div class="admin-platform-header">
+                <h2>Administração da plataforma</h2>
+
+                <p>
+                  Analise e aprove solicitações de alteração de e-mail dos
+                  usuários.
+                </p>
+              </div>
+
+              <!-- RESUMO -->
+
+              <div
+                class="admin-request-summary"
+                aria-label="Resumo das solicitações"
+              >
+                <article class="admin-request-stat">
+                  <p class="admin-request-stat-label">Total</p>
+
+                  <p class="admin-request-stat-value" id="total-solicitacoes">
+                    0
+                  </p>
+                </article>
+
+                <article class="admin-request-stat">
+                  <p class="admin-request-stat-label">Pendentes</p>
+
+                  <p
+                    class="admin-request-stat-value"
+                    id="pendentes-solicitacoes"
+                  >
+                    0
+                  </p>
+                </article>
+
+                <article class="admin-request-stat">
+                  <p class="admin-request-stat-label">Em análise</p>
+
+                  <p class="admin-request-stat-value" id="analise-solicitacoes">
+                    0
+                  </p>
+                </article>
+
+                <article class="admin-request-stat">
+                  <p class="admin-request-stat-label">Concluídas</p>
+
+                  <p
+                    class="admin-request-stat-value"
+                    id="concluidas-solicitacoes"
+                  >
+                    0
+                  </p>
+                </article>
+              </div>
+
+              <!-- FILTRO -->
+
+              <div class="admin-request-filters">
+                <div class="field">
+                  <label for="filtro-status"> Status </label>
+
+                  <select class="select" id="filtro-status">
+                    <option value="Todos">Todos</option>
+
+                    <option value="Pendente">Pendente</option>
+
+                    <option value="Em análise">Em análise</option>
+
+                    <option value="Concluída">Concluída</option>
+
+                    <option value="Recusada">Recusada</option>
+                  </select>
+                </div>
+
+                <button class="btn btn-outline" type="button" id="btn-filtrar">
+                  Consultar
+                </button>
+              </div>
+
+              <!-- TABELA -->
+
+              <div class="admin-request-table-wrap">
+                <table class="admin-request-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+
+                      <th>Usuário</th>
+
+                      <th>E-mail atual</th>
+
+                      <th>Novo e-mail</th>
+
+                      <th>Status</th>
+
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="solicitacoes-body"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <!-- E-mail é só leitura — trocar e-mail não faz parte do escopo desta 1ª entrega -->
-            <label for="email">E-mail</label>
-            <input class="input" id="email" type="email" disabled />
+        </section>
+
+        <!-- =====================================================
+             DADOS DA CONTA
+             STARTUP / INVESTIDOR / MENTOR
+             ===================================================== -->
+
+        <section class="config-card standard-config-section">
+          <div class="config-card-header">
+            <h2 class="config-card-title">Dados da conta</h2>
+
+            <p class="config-card-description">
+              Atualize seu nome e consulte o e-mail associado à sua conta.
+            </p>
           </div>
-          <button class="btn btn-primary" type="submit">Salvar</button>
-          <p class="form-error" id="form-conta-error"></p>
-          <p class="text-muted" id="form-conta-success"></p>
-        </form>
+
+          <form id="form-conta">
+            <div class="config-account-grid">
+              <div class="field">
+                <label for="nome"> Nome </label>
+
+                <input
+                  class="input"
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+
+              <div class="field">
+                <label for="email"> E-mail </label>
+
+                <input
+                  class="input config-readonly"
+                  id="email"
+                  type="email"
+                  autocomplete="email"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="config-account-actions">
+              <button class="btn btn-primary" type="submit">
+                Salvar alterações
+              </button>
+            </div>
+
+            <p
+              class="form-error config-message"
+              id="form-conta-error"
+              aria-live="polite"
+            ></p>
+
+            <p
+              class="config-success-message"
+              id="form-conta-success"
+              aria-live="polite"
+            ></p>
+          </form>
+        </section>
+
+        <!-- =====================================================
+             SEGURANÇA E ACESSO
+             SOMENTE STARTUP / INVESTIDOR / MENTOR
+             ===================================================== -->
+
+        <section
+          class="config-security standard-config-section"
+          id="config-security"
+        >
+          <div class="config-card-header">
+            <h2 class="config-card-title">Segurança e acesso</h2>
+
+            <p class="config-card-description">
+              Solicite uma alteração de e-mail e acompanhe o andamento da
+              solicitação.
+            </p>
+          </div>
+
+          <div class="config-security-grid">
+            <div class="config-security-item">
+              <h3>E-mail da conta</h3>
+
+              <p>
+                O e-mail atual pode ser consultado e uma nova alteração pode ser
+                enviada para análise administrativa.
+              </p>
+
+              <div class="config-security-email" id="seguranca-email-atual">
+                —
+              </div>
+
+              <div class="config-security-actions">
+                <button
+                  class="btn btn-outline"
+                  type="button"
+                  id="btn-solicitar-email"
+                >
+                  Solicitar alteração
+                </button>
+              </div>
+
+              <form
+                class="config-request-form"
+                id="form-solicitar-email"
+                hidden
+              >
+                <div class="field">
+                  <label for="novo-email"> Novo e-mail </label>
+
+                  <input
+                    class="input"
+                    id="novo-email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+
+                <div class="config-security-actions">
+                  <button class="btn btn-primary" type="submit">
+                    Enviar solicitação
+                  </button>
+
+                  <button
+                    class="btn btn-outline"
+                    type="button"
+                    id="btn-cancelar-email"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- MINHAS SOLICITAÇÕES -->
+
+          <div class="config-user-requests">
+            <h3 class="config-info-title">Minhas solicitações</h3>
+
+            <p class="config-info-description">
+              Acompanhe as solicitações de alteração de e-mail feitas nesta
+              conta.
+            </p>
+
+            <div class="config-request-list" id="minhas-solicitacoes">
+              <p class="text-muted">Nenhuma solicitação registrada.</p>
+            </div>
+          </div>
+
+          <p
+            class="config-security-message"
+            id="seguranca-message"
+            aria-live="polite"
+          ></p>
+        </section>
+
+        <!-- =====================================================
+             CONFORMIDADE LEGAL E LGPD
+             ===================================================== -->
+
+        <section class="config-legal standard-config-section">
+          <div class="config-legal-header">
+            <h2 class="config-legal-title">Conformidade Legal e LGPD</h2>
+
+            <p class="config-legal-description">
+              Consulte informações resumidas sobre privacidade, proteção de
+              dados e utilização da plataforma.
+            </p>
+          </div>
+
+          <!-- POLÍTICA DE PRIVACIDADE -->
+
+          <div class="config-legal-item">
+            <button
+              type="button"
+              class="config-legal-button"
+              data-legal-toggle
+              aria-expanded="false"
+              aria-controls="legal-privacidade"
+            >
+              <span> Política de Privacidade </span>
+
+              <span class="config-legal-icon" aria-hidden="true"> + </span>
+            </button>
+
+            <div class="config-legal-content" id="legal-privacidade">
+              <p>
+                O StartMatch realiza o tratamento de dados pessoais de acordo
+                com a
+                <strong>
+                  Lei nº 13.709/2018 — Lei Geral de Proteção de Dados Pessoais
+                  (LGPD) </strong
+                >. A legislação estabelece regras para a coleta, utilização,
+                armazenamento, compartilhamento e proteção de dados pessoais,
+                buscando garantir transparência, segurança e respeito à
+                privacidade dos titulares.
+              </p>
+            </div>
+          </div>
+
+          <!-- PROTEÇÃO DE DADOS -->
+
+          <div class="config-legal-item">
+            <button
+              type="button"
+              class="config-legal-button"
+              data-legal-toggle
+              aria-expanded="false"
+              aria-controls="legal-dados"
+            >
+              <span> Proteção de Dados — LGPD </span>
+
+              <span class="config-legal-icon" aria-hidden="true"> + </span>
+            </button>
+
+            <div class="config-legal-content" id="legal-dados">
+              <p>
+                A
+                <strong> Lei nº 13.709/2018 (LGPD) </strong>
+                determina princípios e regras para o tratamento de dados
+                pessoais no Brasil. Entre seus princípios estão finalidade,
+                adequação, necessidade, transparência, segurança e prevenção. A
+                legislação também garante ao titular direitos relacionados aos
+                seus dados pessoais, conforme as condições previstas em lei.
+              </p>
+            </div>
+          </div>
+
+          <!-- TERMOS -->
+
+          <div class="config-legal-item">
+            <button
+              type="button"
+              class="config-legal-button"
+              data-legal-toggle
+              aria-expanded="false"
+              aria-controls="legal-termos"
+            >
+              <span> Termos de Uso </span>
+
+              <span class="config-legal-icon" aria-hidden="true"> + </span>
+            </button>
+
+            <div class="config-legal-content" id="legal-termos">
+              <p>
+                A utilização do StartMatch está sujeita aos seus Termos de Uso,
+                que estabelecem as condições para utilização da plataforma,
+                responsabilidades dos usuários e regras aplicáveis aos serviços
+                oferecidos. O conteúdo apresentado nesta seção é um resumo
+                informativo e não substitui os documentos jurídicos oficiais da
+                plataforma.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             PLANO
+             ===================================================== -->
+
+        <p
+          class="config-plan-note standard-config-section"
+          id="plano-nota"
+          aria-live="polite"
+        ></p>
+
+        <!-- =====================================================
+             AVALIAÇÃO
+             ===================================================== -->
+
+        <section class="config-card config-feedback standard-config-section">
+          <div class="config-card-header">
+            <h2 class="config-card-title">Avalie o StartMatch</h2>
+
+            <p class="config-card-description">
+              Sua opinião nos ajuda a melhorar a plataforma e a experiência de
+              todos os usuários.
+            </p>
+          </div>
+
+          <form id="form-avaliacao">
+            <!-- ESTRELAS -->
+
+            <div class="field config-rating-field">
+              <label> Como você avalia sua experiência? </label>
+
+              <div
+                class="config-stars"
+                id="rating-stars"
+                role="radiogroup"
+                aria-label="Avaliação de 1 a 5 estrelas"
+              >
+                <button
+                  type="button"
+                  class="config-star"
+                  data-rating="1"
+                  role="radio"
+                  aria-label="1 estrela"
+                  aria-checked="false"
+                >
+                  ★
+                </button>
+
+                <button
+                  type="button"
+                  class="config-star"
+                  data-rating="2"
+                  role="radio"
+                  aria-label="2 estrelas"
+                  aria-checked="false"
+                >
+                  ★
+                </button>
+
+                <button
+                  type="button"
+                  class="config-star"
+                  data-rating="3"
+                  role="radio"
+                  aria-label="3 estrelas"
+                  aria-checked="false"
+                >
+                  ★
+                </button>
+
+                <button
+                  type="button"
+                  class="config-star"
+                  data-rating="4"
+                  role="radio"
+                  aria-label="4 estrelas"
+                  aria-checked="false"
+                >
+                  ★
+                </button>
+
+                <button
+                  type="button"
+                  class="config-star"
+                  data-rating="5"
+                  role="radio"
+                  aria-label="5 estrelas"
+                  aria-checked="false"
+                >
+                  ★
+                </button>
+              </div>
+
+              <input type="hidden" id="nota" name="nota" value="5" />
+
+              <p
+                class="config-rating-label"
+                id="rating-label"
+                aria-live="polite"
+              >
+                5 — Excelente
+              </p>
+            </div>
+
+            <!-- COMENTÁRIO -->
+
+            <div class="field">
+              <label for="comentario"> Comentário (opcional) </label>
+
+              <textarea
+                class="textarea"
+                id="comentario"
+                name="comentario"
+                placeholder="Conte-nos o que você achou do StartMatch..."
+              ></textarea>
+            </div>
+
+            <!-- ENVIAR -->
+
+            <div class="config-feedback-actions">
+              <button class="btn btn-outline" type="submit">
+                Enviar avaliação
+              </button>
+            </div>
+
+            <p
+              class="config-success-message"
+              id="form-avaliacao-success"
+              aria-live="polite"
+            ></p>
+          </form>
+        </section>
       </div>
+    </main>
 
-      <!--
-        O bloco de "Plano de assinatura" mudou de lugar: agora é a tela própria
-        Plano (src/pages/plano/), que aparece no menu para Startup e Investidor —
-        segue a hierarquia de telas do fluxograma da designer, que separa
-        "Configurações" (conta/avaliação) de "Plano e assinatura" (Startup) /
-        "Plano" (Investidor). #plano-nota é preenchido por main.ts só quando faz
-        sentido para o papel do usuário logado.
-      -->
-      <div class="spacer-lg"></div>
-      <p class="text-muted" id="plano-nota"></p>
-
-      <div class="spacer-lg"></div>
-      <div class="card">
-        <div class="card-title">Avalie o StartMatch (beta)</div>
-        <form id="form-avaliacao">
-          <div class="field">
-            <label for="nota">Nota (1 a 5)</label>
-            <select class="select" id="nota" name="nota" required>
-              <option value="5">5 — Excelente</option>
-              <option value="4">4 — Bom</option>
-              <option value="3">3 — Regular</option>
-              <option value="2">2 — Ruim</option>
-              <option value="1">1 — Péssimo</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="comentario">Comentário (opcional)</label>
-            <textarea class="textarea" id="comentario" name="comentario"></textarea>
-          </div>
-          <button class="btn btn-outline" type="submit">Enviar avaliação</button>
-          <p class="text-muted" id="form-avaliacao-success"></p>
-        </form>
-      </div>
-
-      <div class="spacer-lg"></div>
-      <button class="btn btn-outline btn-block" id="btn-logout" type="button">Sair</button>
-    </div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

@@ -1,58 +1,228 @@
-<!--
-  Tela: Dashboard do Mentor
-  ============================
-  Tela principal de quem está logado como Mentor — Etapa 6 do fluxograma da
-  designer ("Fluxo das Mentorias"). Até esta atualização, mentor não tinha
-  dashboard próprio nesta 1ª entrega (caía direto em Configurações); agora segue
-  o mesmo padrão dos dashboards de Startup/Investidor: resumo do perfil + atalhos
-  para as telas do papel (Agenda, Solicitações, Histórico, Certificados).
--->
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Dashboard do Mentor</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================
+         CABEÇALHO DO DASHBOARD
+         ========================= */
+
+      .dashboard-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .dashboard-header h1 {
+        font-size: 2rem;
+        margin: var(--spacing-sm) 0 var(--spacing-xs);
+        letter-spacing: -0.5px;
+      }
+
+      .dashboard-header p {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      /* =========================
+         CARDS PRINCIPAIS
+         ========================= */
+
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .dashboard-stat {
+        text-align: center;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .dashboard-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .dashboard-stat-label {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .dashboard-stat-description {
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        margin-top: var(--spacing-xs);
+        margin-bottom: 0;
+      }
+
+      /* =========================
+         ATALHOS
+         ========================= */
+
+      .atalhos-header {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .atalhos-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+
+      .atalho-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 150px;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .atalho-card:hover {
+        text-decoration: none;
+      }
+
+      .atalho-card .card-title {
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .atalho-card p {
+        margin-bottom: 0;
+      }
+
+      /* =========================
+         RESPONSIVIDADE
+         ========================= */
+
+      @media (max-width: 900px) {
+        .dashboard-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .atalhos-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 520px) {
+        .dashboard-stats,
+        .atalhos-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
     <div class="container">
-      <section id="resumo-perfil" class="card">
-        <p class="text-muted">Carregando perfil…</p>
+      <!-- =========================
+           CABEÇALHO DO DASHBOARD
+           ========================= -->
+
+      <div class="dashboard-header">
+        <h1>Dashboard</h1>
+
+        <p class="text-muted">
+          Acompanhe seu perfil, suas mentorias e suas atividades no StartMatch.
+        </p>
+      </div>
+
+      <!-- =========================
+           CARDS PRINCIPAIS
+           ========================= -->
+
+      <section class="dashboard-stats" id="dados-dashboard">
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-perfil-mentor">0</div>
+
+          <div class="dashboard-stat-label">Seu perfil</div>
+
+          <p class="dashboard-stat-description">
+            Áreas de Atuação e Especialidades.
+          </p>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-mentorias-mentor">0</div>
+
+          <div class="dashboard-stat-label">Suas mentorias</div>
+
+          <p class="dashboard-stat-description">
+            Acompanhamento de Sessões e Solicitações.
+          </p>
+        </div>
+
+        <div class="card dashboard-stat">
+          <div class="dashboard-stat-number" id="card-atividades-mentor">1</div>
+
+          <div class="dashboard-stat-label">Suas atividades</div>
+
+          <p class="dashboard-stat-description">
+            Agenda, histórico e certificados.
+          </p>
+        </div>
       </section>
 
-      <div class="spacer-lg"></div>
-      <h2>Atalhos</h2>
-      <div class="grid">
-        <a class="card" href="../agenda/index.html" style="text-decoration:none;color:inherit">
+      <!-- =========================
+           ATALHOS
+           ========================= -->
+
+      <div class="atalhos-header">
+        <h2>Atalhos</h2>
+      </div>
+
+      <div class="atalhos-grid">
+        <a class="card atalho-card" href="../agenda/index.html">
           <div class="card-title">Agenda</div>
+
           <p class="text-muted">Sua disponibilidade e próximas sessões.</p>
         </a>
-        <a class="card" href="../solicitacoes/index.html" style="text-decoration:none;color:inherit">
+
+        <a class="card atalho-card" href="../solicitacoes/index.html">
           <div class="card-title">Solicitações</div>
+
           <p class="text-muted">Pedidos de mentoria recebidos de startups.</p>
         </a>
-        <a class="card" href="../historico-mentorias/index.html" style="text-decoration:none;color:inherit">
+
+        <a class="card atalho-card" href="../historico-mentorias/index.html">
           <div class="card-title">Histórico</div>
+
           <p class="text-muted">Sessões realizadas e horas de mentoria.</p>
         </a>
-        <a class="card" href="../certificados/index.html" style="text-decoration:none;color:inherit">
+
+        <a class="card atalho-card" href="../certificados/index.html">
           <div class="card-title">Certificados</div>
-          <p class="text-muted">Certificado de horas, exportável para LinkedIn.</p>
+
+          <p class="text-muted">
+            Certificado de horas, exportável para LinkedIn.
+          </p>
         </a>
       </div>
     </div>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

@@ -1,40 +1,224 @@
 <!--
   Tela: Matches
   ==============
-  Lista as conexões CONFIRMADAS (interesse mútuo já detectado pelo backend) — tanto
-  para startups quanto investidores, a mesma tela serve os dois (main.ts decide o
-  que mostrar de acordo com usuario.tipo). Cada card de match é um link direto para
-  a conversa correspondente na tela de Mensagens.
+  Lista as conexões CONFIRMADAS. O conteúdo é preenchido pelo main.ts.
+
+  O layout visual fica disponível imediatamente, mesmo enquanto a API carrega.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Matches</title>
-    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      .matches-page {
+        padding-bottom: 40px;
+      }
+
+      .matches-header {
+        margin: 28px 0 22px;
+      }
+
+      .matches-header h1 {
+        margin-bottom: 6px;
+      }
+
+      .matches-header p {
+        margin: 0;
+      }
+
+      .matches-summary {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        margin-bottom: 28px;
+      }
+
+      .match-summary-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .match-summary-label {
+        color: var(--color-muted);
+        font-size: 0.9rem;
+      }
+
+      .match-summary-value {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.7rem;
+        font-weight: 700;
+      }
+
+      .matches-section {
+        margin-top: 26px;
+      }
+
+      .matches-section-title {
+        margin: 0 0 12px;
+        font-size: 1.2rem;
+      }
+
+      #matches-list {
+        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      }
+
+      .match-card {
+        display: block;
+        min-width: 0;
+        text-decoration: none;
+        color: inherit;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .match-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--color-accent);
+      }
+
+      .match-card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        min-width: 0;
+      }
+
+      .match-avatar {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--color-primary);
+        color: #fff;
+        font-weight: 700;
+      }
+
+      .match-card-name {
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+
+      .match-card-meta {
+        color: var(--color-muted);
+        font-size: 0.86rem;
+        overflow-wrap: anywhere;
+      }
+
+      .match-card-description {
+        margin: 10px 0 14px;
+        overflow-wrap: anywhere;
+      }
+
+      .match-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .match-loading {
+        min-height: 120px;
+        display: grid;
+        place-items: center;
+        border: 1px dashed var(--color-border);
+        border-radius: var(--radius);
+        color: var(--color-muted);
+        background: var(--color-surface);
+        padding: 20px;
+      }
+
+      @media (max-width: 720px) {
+        .matches-header {
+          margin-top: 20px;
+        }
+
+        .matches-summary {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        #matches-list {
+          grid-template-columns: 1fr;
+        }
+
+        .match-card {
+          padding: 15px;
+        }
+
+        .match-card-footer {
+          align-items: stretch;
+        }
+
+        .match-card-footer .btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
-        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Matches</h1>
-      <p class="text-muted">Conexões confirmadas — interesse mútuo entre você e a outra parte.</p>
-      <div id="matches-list" class="grid">
-        <p class="text-muted">Carregando matches…</p>
+    <main class="container matches-page">
+      <div class="matches-header">
+        <h1>Matches</h1>
+
+        <p class="text-muted">
+          Seus matches confirmados e conexões dentro da rede StartMatch.
+        </p>
       </div>
-    </div>
+
+      <section class="matches-summary" aria-label="Resumo das conexões">
+        <div class="match-summary-card">
+          <span class="match-summary-label">Matches</span>
+
+          <strong id="matches-total" class="match-summary-value"> — </strong>
+        </div>
+      </section>
+
+      <section class="matches-section">
+        <h2 class="matches-section-title">Suas conexões</h2>
+
+        <div id="matches-list" class="grid">
+          <div class="match-loading">Carregando suas conexões…</div>
+        </div>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

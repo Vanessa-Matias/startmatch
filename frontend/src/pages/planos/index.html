@@ -1,39 +1,45 @@
-<!--
-  Tela: Planos (Área Pública)
-  ==============================
-  Parte da "Etapa 1 — Entrada na plataforma" do fluxograma: apresenta a
-  monetização da plataforma (planos Básico/Plus/Premium para Startups e
-  Investidores, mais a lógica específica de Mentores). Só apresentação: a
-  contratação/cobrança de planos em si é escopo da 2ª entrega do projeto.
-
-  IDENTIDADE VISUAL (atualização): cabeçalho/rodapé compartilhados (.page-hero /
-  .site-footer). Os badges de preço (.badge-accent) já ficam azuis automaticamente
-  via components.css. Nenhuma lógica mudou (main.ts vazio).
--->
 <!doctype html>
+
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Planos</title>
+
     <link rel="manifest" href="/manifest.json" />
+
     <meta name="theme-color" content="#0f2148" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
+
     <link rel="stylesheet" href="../../styles/global.css" />
+
     <link rel="stylesheet" href="../../styles/components.css" />
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
+
         <nav>
           <a href="../home/index.html">Home</a>
+
           <a href="../sobre/index.html">Sobre</a>
+
           <a href="../como-funciona/index.html">Como funciona</a>
+
           <a href="../recursos/index.html">Recursos</a>
+
           <a href="./index.html">Planos</a>
+
           <a href="../login/index.html">Entrar</a>
-          <a class="btn btn-accent" href="../onboarding/index.html">Criar conta</a>
+
+          <a class="btn btn-accent" href="../onboarding/index.html"
+            >Criar conta</a
+          >
         </nav>
       </div>
     </header>
@@ -41,7 +47,10 @@
     <section class="page-hero">
       <div class="container">
         <h1>Planos</h1>
-        <p class="lead">Preços sugeridos — sujeitos a ajuste até o lançamento oficial.</p>
+
+        <p class="lead">
+          Preços sugeridos — sujeitos a ajuste até o lançamento oficial.
+        </p>
       </div>
     </section>
 
@@ -49,59 +58,128 @@
       <div class="spacer-lg"></div>
 
       <span class="section-eyebrow blue">STARTUPS</span>
+
       <h2>Startups</h2>
+
       <div class="spacer-sm"></div>
+
       <div class="grid">
         <div class="card sm-reveal">
           <div class="card-title">Básico <span class="badge">grátis</span></div>
-          <p class="text-muted">Perfil completo, aparece na busca dos investidores, interesses limitados por mês, Canvas simples.</p>
+
+          <p class="text-muted">
+            Perfil completo, aparece na busca dos investidores, interesses
+            limitados por mês, Canvas simples.
+          </p>
         </div>
+
         <div class="card sm-reveal" style="animation-delay: 0.05s">
-          <div class="card-title">Plus <span class="badge badge-accent">~R$ 149–199/mês</span></div>
-          <p class="text-muted">Perfil em destaque, interesses ilimitados, métricas de visualização, mentoria paga por sessão avulsa.</p>
+          <div class="card-title">
+            Plus <span class="badge badge-accent">~R$ 149–199/mês</span>
+          </div>
+
+          <p class="text-muted">
+            Perfil em destaque, interesses ilimitados, métricas de visualização,
+            mentoria paga por sessão avulsa.
+          </p>
         </div>
+
         <div class="card sm-reveal" style="animation-delay: 0.1s">
-          <div class="card-title">Premium <span class="badge badge-accent">~R$ 349–399/mês</span></div>
-          <p class="text-muted">Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado", 4 sessões de mentoria grátis por mês.</p>
+          <div class="card-title">
+            Premium <span class="badge badge-accent">~R$ 349–399/mês</span>
+          </div>
+
+          <p class="text-muted">
+            Tudo do Plus + prioridade no algoritmo de match, relatório de
+            compatibilidade, selo "verificado", 4 sessões de mentoria grátis por
+            mês.
+          </p>
         </div>
       </div>
 
       <div class="spacer-lg"></div>
+
       <span class="section-eyebrow blue">INVESTIDORES</span>
+
       <h2>Investidores</h2>
+
       <div class="spacer-sm"></div>
+
       <div class="grid">
         <div class="card sm-reveal">
           <div class="card-title">Básico <span class="badge">grátis</span></div>
-          <p class="text-muted">Busca com filtros simples (segmento, estágio), interesses limitados por mês.</p>
+
+          <p class="text-muted">
+            Busca com filtros simples (segmento, estágio), interesses limitados
+            por mês.
+          </p>
         </div>
+
         <div class="card sm-reveal" style="animation-delay: 0.05s">
-          <div class="card-title">Plus <span class="badge badge-accent">~R$ 199–249/mês</span></div>
-          <p class="text-muted">Filtros avançados (faixa de investimento, tração, localização), sugestões automáticas, interesses ilimitados.</p>
+          <div class="card-title">
+            Plus <span class="badge badge-accent">~R$ 199–249/mês</span>
+          </div>
+
+          <p class="text-muted">
+            Filtros avançados (faixa de investimento, tração, localização),
+            sugestões automáticas, interesses ilimitados.
+          </p>
         </div>
+
         <div class="card sm-reveal" style="animation-delay: 0.1s">
-          <div class="card-title">Premium <span class="badge badge-accent">~R$ 499–599/mês</span></div>
-          <p class="text-muted">Tese estruturada, acesso antecipado a startups do seu perfil, relatórios agregados do ecossistema, matchmaking assistido por mentor.</p>
+          <div class="card-title">
+            Premium <span class="badge badge-accent">~R$ 499–599/mês</span>
+          </div>
+
+          <p class="text-muted">
+            Tese estruturada, acesso antecipado a startups do seu perfil,
+            relatórios agregados do ecossistema, matchmaking assistido por
+            mentor.
+          </p>
         </div>
       </div>
 
       <div class="spacer-lg"></div>
+
       <span class="section-eyebrow green">MENTORES</span>
+
       <h2>Mentores</h2>
+
       <div class="spacer-sm"></div>
+
       <div class="grid">
         <div class="card sm-reveal">
-          <div class="card-title">Mentor Porto Digital <span class="badge badge-success">70–80% de desconto</span></div>
-          <p class="text-muted">Para mentores vinculados a empresas do Porto Digital — badge exclusivo, certificado de horas exportável, acesso à vitrine de startups.</p>
+          <div class="card-title">
+            Mentor da Rede Parceira
+            <span class="badge badge-success">70–80% de desconto</span>
+          </div>
+
+          <p class="text-muted">
+            Para mentores vinculados a empresas parceiras — badge exclusivo,
+            certificado de horas exportável e acesso à vitrine de startups..
+          </p>
         </div>
+
         <div class="card sm-reveal" style="animation-delay: 0.05s">
-          <div class="card-title">Mentor independente <span class="badge">~R$ 79–99/mês</span></div>
-          <p class="text-muted">Acesso à mesma vitrine de startups — ferramenta de networking e captação de clientes.</p>
+          <div class="card-title">
+            Mentor independente <span class="badge">~R$ 79–99/mês</span>
+          </div>
+
+          <p class="text-muted">
+            Acesso à mesma vitrine de startups — ferramenta de networking e
+            captação de clientes.
+          </p>
         </div>
       </div>
 
       <div class="spacer-lg"></div>
-      <p style="text-align:center"><a class="btn btn-primary" href="../onboarding/index.html">Criar conta grátis</a></p>
+
+      <p style="text-align: center">
+        <a class="btn btn-primary" href="../onboarding/index.html"
+          >Criar conta grátis</a
+        >
+      </p>
+
       <div class="spacer-lg"></div>
     </div>
 
@@ -109,14 +187,22 @@
       <div class="container">
         <p>
           <a href="../home/index.html">Home</a> ·
+
           <a href="../sobre/index.html">Sobre</a> ·
+
           <a href="../como-funciona/index.html">Como funciona</a> ·
+
           <a href="../recursos/index.html">Recursos</a> ·
+
           <a href="./index.html">Planos</a>
         </p>
-        <p class="copy">StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).</p>
+
+        <p class="copy">
+          StartMatch — Projeto Integrador, ecossistema (Recife).
+        </p>
       </div>
     </footer>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

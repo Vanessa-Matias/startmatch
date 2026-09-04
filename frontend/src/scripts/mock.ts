@@ -50,6 +50,106 @@ import {
 //         testar com dados reais.
 export const MOCK_MODE = (import.meta.env.VITE_MOCK_MODE ?? 'true') !== 'false';
 
+// -----------------------------------------------------------------------------
+// PERFIS DO MODO DEMONSTRAÇÃO
+// -----------------------------------------------------------------------------
+// Cada perfil pertence a um USUÁRIO específico. Startup e Investidor nunca
+// compartilham a mesma chave de armazenamento, mesmo quando possuem o mesmo
+// número de id no mock.
+const USER_KEY = 'sc_user';
+const STARTUP_PROFILES_KEY = 'sc_mock_startup_profiles';
+const INVESTOR_PROFILES_KEY = 'sc_mock_investor_profiles';
+
+function getMockCurrentUser(): Usuario | null {
+  const raw = localStorage.getItem(USER_KEY);
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw) as Usuario;
+  } catch {
+    return null;
+  }
+}
+
+function readProfileStore<T>(key: string): Record<string, T> {
+  const raw = localStorage.getItem(key);
+  if (!raw) return {};
+
+  try {
+    return JSON.parse(raw) as Record<string, T>;
+  } catch {
+    return {};
+  }
+}
+
+function writeProfileStore<T>(key: string, store: Record<string, T>): void {
+  localStorage.setItem(key, JSON.stringify(store));
+}
+
+function getStartupForCurrentUser(): Startup {
+  const usuario = getMockCurrentUser();
+  const store = readProfileStore<Startup>(STARTUP_PROFILES_KEY);
+  const saved = usuario ? store[String(usuario.id)] : undefined;
+
+  const startupIdByUserId: Record<number, number> = {
+    100: 1,
+    103: 2,
+  };
+  const fallbackId = usuario ? startupIdByUserId[usuario.id] ?? 1 : 1;
+
+  return saved ?? MOCK_STARTUPS.find((startup) => startup.id === fallbackId) ?? MOCK_STARTUPS[0];
+}
+
+function getInvestorForCurrentUser(): Investidor {
+  const usuario = getMockCurrentUser();
+  const store = readProfileStore<Investidor>(INVESTOR_PROFILES_KEY);
+  const saved = usuario ? store[String(usuario.id)] : undefined;
+
+  const investorIdByUserId: Record<number, number> = {
+    101: 1,
+    104: 2,
+  };
+  const fallbackId = usuario ? investorIdByUserId[usuario.id] ?? 1 : 1;
+
+  return saved ?? MOCK_INVESTIDORES.find((investidor) => investidor.id === fallbackId) ?? MOCK_INVESTIDORES[0];
+}
+
+function saveStartupForCurrentUser(body: Record<string, unknown>): Startup {
+  const usuario = getMockCurrentUser();
+  const current = getStartupForCurrentUser();
+  const profile: Startup = {
+    ...current,
+    ...body,
+    id: current.id,
+  } as Startup;
+
+  if (usuario) {
+    const store = readProfileStore<Startup>(STARTUP_PROFILES_KEY);
+    store[String(usuario.id)] = profile;
+    writeProfileStore(STARTUP_PROFILES_KEY, store);
+  }
+
+  return profile;
+}
+
+function saveInvestorForCurrentUser(body: Record<string, unknown>): Investidor {
+  const usuario = getMockCurrentUser();
+  const current = getInvestorForCurrentUser();
+  const profile: Investidor = {
+    ...current,
+    ...body,
+    id: current.id,
+  } as Investidor;
+
+  if (usuario) {
+    const store = readProfileStore<Investidor>(INVESTOR_PROFILES_KEY);
+    store[String(usuario.id)] = profile;
+    writeProfileStore(INVESTOR_PROFILES_KEY, store);
+  }
+
+  return profile;
+}
+
 function delay(ms = 250): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -115,10 +215,10 @@ export async function mockRequest<T>(
 
   // ---------- Startups ----------
   if (rota === '/startups/me' && method === 'GET') {
-    return MOCK_STARTUPS[0] as T;
+    return getStartupForCurrentUser() as T;
   }
-  if (rota === '/startups' && method === 'POST') {
-    return { ...MOCK_STARTUPS[0], ...body } as T;
+  if (rota === '/startups' && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+    return saveStartupForCurrentUser(body ?? {}) as T;
   }
   if (rota === '/startups' && method === 'GET') {
     return paginated<Startup>(MOCK_STARTUPS) as T;
@@ -130,10 +230,10 @@ export async function mockRequest<T>(
 
   // ---------- Investidores ----------
   if (rota === '/investors/me' && method === 'GET') {
-    return MOCK_INVESTIDORES[0] as T;
+    return getInvestorForCurrentUser() as T;
   }
-  if (rota === '/investors' && method === 'POST') {
-    return { ...MOCK_INVESTIDORES[0], ...body } as T;
+  if (rota === '/investors' && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+    return saveInvestorForCurrentUser(body ?? {}) as T;
   }
   if (rota === '/investors' && method === 'GET') {
     return paginated<Investidor>(MOCK_INVESTIDORES) as T;

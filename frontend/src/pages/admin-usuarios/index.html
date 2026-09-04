@@ -1,39 +1,442 @@
 <!--
   Tela: Gestão de usuários (Admin)
-  ===================================
-  Etapa 7 do fluxograma — item "Gestão de usuários". Lista todas as contas da
-  plataforma (GET /users, endpoint novo, admin-only). Só leitura nesta 1ª
-  entrega — ações de gestão (suspender conta, aprovar mentor verificado etc.)
-  ficam para uma fase futura.
+  =================================
+  Lista todas as contas da plataforma.
+  Permite pesquisar por nome e filtrar por tipo e plano.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Usuários</title>
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =====================================================
+         BASE
+         ===================================================== */
+
+      body {
+        margin: 0;
+        background: #f4f6f9;
+        color: #152a54;
+      }
+      /* Navbar centralizada em src/styles/components.css */
+
+      /* =====================================================
+         PÁGINA
+         ===================================================== */
+
+      .users-page {
+        width: min(1100px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      .users-header {
+        margin-bottom: 24px;
+      }
+
+      .users-header h1 {
+        margin: 0 0 8px;
+        color: #152a54;
+        font-size: 28px;
+        line-height: 1.2;
+      }
+
+      .users-header p {
+        margin: 0;
+        color: #7b8799;
+        font-size: 14px;
+      }
+
+      /* =====================================================
+         PAINEL DE FILTROS
+         ===================================================== */
+
+      .users-filter-panel {
+        margin-bottom: 24px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.05);
+      }
+
+      .users-filter-title {
+        margin: 0 0 16px;
+        color: #152a54;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .users-filters {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .filter-group label {
+        color: #26344b;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .filter-input,
+      .filter-select {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border: 1px solid #d6dce5;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #26344b;
+        font-size: 13px;
+        outline: none;
+      }
+
+      .filter-input:focus,
+      .filter-select:focus {
+        border-color: #152a54;
+      }
+
+      .clear-filters {
+        height: 42px;
+        padding: 0 16px;
+        border: 1px solid #d6dce5;
+        border-radius: 7px;
+        background: #f8f9fb;
+        color: #152a54;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .clear-filters:hover {
+        background: #eef1f6;
+      }
+
+      /* =====================================================
+         RESUMO
+         ===================================================== */
+
+      .users-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .users-count {
+        color: #7b8799;
+        font-size: 13px;
+      }
+
+      .users-count strong {
+        color: #152a54;
+      }
+
+      /* =====================================================
+         LISTA
+         ===================================================== */
+
+      .users-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .user-card {
+        padding: 18px;
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 10px;
+        box-shadow: 0 2px 7px rgba(15, 33, 72, 0.05);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .user-card:hover {
+        transform: translateY(-2px);
+        border-color: #c8d4e5;
+        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.08);
+      }
+
+      .user-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .user-card-name {
+        margin: 0;
+        color: #152a54;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .user-card-type {
+        flex-shrink: 0;
+        padding: 4px 8px;
+        border-radius: 5px;
+        background: #e8edf5;
+        color: #152a54;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .user-card-info {
+        margin: 5px 0;
+        color: #7b8799;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .user-card-plan {
+        display: inline-block;
+        margin-top: 9px;
+        padding: 5px 9px;
+        background: #eef2f7;
+        border-radius: 5px;
+        color: #152a54;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .empty-message {
+        grid-column: 1 / -1;
+        margin: 0;
+        padding: 24px;
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 10px;
+        color: #7b8799;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      /* =====================================================
+         RESPONSIVIDADE / PWA
+         ===================================================== */
+
+      @media (max-width: 900px) {
+        .users-filters {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .filter-search {
+          grid-column: 1 / -1;
+        }
+
+        .users-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        /*
+          IMPORTANTE:
+          A barra azul permanece visível no PWA.
+        */
+
+        .users-page {
+          width: calc(100% - 28px);
+          padding-top: 24px;
+          padding-bottom: 32px;
+        }
+
+        .users-header h1 {
+          font-size: 24px;
+        }
+
+        .users-header p {
+          font-size: 13px;
+        }
+
+        .users-filter-panel {
+          padding: 16px;
+        }
+
+        .users-filters {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-search {
+          grid-column: auto;
+        }
+
+        .clear-filters {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 520px) {
+        /*
+          Mantém a área azul no celular.
+        */
+
+        .users-page {
+          width: calc(100% - 24px);
+          padding-top: 20px;
+        }
+
+        .users-header {
+          margin-bottom: 18px;
+        }
+
+        .users-filter-panel {
+          margin-bottom: 20px;
+        }
+
+        .users-summary {
+          align-items: flex-start;
+        }
+
+        .user-card {
+          padding: 15px;
+        }
+
+        .user-card-header {
+          flex-direction: column;
+          gap: 7px;
+        }
+      }
+
+      @media (max-width: 360px) {
+      }
+    </style>
   </head>
+
   <body>
-    <header class="navbar">
+    <!-- =====================================================
+         NAVBAR
+         ===================================================== -->
+
+    <header class="navbar admin-navbar">
       <div class="container">
-        <a href="../home/index.html">StartMatch</a>
+        <a class="admin-brand" href="../home/index.html"> StartMatch </a>
+
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container">
-      <h1>Usuários</h1>
-      <p class="text-muted">Todas as contas cadastradas na plataforma.</p>
+    <!-- =====================================================
+         CONTEÚDO
+         ===================================================== -->
 
-      <div id="usuarios-list" class="stack">
-        <p class="text-muted">Carregando usuários…</p>
+    <main class="users-page">
+      <header class="users-header">
+        <h1>Usuários</h1>
+
+        <p>Consulte e filtre todas as contas cadastradas na plataforma.</p>
+      </header>
+
+      <!-- =====================================================
+           FILTROS
+           ===================================================== -->
+
+      <section class="users-filter-panel">
+        <h2 class="users-filter-title">Filtrar usuários</h2>
+
+        <div class="users-filters">
+          <!-- Pesquisa por nome -->
+
+          <div class="filter-group filter-search">
+            <label for="pesquisa-nome"> Pesquisar por nome </label>
+
+            <input
+              id="pesquisa-nome"
+              class="filter-input"
+              type="search"
+              placeholder="Digite o nome do usuário..."
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Tipo -->
+
+          <div class="filter-group">
+            <label for="filtro-tipo"> Tipo de usuário </label>
+
+            <select id="filtro-tipo" class="filter-select">
+              <option value="todos">Todos</option>
+
+              <option value="startup">Startup</option>
+
+              <option value="investidor">Investidor</option>
+
+              <option value="mentor">Mentor</option>
+
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <!-- Plano -->
+
+          <div class="filter-group">
+            <label for="filtro-plano"> Plano </label>
+
+            <select id="filtro-plano" class="filter-select">
+              <option value="todos">Todos</option>
+
+              <option value="basico">Básico</option>
+
+              <option value="plus">Plus</option>
+
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <!-- Limpar -->
+
+          <button id="limpar-filtros" class="clear-filters" type="button">
+            Limpar filtros
+          </button>
+        </div>
+      </section>
+
+      <!-- =====================================================
+           RESUMO
+           ===================================================== -->
+
+      <div class="users-summary">
+        <span id="usuarios-count" class="users-count">
+          Carregando usuários…
+        </span>
       </div>
-    </div>
+
+      <!-- =====================================================
+           LISTA
+           ===================================================== -->
+
+      <section id="usuarios-list" class="users-list">
+        <p class="empty-message">Carregando usuários…</p>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

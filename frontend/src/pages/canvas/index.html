@@ -1,60 +1,684 @@
 <!--
   Tela: Canvas (Plano de Negócio)
   =================================
-  Só visível para startups (link no menu do dashboard-startup). Um formulário
-  simples de 4 campos de texto longo, representando um Business Model Canvas
-  simplificado. Sem paginação, sem lista — carrega os dados existentes (se houver) e
-  salva por cima a cada envio (PUT, não POST).
+  Tela de Canvas apresentada de forma profissional para análise de investidores.
+
+  A estrutura mantém os 9 princípios do modelo de negócio e foi organizada para
+  funcionar bem em desktop, tablet e celular.
 -->
+
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StartMatch — Canvas</title>
-    <!-- Manifest + cor de tema do PWA — repetido no <head> de toda tela -->
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#152a54" />
+
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================================================
+         PÁGINA
+         ========================================================= */
+
+      .canvas-page {
+        padding: 32px 0 56px;
+      }
+
+      .canvas-page .container {
+        max-width: 1180px;
+      }
+
+      /* =========================================================
+         CABEÇALHO
+         ========================================================= */
+
+      .canvas-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        margin-bottom: 30px;
+        padding: 26px 28px;
+        border: 1px solid var(--color-border);
+        border-radius: 18px;
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .canvas-header-copy {
+        max-width: 760px;
+      }
+
+      .canvas-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        color: var(--color-accent);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .canvas-eyebrow::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--color-accent);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+      }
+
+      .canvas-header h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.9rem, 4vw, 2.55rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+      }
+
+      .canvas-header p {
+        margin: 0;
+        font-size: 0.98rem;
+      }
+
+      /* =========================================================
+         DICA
+         ========================================================= */
+
+      .canvas-tip {
+        min-width: 255px;
+        max-width: 290px;
+        padding: 16px 18px;
+        border: 1px solid rgba(37, 99, 235, 0.18);
+        border-radius: 14px;
+        background: #f7faff;
+      }
+
+      .canvas-tip strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .canvas-tip span {
+        color: var(--color-text-muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      /* =========================================================
+         FORMULÁRIO
+         ========================================================= */
+
+      .canvas-form {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      /* Os dois primeiros blocos ocupam metade da linha */
+      .canvas-field:nth-child(1),
+      .canvas-field:nth-child(2) {
+        grid-column: span 3;
+      }
+
+      /* Os demais ocupam um terço da linha */
+      .canvas-field:nth-child(n + 3) {
+        grid-column: span 2;
+      }
+
+      /* =========================================================
+         CARDS DOS 9 PRINCÍPIOS
+         ========================================================= */
+
+      .canvas-field {
+        min-width: 0;
+        margin: 0;
+        padding: 20px;
+        border: 1px solid var(--color-border);
+        border-radius: 16px;
+        background: var(--color-surface);
+        box-shadow: 0 4px 16px rgba(21, 42, 84, 0.05);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .canvas-field:hover {
+        transform: translateY(-2px);
+        border-color: rgba(37, 99, 235, 0.25);
+        box-shadow: 0 8px 22px rgba(21, 42, 84, 0.08);
+      }
+
+      .canvas-field--highlight {
+        border-color: rgba(37, 99, 235, 0.28);
+      }
+
+      /* =========================================================
+         CABEÇALHO DOS CARDS
+         ========================================================= */
+
+      .canvas-field-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .canvas-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #eef4ff;
+        color: var(--color-accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+
+      .canvas-field-title {
+        margin: 0 0 3px;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .canvas-field-help {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      /* =========================================================
+         CAMPOS
+         ========================================================= */
+
+      .canvas-field .textarea {
+        width: 100%;
+        min-width: 0;
+        min-height: 145px;
+        resize: vertical;
+        line-height: 1.5;
+      }
+
+      /* =========================================================
+         AÇÕES
+         ========================================================= */
+
+      .canvas-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 4px;
+      }
+
+      .canvas-status {
+        min-height: 24px;
+        margin: 0;
+      }
+
+      .canvas-save {
+        min-width: 170px;
+      }
+
+      /* =========================================================
+         TABLET
+         ========================================================= */
+
+      @media (max-width: 900px) {
+        .canvas-form {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .canvas-field:nth-child(1),
+        .canvas-field:nth-child(2),
+        .canvas-field:nth-child(n + 3) {
+          grid-column: span 1;
+        }
+
+        .canvas-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .canvas-tip {
+          width: 100%;
+          max-width: none;
+        }
+      }
+
+      /* =========================================================
+         CELULAR
+         ========================================================= */
+
+      @media (max-width: 600px) {
+        .canvas-page {
+          padding: 20px 0 36px;
+        }
+
+        .canvas-page .container {
+          width: 100%;
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .canvas-header {
+          width: 100%;
+          padding: 20px;
+          margin-bottom: 20px;
+          gap: 16px;
+          border-radius: 15px;
+        }
+
+        .canvas-header-copy {
+          width: 100%;
+        }
+
+        .canvas-eyebrow {
+          font-size: 0.7rem;
+          line-height: 1.4;
+        }
+
+        .canvas-header h1 {
+          font-size: 28px;
+          line-height: 1.2;
+        }
+
+        .canvas-header p {
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .canvas-tip {
+          width: 100%;
+          min-width: 0;
+          max-width: none;
+          padding: 14px 16px;
+        }
+
+        .canvas-tip strong {
+          font-size: 0.86rem;
+        }
+
+        .canvas-tip span {
+          font-size: 0.8rem;
+        }
+
+        /*
+          No celular, cada princípio ocupa
+          toda a largura da tela.
+        */
+        .canvas-form {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 14px;
+          width: 100%;
+        }
+
+        .canvas-field,
+        .canvas-field:nth-child(1),
+        .canvas-field:nth-child(2),
+        .canvas-field:nth-child(n + 3) {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .canvas-field {
+          padding: 16px;
+          border-radius: 14px;
+        }
+
+        .canvas-field-head {
+          gap: 10px;
+        }
+
+        .canvas-number {
+          flex: 0 0 32px;
+          width: 32px;
+          height: 32px;
+          border-radius: 9px;
+          font-size: 0.78rem;
+        }
+
+        .canvas-field-title {
+          font-size: 16px;
+        }
+
+        .canvas-field-help {
+          font-size: 13px;
+          line-height: 1.45;
+        }
+
+        .canvas-field .textarea {
+          width: 100%;
+          min-height: 130px;
+          font-size: 15px;
+          line-height: 1.5;
+        }
+
+        .canvas-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          width: 100%;
+          gap: 10px;
+          padding-top: 2px;
+        }
+
+        .canvas-save {
+          width: 100%;
+          min-width: 0;
+        }
+      }
+
+      /* =========================================================
+         CELULARES PEQUENOS
+         ========================================================= */
+
+      @media (max-width: 390px) {
+        .canvas-page .container {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .canvas-header {
+          padding: 18px 16px;
+          border-radius: 14px;
+        }
+
+        .canvas-header h1 {
+          font-size: 24px;
+        }
+
+        .canvas-header p {
+          font-size: 13px;
+        }
+
+        .canvas-field {
+          padding: 15px;
+        }
+
+        .canvas-field .textarea {
+          min-height: 120px;
+          font-size: 14px;
+        }
+
+        .canvas-field-title {
+          font-size: 15px;
+        }
+
+        .canvas-field-help {
+          font-size: 12px;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
-        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts (renderNav) -->
+
+        <!-- Preenchido dinamicamente por main.ts via scripts/nav.ts -->
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <div class="container container--narrow">
-      <h1>Plano de Negócio (Canvas)</h1>
-      <p class="text-muted">Business Model Canvas simplificado da sua startup.</p>
+    <main class="canvas-page">
+      <div class="container container--narrow">
+        <!-- Cabeçalho -->
+        <header class="canvas-header">
+          <div class="canvas-header-copy">
+            <span class="canvas-eyebrow">
+              Visão estratégica para investidores
+            </span>
 
-      <form id="form-canvas">
-        <div class="field">
-          <label for="propostaValor">Proposta de valor</label>
-          <textarea class="textarea" id="propostaValor" name="propostaValor"></textarea>
-        </div>
-        <div class="field">
-          <label for="modeloReceita">Modelo de receita</label>
-          <textarea class="textarea" id="modeloReceita" name="modeloReceita"></textarea>
-        </div>
-        <div class="field">
-          <label for="publicoAlvo">Público-alvo</label>
-          <textarea class="textarea" id="publicoAlvo" name="publicoAlvo"></textarea>
-        </div>
-        <div class="field">
-          <label for="estrategiaMonetizacao">Estratégia de monetização</label>
-          <textarea class="textarea" id="estrategiaMonetizacao" name="estrategiaMonetizacao"></textarea>
-        </div>
+            <h1>Canvas do Modelo de Negócio</h1>
 
-        <button class="btn btn-primary btn-block" type="submit">Salvar</button>
-        <p class="form-error" id="form-error"></p>
-        <p class="text-muted" id="form-success"></p>
-      </form>
-    </div>
+            <p class="text-muted">
+              Uma visão objetiva dos 9 pilares do negócio para entender
+              proposta, mercado, operação, receitas e custos.
+            </p>
+          </div>
+
+          <div class="canvas-tip">
+            <strong>Para uma boa análise</strong>
+
+            <span>
+              Use informações claras, objetivas e baseadas na realidade do
+              negócio.
+            </span>
+          </div>
+        </header>
+
+        <!-- Canvas -->
+        <form id="form-canvas" class="canvas-form">
+          <!-- 01 -->
+          <section class="canvas-field canvas-field--highlight">
+            <div class="canvas-field-head">
+              <span class="canvas-number">01</span>
+
+              <div>
+                <h2 class="canvas-field-title">Proposta de Valor</h2>
+
+                <p class="canvas-field-help">
+                  O valor real ou solução que você entrega ao cliente.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="propostaValor"
+              name="propostaValor"
+              placeholder="Qual problema você resolve e qual valor entrega?"
+            ></textarea>
+          </section>
+
+          <!-- 02 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">02</span>
+
+              <div>
+                <h2 class="canvas-field-title">Segmentos de Clientes</h2>
+
+                <p class="canvas-field-help">
+                  Quem são os clientes ou usuários focais do produto.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="segmentosClientes"
+              name="segmentosClientes"
+              placeholder="Quem são seus principais clientes?"
+            ></textarea>
+          </section>
+
+          <!-- 03 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">03</span>
+
+              <div>
+                <h2 class="canvas-field-title">Canais</h2>
+
+                <p class="canvas-field-help">
+                  Como o produto chega até o cliente.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="canais"
+              name="canais"
+              placeholder="Vendas, distribuição, comunicação..."
+            ></textarea>
+          </section>
+
+          <!-- 04 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">04</span>
+
+              <div>
+                <h2 class="canvas-field-title">Relacionamento com Clientes</h2>
+
+                <p class="canvas-field-help">
+                  Como a empresa atrai, retém e se comunica com os clientes.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="relacionamentoClientes"
+              name="relacionamentoClientes"
+              placeholder="Como você atrai e mantém seus clientes?"
+            ></textarea>
+          </section>
+
+          <!-- 05 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">05</span>
+
+              <div>
+                <h2 class="canvas-field-title">Fontes de Receita</h2>
+
+                <p class="canvas-field-help">Como o negócio gera dinheiro.</p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="fontesReceita"
+              name="fontesReceita"
+              placeholder="Assinaturas, vendas, freemium..."
+            ></textarea>
+          </section>
+
+          <!-- 06 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">06</span>
+
+              <div>
+                <h2 class="canvas-field-title">Recursos-Chave</h2>
+
+                <p class="canvas-field-help">
+                  Ativos essenciais para fazer o negócio funcionar.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="recursosChave"
+              name="recursosChave"
+              placeholder="Tecnologia, equipe, infraestrutura..."
+            ></textarea>
+          </section>
+
+          <!-- 07 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">07</span>
+
+              <div>
+                <h2 class="canvas-field-title">Atividades-Chave</h2>
+
+                <p class="canvas-field-help">
+                  Ações vitais para entregar a proposta de valor.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="atividadesChave"
+              name="atividadesChave"
+              placeholder="Desenvolvimento, marketing, operação..."
+            ></textarea>
+          </section>
+
+          <!-- 08 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">08</span>
+
+              <div>
+                <h2 class="canvas-field-title">Parcerias-Chave</h2>
+
+                <p class="canvas-field-help">
+                  Fornecedores, mentores e parceiros estratégicos.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="parceriasChave"
+              name="parceriasChave"
+              placeholder="Quem ajuda sua startup a crescer?"
+            ></textarea>
+          </section>
+
+          <!-- 09 -->
+          <section class="canvas-field">
+            <div class="canvas-field-head">
+              <span class="canvas-number">09</span>
+
+              <div>
+                <h2 class="canvas-field-title">Estrutura de Custos</h2>
+
+                <p class="canvas-field-help">
+                  Os maiores custos para manter a operação.
+                </p>
+              </div>
+            </div>
+
+            <textarea
+              class="textarea"
+              id="estruturaCustos"
+              name="estruturaCustos"
+              placeholder="Tecnologia, equipe, marketing, operação..."
+            ></textarea>
+          </section>
+
+          <!-- Ações -->
+          <div class="canvas-actions">
+            <div>
+              <p class="form-error canvas-status" id="form-error"></p>
+
+              <p class="text-muted canvas-status" id="form-success"></p>
+            </div>
+
+            <button class="btn btn-primary canvas-save" type="submit">
+              Salvar Canvas
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

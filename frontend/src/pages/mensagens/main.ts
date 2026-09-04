@@ -16,7 +16,7 @@ import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import type { Conversa, Mensagem } from '../../scripts/types';
 
-const usuario = requireAuth(['startup', 'investidor']);
+const usuario = requireAuth(['startup', 'investidor', 'mentor']);
 renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
 const conversasListEl = document.getElementById('conversas-list') as HTMLDivElement;
@@ -38,14 +38,23 @@ function selecionarConversaNaLista(conversaId: number): void {
 // Busca as mensagens da conversa e redesenha as bolhas de chat. `minha` decide se a
 // bolha usa a classe .minha (mensagem enviada pelo usuário logado) ou não.
 async function carregarMensagens(conversaId: number): Promise<void> {
-  const mensagens = await api.get<Mensagem[]>(`/conversations/${conversaId}/messages`);
+  const mensagens = await api.get<Mensagem[]>(
+    `/conversations/${conversaId}/messages`
+  );
+
   chatBoxEl.innerHTML = mensagens
     .map((m) => {
       const minha = m.remetenteId === usuario.id;
-      return `<div class="mensagem ${minha ? 'minha' : ''}">${m.conteudo}</div>`;
+
+      return `
+        <div class="mensagem ${minha ? 'minha' : ''}">
+          ${m.conteudo}
+        </div>
+      `;
     })
     .join('');
-  chatBoxEl.scrollTop = chatBoxEl.scrollHeight; // rola para a mensagem mais recente
+
+  chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
 }
 
 // Abre uma conversa: seleciona na lista, libera o formulário de envio, carrega as

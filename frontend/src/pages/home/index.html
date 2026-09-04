@@ -1,416 +1,1010 @@
-<!--
-  Tela: Home (Área Pública)
-  ===========================
-  Primeira tela que qualquer visitante não-logado vê (redirecionamento vem de
-  src/main.ts, na raiz do frontend). Faz parte da "Etapa 1 — Entrada na
-  plataforma" do fluxograma da designer (Aula 02 - PI.pdf): Home -> Sobre -> Como
-  funciona -> Planos -> Recursos, e só depois Login/Cadastro.
-
-  Página só de apresentação — não tem formulário nem chamada de API. Os dois
-  botões de call-to-action (#cta-criar-conta e #cta-entrar) levam para
-  onboarding/ (escolha de perfil) e login/, respectivamente.
-
-  IDENTIDADE VISUAL (atualização): hero com fundo de rede de pontos animada
-  (src/scripts/particleNetwork.ts), no mesmo espírito "tech" de referências como
-  coders.com.br e ghcm.com.br, mas com a paleta do projeto (azul-marinho + azul,
-  detalhes em verde/vermelho). O <style> abaixo só tem o que é específico desta
-  tela (navbar pública, hero, ícones de "para quem") — botão, card e badge
-  continuam vindo de components.css.
--->
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StartMatch — Matchmaking para Startups e Investidores do Porto Digital</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0f2148" />
-    <link rel="stylesheet" href="../../styles/variables.css" />
-    <link rel="stylesheet" href="../../styles/global.css" />
-    <link rel="stylesheet" href="../../styles/components.css" />
-    <style>
-      /* Navbar pública — mesma classe .navbar (cor/estrutura de components.css),
-         só que com links fixos escritos aqui mesmo (não tem renderNav nesta
-         tela: main.ts não faz login, então não há papel de usuário pra decidir
-         o menu). */
-      .public-nav {
-        margin-bottom: 0;
-        padding: 14px 0;
-      }
-      .public-nav .container {
-        max-width: 1200px;
-      }
 
-      /* Hero — fundo escuro com a rede de pontos animada atrás do conteúdo. */
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#0f2148" />
+
+    <meta
+      name="description"
+      content="StartMatch — plataforma de matchmaking para startups, investidores e mentores do ecossistema Porto Digital."
+    />
+
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
+    <title>
+      StartMatch — Matchmaking para Startups e Investidores do Porto Digital
+    </title>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <link rel="stylesheet" href="../../styles/variables.css" />
+
+    <link rel="stylesheet" href="../../styles/global.css" />
+
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* =========================================================
+         NAVBAR PÚBLICA
+         ========================================================= */
+
+      /* =========================================================
+         HERO
+         ========================================================= */
+
       .hero {
         position: relative;
+
         overflow: hidden;
-        background: linear-gradient(180deg, #060e24 0%, #0f2148 55%, #16305f 100%);
+
+        background: linear-gradient(
+          180deg,
+          #060e24 0%,
+          #0f2148 55%,
+          #16305f 100%
+        );
+
         padding: 160px 0 180px;
+
         min-height: 760px;
+
         display: flex;
         align-items: center;
       }
+
       .hero .container {
         max-width: 1200px;
+
         position: relative;
-        z-index: 2;
+
+        z-index: 3;
       }
+
+      /* =========================================================
+         CANVAS DAS PARTÍCULAS
+         ========================================================= */
+
       #particle-bg {
         position: absolute;
+
         inset: 0;
+
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
         z-index: 1;
+
         pointer-events: none;
       }
+
+      /* =========================================================
+         CAMADA DE LEITURA DO HERO
+         ========================================================= */
+
+      .hero::after {
+        content: '';
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: 2;
+
+        pointer-events: none;
+
+        background: linear-gradient(
+          90deg,
+          rgba(6, 14, 36, 0.12),
+          rgba(15, 33, 72, 0.04)
+        );
+      }
+
+      /* =========================================================
+         HERO EYEBROW
+         ========================================================= */
+
       .hero-eyebrow {
         display: inline-flex;
+
         align-items: center;
+
         gap: 8px;
+
         background: rgba(37, 99, 235, 0.35);
+
         border: 1px solid rgba(96, 165, 250, 0.8);
+
         border-radius: 100px;
+
         padding: 8px 16px;
+
         color: #dbeafe;
+
         font-size: 13px;
+
         font-weight: 700;
+
         letter-spacing: 0.6px;
+
         margin-bottom: var(--spacing-md);
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 6px 18px rgba(37, 99, 235, 0.35);
+
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.2),
+          0 6px 18px rgba(37, 99, 235, 0.35);
       }
+
       .hero-eyebrow .dot {
         width: 6px;
         height: 6px;
+
+        flex-shrink: 0;
+
         border-radius: 50%;
+
         background: #60a5fa;
       }
+
+      /* =========================================================
+         TÍTULO DO HERO
+         ========================================================= */
+
       .hero h1 {
-        color: #fff;
+        color: #ffffff;
+
         font-size: 56px;
+
         line-height: 1.14;
+
         max-width: 860px;
       }
+
       .hero .highlight {
         background: linear-gradient(90deg, #5b9bff, #4ade80, #5b9bff);
+
         background-size: 200% auto;
+
         -webkit-background-clip: text;
         background-clip: text;
+
         color: transparent;
       }
+
+      /* =========================================================
+         TEXTO DO HERO
+         ========================================================= */
+
       .hero p.lead {
         color: #a9b4cc;
+
         font-size: 17px;
+
         line-height: 1.6;
+
         max-width: 560px;
+
         margin-top: var(--spacing-md);
       }
+
+      /* =========================================================
+         BOTÕES DO HERO
+         ========================================================= */
+
       .hero .actions {
         display: flex;
+
         gap: 14px;
+
         flex-wrap: wrap;
+
         margin-top: var(--spacing-lg);
       }
+
       .hero .btn-outline {
         border-color: rgba(255, 255, 255, 0.28);
-        color: #fff;
+
+        color: #ffffff;
       }
+
       .hero .btn-outline:hover:not(:disabled) {
-        border-color: #fff;
-        color: #fff;
+        border-color: #ffffff;
+
+        color: #ffffff;
+
         background: rgba(255, 255, 255, 0.08);
       }
 
-      /* Seção "eyebrow" (rótulo pequeno acima de cada H2). */
+      /* =========================================================
+         SECTION EYEBROW
+         ========================================================= */
+
       .section-eyebrow {
         display: inline-flex;
+
         width: fit-content;
+
         font-size: 12px;
+
         font-weight: 700;
+
         letter-spacing: 0.6px;
+
         padding: 6px 12px;
+
         border-radius: 6px;
+
         margin-bottom: var(--spacing-sm);
       }
+
       .section-eyebrow.blue {
         background: #eff6ff;
+
         border: 1px solid #bfdbfe;
+
         color: #1d4ed8;
       }
+
       .section-eyebrow.green {
         background: #ecfdf5;
+
         border: 1px solid #a7f3d0;
+
         color: #047857;
       }
 
-      /* Seção "Para quem é" — mais espaço vertical (era muito espremida entre o
-         "como funciona" e o CTA final) e cards maiores (.card-feature), cada um
-         com uma lista curta de benefícios abaixo do texto principal. */
+      /* =========================================================
+         PERSONAS
+         ========================================================= */
+
       .personas-section {
         padding: var(--spacing-2xl) 0;
       }
+
       .persona-benefits {
         list-style: none;
+
         margin: var(--spacing-md) 0 0;
+
         padding: 0;
+
         display: flex;
+
         flex-direction: column;
+
         gap: 8px;
       }
+
       .persona-benefits li {
         display: flex;
+
         align-items: flex-start;
+
         gap: 8px;
+
         font-size: 14px;
+
         color: var(--color-text-muted);
       }
+
       .persona-benefits svg {
         flex-shrink: 0;
+
         margin-top: 2px;
       }
 
-      /* CTA final — bloco escuro, mais generoso e com uma composição em duas
-         colunas (texto + botões) em telas largas, glow difuso ao fundo e um
-         padrão de pontinhos estático (mais leve que o canvas animado do hero,
-         não precisa de JS). */
+      /* =========================================================
+         CTA FINAL
+         ========================================================= */
+
       .cta-final {
         position: relative;
+
         overflow: hidden;
+
         border-radius: var(--radius-xl);
+
         padding: var(--spacing-2xl) var(--spacing-xl);
-        /* Duas camadas de background numa só declaração (nunca duas
-           propriedades "background"/"background-image" separadas — a segunda
-           sobrescreve a primeira e apaga o gradiente): pontinhos por cima,
-           gradiente escuro por baixo, cobrindo o bloco inteiro. */
-        background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.4px, transparent 1.4px),
+
+        background-image:
+          radial-gradient(rgba(255, 255, 255, 0.1) 1.4px, transparent 1.4px),
           linear-gradient(155deg, #0f2148 0%, #152a54 100%);
-        background-size: 26px 26px, 100% 100%;
+
+        background-size:
+          26px 26px,
+          100% 100%;
       }
+
       .cta-final::before {
         content: '';
+
         position: absolute;
+
         top: -140px;
         right: -100px;
+
         width: 340px;
         height: 340px;
+
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(47, 111, 235, 0.35), transparent 70%);
+
+        background: radial-gradient(
+          circle,
+          rgba(47, 111, 235, 0.35),
+          transparent 70%
+        );
+
         pointer-events: none;
       }
+
       .cta-final::after {
         content: '';
+
         position: absolute;
+
         bottom: -160px;
         left: -80px;
+
         width: 300px;
         height: 300px;
+
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(34, 197, 94, 0.22), transparent 70%);
+
+        background: radial-gradient(
+          circle,
+          rgba(34, 197, 94, 0.22),
+          transparent 70%
+        );
+
         pointer-events: none;
       }
+
       .cta-final-inner {
         position: relative;
+
         z-index: 1;
+
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
+
         gap: var(--spacing-xl);
+
         flex-wrap: wrap;
       }
+
       .cta-final-copy {
         max-width: 480px;
+
         text-align: left;
       }
+
       .cta-final h2 {
-        color: #fff;
+        color: #ffffff;
+
         font-size: 30px;
+
         margin-bottom: var(--spacing-sm);
       }
+
       .cta-final p {
         color: #a9b4cc;
+
         font-size: 16px;
+
         margin: 0;
       }
+
       .cta-final-actions {
         display: flex;
+
         flex-direction: column;
+
         align-items: flex-start;
+
         gap: 10px;
+
         flex-shrink: 0;
       }
+
       .cta-final-actions .form-hint {
         color: #7684a6;
       }
+
+      /* =========================================================
+         FOOTER
+         ========================================================= */
+
+      footer.site-footer {
+        background: #0f2148;
+
+        padding: var(--spacing-lg) 0;
+
+        text-align: center;
+      }
+
+      footer.site-footer a {
+        color: #a9b4cc;
+      }
+
+      footer.site-footer p {
+        color: #5c6a94;
+
+        font-size: 13px;
+      }
+
+      /* =========================================================
+         RESPONSIVO
+         ========================================================= */
+
+      /* =========================================================
+         CELULAR
+         ========================================================= */
+
       @media (max-width: 720px) {
+        /* -------------------------------------------------------
+           HERO MOBILE
+           ------------------------------------------------------- */
+
+        .hero {
+          padding: 72px 0 88px;
+
+          min-height: unset;
+        }
+
+        .hero h1 {
+          font-size: 34px;
+
+          line-height: 1.16;
+        }
+
+        .hero p.lead {
+          font-size: 15px;
+
+          line-height: 1.55;
+        }
+
+        .hero-eyebrow {
+          font-size: 10px;
+
+          padding: 7px 12px;
+
+          letter-spacing: 0.4px;
+        }
+
+        .hero .actions {
+          flex-direction: column;
+
+          gap: 10px;
+
+          width: 100%;
+        }
+
+        .hero .actions .btn {
+          width: 100%;
+        }
+
+        /* -------------------------------------------------------
+           PERSONAS
+           ------------------------------------------------------- */
+
+        .personas-section {
+          padding: var(--spacing-xl) 0;
+        }
+
+        /* -------------------------------------------------------
+           CTA
+           ------------------------------------------------------- */
+
+        .cta-final {
+          padding: var(--spacing-xl) var(--spacing-lg);
+        }
+
         .cta-final-inner {
           text-align: center;
+
           justify-content: center;
         }
+
         .cta-final-copy {
           text-align: center;
         }
+
         .cta-final-actions {
           align-items: center;
+
+          width: 100%;
+        }
+
+        .cta-final-actions .btn {
           width: 100%;
         }
       }
 
-      footer.site-footer {
-        background: #0f2148;
-        padding: var(--spacing-lg) 0;
-        text-align: center;
-      }
-      footer.site-footer a {
-        color: #a9b4cc;
-      }
-      footer.site-footer p {
-        color: #5c6a94;
-        font-size: 13px;
-      }
+      /* =========================================================
+         CELULARES MUITO PEQUENOS
+         ========================================================= */
 
-      @media (max-width: 720px) {
-        .public-nav nav {
-          display: none;
-        }
-        .hero {
-          padding: 72px 0 88px;
-          min-height: unset;
-        }
+      @media (max-width: 390px) {
         .hero h1 {
-          font-size: 34px;
+          font-size: 30px;
+        }
+
+        .hero-eyebrow {
+          font-size: 9px;
         }
       }
     </style>
   </head>
+
   <body>
-    <header class="navbar public-nav">
+    <!-- =========================================================
+         NAVBAR
+         ========================================================= -->
+
+    <header class="navbar">
       <div class="container">
-        <a href="./index.html">StartMatch</a>
-        <nav>
-          <a href="./index.html">Home</a>
-          <a href="../sobre/index.html">Sobre</a>
-          <a href="../como-funciona/index.html">Como funciona</a>
-          <a href="../recursos/index.html">Recursos</a>
-          <a href="../planos/index.html">Planos</a>
-          <a href="../login/index.html">Entrar</a>
-          <a class="btn btn-accent" href="../onboarding/index.html">Criar conta</a>
+        <!-- LOGO -->
+
+        <a class="brand" href="./index.html"> StartMatch </a>
+
+        <!-- MENU NORMAL
+             Sem hambúrguer e sem esconder no celular -->
+
+        <nav aria-label="Navegação principal">
+          <a href="./index.html"> Home </a>
+
+          <a href="../sobre/index.html"> Sobre </a>
+
+          <a href="../como-funciona/index.html"> Como funciona </a>
+
+          <a href="../recursos/index.html"> Recursos </a>
+
+          <a href="../planos/index.html"> Planos </a>
+
+          <a href="../login/index.html"> Entrar </a>
+
+          <a class="btn btn-accent" href="../onboarding/index.html">
+            Criar conta
+          </a>
         </nav>
       </div>
     </header>
 
-    <!-- Hero -->
+    <!-- =========================================================
+         HERO
+         ========================================================= -->
+
     <section class="hero">
       <canvas id="particle-bg"></canvas>
+
       <div class="container">
-        <span class="hero-eyebrow"><span class="dot sm-pulse-dot"></span>ECOSSISTEMA PORTO DIGITAL · RECIFE</span>
-        <h1>Conectando Startups,
-          <span class="highlight sm-gradient-text">Investidores e mentores</span>.
+        <span class="hero-eyebrow">
+          <span class="dot sm-pulse-dot"></span>
+
+          ECOSSISTEMA DE INOVAÇÃO - RECIFE
+        </span>
+
+        <h1>
+          Conectando Startups,
+
+          <span class="highlight sm-gradient-text">
+            Investidores e mentores </span
+          >.
         </h1>
+
         <p class="lead">
-          Uma plataforma de matchmaking para o ecossistema de startups e economia criativa do
-          Porto Digital (Recife): cadastro, busca, manifestação de interesse e match — tudo num
-          só lugar.
+          Uma plataforma de matchmaking para o ecossistema de startups e
+          economia criativa: cadastro, busca, manifestação de interesse e match
+          — tudo num só lugar.
         </p>
+
         <div class="actions">
-          <a class="btn btn-primary" id="cta-criar-conta" href="../onboarding/index.html">Criar conta grátis</a>
-          <a class="btn btn-outline" id="cta-entrar" href="../login/index.html">Já tenho conta</a>
+          <a
+            class="btn btn-primary"
+            id="cta-criar-conta"
+            href="../onboarding/index.html"
+          >
+            Criar conta grátis
+          </a>
+
+          <a class="btn btn-outline" id="cta-entrar" href="../login/index.html">
+            Já tenho conta
+          </a>
         </div>
       </div>
     </section>
 
-    <div class="container">
-      <div class="spacer-lg"></div>
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+         ========================================================= -->
 
-      <!-- Resumo do fluxo (Etapa 5 do fluxograma: cadastro -> perfil -> busca -> interesse -> match) -->
-      <section>
-        <span class="section-eyebrow blue">COMO FUNCIONA</span>
-        <h2>Do cadastro ao negócio fechado</h2>
-        <div class="spacer-sm"></div>
-        <div class="grid">
-          <div class="card sm-reveal" style="animation-delay: 0s"><div class="card-title">1. Conheça</div><p class="text-muted">Entenda como a plataforma conecta startups, investidores e mentores.</p></div>
-          <div class="card sm-reveal" style="animation-delay: 0.06s"><div class="card-title">2. Crie sua conta</div><p class="text-muted">Escolha seu perfil: Startup, Investidor ou Mentor.</p></div>
-          <div class="card sm-reveal" style="animation-delay: 0.12s"><div class="card-title">3. Complete o perfil</div><p class="text-muted">Segmento, estágio, tese de investimento ou área de mentoria.</p></div>
-          <div class="card sm-reveal" style="animation-delay: 0.18s"><div class="card-title">4. Busque oportunidades</div><p class="text-muted">Filtros por segmento, estágio, localização e faixa de investimento.</p></div>
-          <div class="card sm-reveal" style="animation-delay: 0.24s"><div class="card-title">5. Demonstre interesse</div><p class="text-muted">Quando o interesse é mútuo, nasce um Match.</p></div>
-          <div class="card sm-reveal" style="animation-delay: 0.3s"><div class="card-title">6. Feche negócio</div><p class="text-muted">Converse pelo chat da plataforma e avance a parceria.</p></div>
-        </div>
-        <div class="spacer-md"></div>
-        <p><a href="../como-funciona/index.html">Ver como funciona em detalhes →</a></p>
-      </section>
+    <main>
+      <div class="container">
+        <div class="spacer-lg"></div>
 
-      <div class="spacer-lg"></div>
+        <!-- =====================================================
+             COMO FUNCIONA
+             ===================================================== -->
 
-      <!-- Para quem é a plataforma -->
-      <section class="personas-section">
-        <span class="section-eyebrow green">PARA QUEM É</span>
-        <h2>Para quem é o StartMatch</h2>
-        <p class="section-lead">Três perfis, uma plataforma só — cada um com filtros, sugestões e um funil de match pensado pra sua ponta do ecossistema.</p>
-        <div class="grid">
-          <div class="card card-feature sm-reveal">
-            <div class="icon-circle" style="background: #eff6ff">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"></path><path d="M9.5 12.5l2 2 3.5-4"></path></svg>
+        <section>
+          <span class="section-eyebrow blue"> COMO FUNCIONA </span>
+
+          <h2>Do cadastro ao negócio fechado</h2>
+
+          <div class="spacer-sm"></div>
+
+          <div class="grid">
+            <div class="card sm-reveal" style="animation-delay: 0s">
+              <div class="card-title">1. Conheça</div>
+
+              <p class="text-muted">
+                Entenda como a plataforma conecta startups, investidores e
+                mentores.
+              </p>
             </div>
-            <div class="card-title">Startups</div>
-            <p class="text-muted">Ganhe visibilidade, encontre investidores compatíveis e acesse mentoria especializada.</p>
-            <ul class="persona-benefits">
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Perfil por segmento e estágio</li>
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2f6feb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Match com score de compatibilidade</li>
-            </ul>
-          </div>
-          <div class="card card-feature sm-reveal" style="animation-delay: 0.08s">
-            <div class="icon-circle" style="background: #ecfdf5">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"></path><path d="M15 6h6v6"></path></svg>
+
+            <div class="card sm-reveal" style="animation-delay: 0.06s">
+              <div class="card-title">2. Crie sua conta</div>
+
+              <p class="text-muted">
+                Escolha seu perfil: Startup, Investidor ou Mentor.
+              </p>
             </div>
-            <div class="card-title">Investidores</div>
-            <p class="text-muted">Descubra startups do Porto Digital alinhadas à sua tese, com filtros e recomendações.</p>
-            <ul class="persona-benefits">
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Filtros por estágio e investimento</li>
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Sugestões automáticas de startups</li>
-            </ul>
-          </div>
-          <div class="card card-feature sm-reveal" style="animation-delay: 0.16s">
-            <div class="icon-circle" style="background: #fef2f2">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"></circle><path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"></path><circle cx="18" cy="9" r="2.3"></circle><path d="M15.8 13.6c2.3.2 4.2 2.1 4.2 4.9"></path></svg>
+
+            <div class="card sm-reveal" style="animation-delay: 0.12s">
+              <div class="card-title">3. Complete o perfil</div>
+
+              <p class="text-muted">
+                Segmento, estágio, tese de investimento ou área de mentoria.
+              </p>
             </div>
-            <div class="card-title">Mentores</div>
-            <p class="text-muted">Compartilhe experiência, construa rede de contatos e ganhe visibilidade no ecossistema.</p>
-            <ul class="persona-benefits">
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Condições especiais Porto Digital</li>
-              <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Vitrine de startups pra mentorar</li>
-            </ul>
-          </div>
-        </div>
-      </section>
 
-      <div class="spacer-lg"></div>
+            <div class="card sm-reveal" style="animation-delay: 0.18s">
+              <div class="card-title">4. Busque oportunidades</div>
 
-      <!-- CTA final -->
-      <section class="cta-final sm-reveal">
-        <div class="cta-final-inner">
-          <div class="cta-final-copy">
-            <h2>Pronto para começar?</h2>
-            <p>Leva menos de 5 minutos para criar sua conta e completar o perfil — sem cartão, sem burocracia.</p>
-          </div>
-          <div class="cta-final-actions">
-            <a class="btn btn-primary" href="../onboarding/index.html">Criar conta grátis</a>
-            <span class="form-hint">Startup, investidor ou mentor — você escolhe depois.</span>
-          </div>
-        </div>
-      </section>
+              <p class="text-muted">
+                Filtros por segmento, estágio, localização e faixa de
+                investimento.
+              </p>
+            </div>
 
-      <div class="spacer-lg"></div>
-    </div>
+            <div class="card sm-reveal" style="animation-delay: 0.24s">
+              <div class="card-title">5. Demonstre interesse</div>
+
+              <p class="text-muted">
+                Quando o interesse é mútuo, nasce um Match.
+              </p>
+            </div>
+
+            <div class="card sm-reveal" style="animation-delay: 0.3s">
+              <div class="card-title">6. Feche negócio</div>
+
+              <p class="text-muted">
+                Converse pelo chat da plataforma e avance a parceria.
+              </p>
+            </div>
+          </div>
+
+          <div class="spacer-md"></div>
+
+          <p>
+            <a href="../como-funciona/index.html">
+              Ver como funciona em detalhes →
+            </a>
+          </p>
+        </section>
+
+        <div class="spacer-lg"></div>
+
+        <!-- =====================================================
+             PARA QUEM É
+             ===================================================== -->
+
+        <section class="personas-section">
+          <span class="section-eyebrow green"> PARA QUEM É </span>
+
+          <h2>Para quem é o StartMatch</h2>
+
+          <p class="section-lead">
+            Três perfis, uma plataforma só — cada um com filtros, sugestões e um
+            funil de match pensado pra sua ponta do ecossistema.
+          </p>
+
+          <div class="grid">
+            <!-- =================================================
+                 STARTUPS
+                 ================================================= -->
+
+            <div class="card card-feature sm-reveal">
+              <div class="icon-circle" style="background: #eff6ff">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#2f6feb"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"
+                  ></path>
+
+                  <path d="M9.5 12.5l2 2 3.5-4"></path>
+                </svg>
+              </div>
+
+              <div class="card-title">Startups</div>
+
+              <p class="text-muted">
+                Ganhe visibilidade, encontre investidores compatíveis e acesse
+                mentoria especializada.
+              </p>
+
+              <ul class="persona-benefits">
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#2f6feb"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Perfil por segmento e estágio
+                </li>
+
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#2f6feb"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Match com score de compatibilidade
+                </li>
+              </ul>
+            </div>
+
+            <!-- =================================================
+                 INVESTIDORES
+                 ================================================= -->
+
+            <div
+              class="card card-feature sm-reveal"
+              style="animation-delay: 0.08s"
+            >
+              <div class="icon-circle" style="background: #ecfdf5">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#16a34a"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 17l6-6 4 4 8-9"></path>
+
+                  <path d="M15 6h6v6"></path>
+                </svg>
+              </div>
+
+              <div class="card-title">Investidores</div>
+
+              <p class="text-muted">
+                Descubra startups do Porto Digital alinhadas à sua tese, com
+                filtros e recomendações.
+              </p>
+
+              <ul class="persona-benefits">
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#16a34a"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Filtros por estágio e investimento
+                </li>
+
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#16a34a"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Sugestões automáticas de startups
+                </li>
+              </ul>
+            </div>
+
+            <!-- =================================================
+                 MENTORES
+                 ================================================= -->
+
+            <div
+              class="card card-feature sm-reveal"
+              style="animation-delay: 0.16s"
+            >
+              <div class="icon-circle" style="background: #fef2f2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#dc2626"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="9" cy="8" r="3"></circle>
+
+                  <path
+                    d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"
+                  ></path>
+
+                  <circle cx="18" cy="9" r="2.3"></circle>
+
+                  <path d="M15.8 13.6c2.3.2 4.2 2.1 4.2 4.9"></path>
+                </svg>
+              </div>
+
+              <div class="card-title">Mentores</div>
+
+              <p class="text-muted">
+                Compartilhe experiência, construa rede de contatos e ganhe
+                visibilidade no ecossistema.
+              </p>
+
+              <ul class="persona-benefits">
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#dc2626"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Condições especiais para o ecossistema
+                </li>
+
+                <li>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#dc2626"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg>
+
+                  Vitrine de startups pra mentorar
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <div class="spacer-lg"></div>
+
+        <!-- =====================================================
+             CTA FINAL
+             ===================================================== -->
+
+        <section class="cta-final sm-reveal">
+          <div class="cta-final-inner">
+            <div class="cta-final-copy">
+              <h2>Pronto para começar?</h2>
+
+              <p>
+                Leva menos de 5 minutos para criar sua conta e completar o
+                perfil — sem cartão, sem burocracia.
+              </p>
+            </div>
+
+            <div class="cta-final-actions">
+              <a class="btn btn-primary" href="../onboarding/index.html">
+                Criar conta grátis
+              </a>
+
+              <span class="form-hint"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="spacer-lg"></div>
+      </div>
+    </main>
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
 
     <footer class="site-footer">
       <div class="container">
         <p>
-          <a href="./index.html">Home</a> ·
-          <a href="../sobre/index.html">Sobre</a> ·
-          <a href="../como-funciona/index.html">Como funciona</a> ·
-          <a href="../recursos/index.html">Recursos</a> ·
-          <a href="../planos/index.html">Planos</a>
+          <a href="./index.html"> Home </a>
+
+          ·
+
+          <a href="../sobre/index.html"> Sobre </a>
+
+          ·
+
+          <a href="../como-funciona/index.html"> Como funciona </a>
+
+          ·
+
+          <a href="../recursos/index.html"> Recursos </a>
+
+          ·
+
+          <a href="../planos/index.html"> Planos </a>
         </p>
-        <p>StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).</p>
+
+        <p>
+          StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).
+        </p>
       </div>
     </footer>
+
+    <!-- =========================================================
+         JAVASCRIPT DA HOME
+         ========================================================= -->
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
