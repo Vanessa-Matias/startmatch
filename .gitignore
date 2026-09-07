@@ -28,3 +28,9 @@ coverage/
 
 # Vite
 frontend/.vite/
+
+# Pasta local do Claude Code (config/sessão da ferramenta, não é parte do projeto)
+.claude/
+
+# Pasta temporária de arquivos marcados para exclusão manual
+_to_delete/

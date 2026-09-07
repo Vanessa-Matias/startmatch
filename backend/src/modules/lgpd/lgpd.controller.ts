@@ -2,9 +2,10 @@
 // =====================
 // Registro e leitura de consentimentos LGPD do usuário logado (termos de
 // uso/privacidade/marketing — ver TipoConsentimento). Suporta o levantamento
-// de dados pessoais tratados descrito em docs/arquitetura.md, seção 5; o
-// painel agregado de consentimentos para o admin ainda não existe (2ª
-// entrega).
+// de dados pessoais tratados descrito em docs/arquitetura.md, seção 5. O
+// painel agregado de consentimentos para o admin fica em
+// GET /admin/lgpd-summary (modules/admin), não aqui — este controller só
+// cuida do consentimento do próprio usuário logado.
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';

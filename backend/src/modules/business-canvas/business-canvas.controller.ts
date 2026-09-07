@@ -1,9 +1,8 @@
 // business-canvas.controller.ts
 // ================================
-// Business Model Canvas de cada startup (proposta de valor, modelo de
-// receita, público-alvo, estratégia de monetização). Só GET/PUT em "me" — é
-// 1:1 com o perfil de startup do usuário logado, não existe listagem nem
-// leitura por terceiros.
+// Business Model Canvas completo (9 blocos) de cada startup. Só GET/PUT em
+// "me" — é 1:1 com o perfil de startup do usuário logado, não existe
+// listagem nem leitura por terceiros.
 import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';

@@ -59,17 +59,27 @@ const estruturaCustosEl = document.getElementById(
   'estruturaCustos'
 ) as HTMLTextAreaElement;
 
+// Preenche os 9 campos do formulário com um Canvas já existente.
+function preencherFormulario(plano: PlanoNegocio): void {
+  propostaValorEl.value = plano.propostaValor;
+  segmentosClientesEl.value = plano.segmentosClientes;
+  canaisEl.value = plano.canais;
+  relacionamentoClientesEl.value = plano.relacionamentoClientes;
+  fontesReceitaEl.value = plano.fontesReceita;
+  recursosChaveEl.value = plano.recursosChave;
+  atividadesChaveEl.value = plano.atividadesChave;
+  parceriasChaveEl.value = plano.parceriasChave;
+  estruturaCustosEl.value = plano.estruturaCustos;
+}
+
 async function init(): Promise<void> {
   try {
-    // Verifica se existe um Canvas para a startup,
-    // mas não carrega os dados salvos nos campos.
-    await api.get<PlanoNegocio>('/business-canvas/me');
-
-    // Os campos permanecem vazios ao abrir a tela.
-    // Os textos de orientação continuam no HTML.
+    // Se já existir um Canvas salvo para a startup, carrega os dados nos campos.
+    const plano = await api.get<PlanoNegocio>('/business-canvas/me');
+    preencherFormulario(plano);
   } catch (error) {
-    // Se ainda não existir um Canvas salvo para a startup,
-    // a tela deve abrir normalmente com os campos vazios.
+    // Se ainda não existir um Canvas salvo para a startup, a tela deve abrir
+    // normalmente com os campos vazios (os textos de orientação continuam no HTML).
     if (error instanceof ApiError) {
       errorEl.textContent = '';
       return;
@@ -87,11 +97,16 @@ form.addEventListener('submit', async (event) => {
   errorEl.textContent = '';
   successEl.textContent = '';
 
-  const payload = {
+  const payload: PlanoNegocio = {
     propostaValor: propostaValorEl.value,
-    modeloReceita: fontesReceitaEl.value,
-    publicoAlvo: segmentosClientesEl.value,
-    estrategiaMonetizacao: canaisEl.value,
+    segmentosClientes: segmentosClientesEl.value,
+    canais: canaisEl.value,
+    relacionamentoClientes: relacionamentoClientesEl.value,
+    fontesReceita: fontesReceitaEl.value,
+    recursosChave: recursosChaveEl.value,
+    atividadesChave: atividadesChaveEl.value,
+    parceriasChave: parceriasChaveEl.value,
+    estruturaCustos: estruturaCustosEl.value,
   };
 
   try {

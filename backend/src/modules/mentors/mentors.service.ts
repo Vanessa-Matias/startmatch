@@ -2,7 +2,8 @@
 // =====================
 // CRUD do perfil de Mentor (1:1 com Usuario). Sem busca com filtros nem
 // paginação — a lista de mentores é pequena o bastante pra findAll() trazer
-// tudo de uma vez; revisar isso se o volume crescer.
+// tudo de uma vez; revisar isso se o volume crescer. Criação e atualização de
+// perfil geram um evento de auditoria (categoria "mentor" — ver modules/audit).
 import {
   ConflictException,
   Injectable,
@@ -13,12 +14,15 @@ import { Repository } from 'typeorm';
 import { Mentor } from './entities/mentor.entity';
 import { CreateMentorProfileDto } from './dto/create-mentor-profile.dto';
 import { UpdateMentorProfileDto } from './dto/update-mentor-profile.dto';
+import { AuditService } from '../audit/audit.service';
+import { TipoEventoAuditoria, ResultadoAuditoria } from '../../common/enums';
 
 @Injectable()
 export class MentorsService {
   constructor(
     @InjectRepository(Mentor)
     private readonly mentorRepository: Repository<Mentor>,
+    private readonly auditService: AuditService,
   ) {}
 
   async create(
@@ -43,7 +47,17 @@ export class MentorsService {
       disponibilidade: dto.disponibilidade,
     });
 
-    return this.mentorRepository.save(mentor);
+    const salvo = await this.mentorRepository.save(mentor);
+
+    await this.auditService.registrar({
+      usuarioId,
+      tipoEvento: TipoEventoAuditoria.MENTOR,
+      evento: 'Perfil de mentor',
+      acao: `Perfil de mentor criado (${dto.areaAtuacao})`,
+      resultado: ResultadoAuditoria.SUCESSO,
+    });
+
+    return salvo;
   }
 
   async findAll(): Promise<Mentor[]> {
@@ -74,6 +88,16 @@ export class MentorsService {
   ): Promise<Mentor> {
     const mentor = await this.findByUserId(usuarioId);
     Object.assign(mentor, dto);
-    return this.mentorRepository.save(mentor);
+    const salvo = await this.mentorRepository.save(mentor);
+
+    await this.auditService.registrar({
+      usuarioId,
+      tipoEvento: TipoEventoAuditoria.MENTOR,
+      evento: 'Perfil de mentor',
+      acao: 'Perfil de mentor atualizado',
+      resultado: ResultadoAuditoria.SUCESSO,
+    });
+
+    return salvo;
   }
 }

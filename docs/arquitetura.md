@@ -88,7 +88,7 @@ e um papel de **Administrador** para a gestão operacional da plataforma
 | `Interesse` | origem (quem manifestou), status, mensagem inicial | N:1 com `Startup` e `Investidor` |
 | `Match` | score de compatibilidade, origem, status | N:1 com `Startup`/`Investidor`, 1:1 com `Conversa` |
 | `Conversa` / `Mensagem` | status, conteúdo, timestamps de leitura/envio | 1:1 com `Match`, 1:N `Mensagem` |
-| `PlanoNegocio` | proposta de valor, modelo de receita, público-alvo, estratégia de monetização | 1:1 com `Startup` |
+| `PlanoNegocio` | Business Model Canvas completo: proposta de valor, segmentos de clientes, canais, relacionamento com clientes, fontes de receita, recursos-chave, atividades-chave, parcerias-chave, estrutura de custos (9 blocos) | 1:1 com `Startup` |
 | `ConsentimentoLGPD` | tipo (termos de uso/privacidade/marketing), versão do termo, aceite, data | N:1 com `Usuario` |
 | `AvaliacaoBeta` | tipo de usuário, nota de usabilidade, nota de utilidade, comentário | N:1 com `Usuario` |
 

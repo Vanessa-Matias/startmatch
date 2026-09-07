@@ -42,9 +42,14 @@ export class BusinessCanvasService {
       ({
         startupId,
         propostaValor: '',
-        modeloReceita: '',
-        publicoAlvo: '',
-        estrategiaMonetizacao: '',
+        segmentosClientes: '',
+        canais: '',
+        relacionamentoClientes: '',
+        fontesReceita: '',
+        recursosChave: '',
+        atividadesChave: '',
+        parceriasChave: '',
+        estruturaCustos: '',
       } as PlanoNegocio)
     );
   }

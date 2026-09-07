@@ -19,7 +19,7 @@ de negócio e da governança da plataforma.
 
 | Item exigido | Status |
 |---|---|
-| Aplicação web responsiva/PWA funcional | PWA pronto (manifest + service worker); **responsividade ainda não implementada** — é o próximo passo, com a Agnes estilizando |
+| Aplicação web responsiva/PWA funcional | PWA pronto (manifest + service worker); responsividade **em andamento** — 24 das 36 telas já têm breakpoints dedicados (mobile/tablet), faltam: busca, cadastro-startup, cadastro-investidor, cadastro-mentor, perfil-startup, perfil-investidor, interesses-startup, interesses-investidor, mentorias, planos, recursos, como-funciona |
 | Frontend em React ou tecnologia equivalente | HTML + CSS + TypeScript puro com Vite (SPA/MPA moderna) — **tecnologicamente equivalente, mas não é React**; vale confirmar com o professor se aceita |
 | Backend em Node.js ou tecnologia equivalente | ✅ NestJS (Node.js) |
 | Backend disponibilizando API REST | ✅ Documentação viva em `/docs` (Swagger) |
@@ -35,7 +35,7 @@ de negócio e da governança da plataforma.
 | Dashboard inicial por perfil | ✅ |
 | Arquitetura cliente-servidor funcional e documentada | ✅ Funcional; documentação em `docs/arquitetura.md` |
 | Modelo de dados e documentação inicial das APIs | ✅ `docs/arquitetura.md` (modelo de dados) + Swagger (`/docs`) |
-| Construção inicial do Business Model Canvas | ✅ Feature funcional (`canvas/`) + conteúdo em `docs/modelo-de-negocio.md` |
+| Construção inicial do Business Model Canvas | ✅ Feature funcional (`canvas/`), com os 9 blocos completos do BMC persistidos no backend (corrigido em 07/09 — o backend só salvava 4 dos 9 campos que a tela da Agnes já exibia; agora `PlanoNegocio` tem os 9 campos e a tela recarrega os dados salvos ao reabrir) + conteúdo em `docs/modelo-de-negocio.md` |
 | Definição preliminar da proposta de valor e público-alvo | ✅ `docs/modelo-de-negocio.md` |
 | Definição inicial das regras de uso da plataforma | ⚠️ Existe o registro de aceite de termos (LGPD), mas falta redigir o texto de Termos de Uso em si |
 | Levantamento dos dados pessoais tratados + requisitos LGPD | ✅ `docs/arquitetura.md`, seção 5 |
@@ -84,6 +84,23 @@ que a designer (Agnes) preparou separadamente, para garantir que as telas
 extras (agenda, solicitações, histórico, certificados no caso do Mentor;
 usuários, planos, relatórios, LGPD, auditoria no caso do Admin) batem com o
 que foi desenhado.
+
+## Nota — verificação de consistência frontend x backend (07/09/2026)
+
+Conferência ponta a ponta do contrato entre as telas da Agnes e a API do
+backend (rotas usadas em cada `main.ts` x rotas expostas por cada
+controller, e os tipos em `frontend/src/scripts/types.ts` x as entidades/DTOs
+do backend): tudo bate, com uma exceção corrigida nesta revisão — o Canvas
+(ver linha acima; os nomes de campo mantidos foram os que a Agnes já usava no
+HTML/TS da tela, o backend é que foi ajustado para acompanhá-los). `npx tsc
+--noEmit` roda limpo tanto em `backend/` quanto em `frontend/` depois da
+correção (antes, o frontend não compilava por causa de 5 variáveis do Canvas
+nunca usadas — sintoma do mesmo problema). `npx eslint` no módulo
+`business-canvas` também está limpo. `npm test` do backend não roda neste
+ambiente por uma dependência (`ts-jest`) ausente do `node_modules` local — não
+é um problema introduzido agora, é o mesmo item "Testes automatizados" já
+listado como pendente na tabela da 2ª entrega; só confirma que a suíte em si
+ainda não foi escrita.
 
 ## Próximos passos imediatos
 

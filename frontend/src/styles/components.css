@@ -1028,6 +1028,26 @@ label {
     padding: 7px 12px;
   }
 
+  /* Navbar geral (mesmo tratamento da navbar pública, para telas
+     tablet/portrait que ainda não caem no breakpoint de 720px) */
+
+  .navbar .container {
+    gap: 14px;
+  }
+
+  .navbar nav {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .navbar nav a {
+    font-size: 13px;
+  }
+
+  .navbar nav .btn {
+    padding: 7px 12px;
+  }
+
   .interesses-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

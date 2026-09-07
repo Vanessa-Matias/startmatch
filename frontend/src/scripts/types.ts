@@ -134,12 +134,19 @@ export interface Mensagem {
   lida: boolean;
 }
 
-// Business Model Canvas simplificado, preenchido pela startup na tela "canvas".
+// Business Model Canvas completo (9 blocos), preenchido pela startup na tela
+// "canvas". Espelha PlanoNegocio do backend
+// (backend/src/modules/business-canvas/entities/plano-negocio.entity.ts).
 export interface PlanoNegocio {
   propostaValor: string;
-  modeloReceita: string;
-  publicoAlvo: string;
-  estrategiaMonetizacao: string;
+  segmentosClientes: string;
+  canais: string;
+  relacionamentoClientes: string;
+  fontesReceita: string;
+  recursosChave: string;
+  atividadesChave: string;
+  parceriasChave: string;
+  estruturaCustos: string;
   atualizadoEm?: string;
 }
 
@@ -164,6 +171,30 @@ export interface AdminMetrics {
   totalMentores: number;
   mentoresPortoDigital: number;
   totalMatches: number;
+}
+
+// Um evento do histórico de auditoria (GET /admin/audit-log, tela
+// admin-auditoria) — espelha AuditLogItemDto do backend
+// (backend/src/modules/audit/dto/audit-log-response.dto.ts).
+export interface AuditLogItem {
+  data: string;
+  dataISO: string;
+  usuario: string;
+  email: string;
+  tipo: 'cadastro' | 'login' | 'plano' | 'mentor' | 'lgpd';
+  evento: string;
+  acao: string;
+  resultado: 'Sucesso' | 'Falha' | 'Pendente';
+  origem: string;
+}
+
+// Resumo agregado de consentimentos LGPD (GET /admin/lgpd-summary, tela
+// admin-lgpd) — espelha LgpdSummary do backend
+// (backend/src/modules/admin/admin.service.ts).
+export interface LgpdSummary {
+  totalUsuarios: number;
+  totalConsentimentosAceitos: number;
+  porTipo: Record<string, number>;
 }
 
 // Formato padrão de erro que o NestJS devolve quando algo dá errado.

@@ -12,12 +12,14 @@
 
 import type {
   AdminMetrics,
+  AuditLogItem,
   Conversa,
   Interesse,
   Investidor,
   Match,
   Mensagem,
   Mentor,
+  LgpdSummary,
   PlanoNegocio,
   Segmento,
   Startup,
@@ -190,9 +192,14 @@ export const MOCK_MENSAGENS: Mensagem[] = [
 
 export const MOCK_PLANO_NEGOCIO: PlanoNegocio = {
   propostaValor: 'Gestão financeira simplificada para pequenos negócios do Porto Digital.',
-  modeloReceita: 'Assinatura mensal (SaaS) com planos escalonados por volume de transações.',
-  publicoAlvo: 'Pequenas empresas e MEIs do ecossistema Porto Digital, 1 a 20 funcionários.',
-  estrategiaMonetizacao: 'Freemium com upsell para funcionalidades avançadas de relatório fiscal.',
+  segmentosClientes: 'Pequenas empresas e MEIs do ecossistema Porto Digital, 1 a 20 funcionários.',
+  canais: 'Aplicativo web (PWA), parcerias com aceleradoras locais e indicação entre usuários.',
+  relacionamentoClientes: 'Autoatendimento via plataforma, com suporte por chat para dúvidas de conta.',
+  fontesReceita: 'Assinatura mensal (SaaS) com planos escalonados por volume de transações.',
+  recursosChave: 'Equipe de desenvolvimento, infraestrutura em nuvem e algoritmo de conciliação.',
+  atividadesChave: 'Desenvolvimento do produto, suporte ao cliente e integrações bancárias.',
+  parceriasChave: 'Bancos parceiros (open finance), contadores e aceleradoras do Porto Digital.',
+  estruturaCustos: 'Hospedagem em nuvem, folha de pagamento da equipe técnica e marketing de aquisição.',
 };
 
 export const MOCK_ADMIN_METRICS: AdminMetrics = {
@@ -228,3 +235,83 @@ export const MOCK_USUARIO_POR_TIPO: Record<Usuario['tipo'], Usuario> = {
   mentor: MOCK_USUARIOS[4],
   admin: MOCK_USUARIOS[5],
 };
+
+// Histórico de auditoria de demonstração (GET /admin/audit-log) — alguns
+// eventos plausíveis usando as próprias contas de teste, só para a tela
+// admin-auditoria não abrir vazia no modo demonstração.
+export const MOCK_AUDIT_LOG: AuditLogItem[] = [
+  {
+    data: '05/09/2026, 09:12',
+    dataISO: '2026-09-05',
+    usuario: 'Startup Teste',
+    email: 'startup@teste.com',
+    tipo: 'cadastro',
+    evento: 'Cadastro de conta',
+    acao: 'Conta criada como startup',
+    resultado: 'Sucesso',
+    origem: 'Web',
+  },
+  {
+    data: '05/09/2026, 09:15',
+    dataISO: '2026-09-05',
+    usuario: 'Investidor Teste',
+    email: 'investidor@teste.com',
+    tipo: 'cadastro',
+    evento: 'Cadastro de conta',
+    acao: 'Conta criada como investidor',
+    resultado: 'Sucesso',
+    origem: 'Web',
+  },
+  {
+    data: '06/09/2026, 08:47',
+    dataISO: '2026-09-06',
+    usuario: 'Mentor Teste',
+    email: 'mentor@teste.com',
+    tipo: 'mentor',
+    evento: 'Perfil de mentor',
+    acao: 'Perfil de mentor criado (Growth e captação de investimento)',
+    resultado: 'Sucesso',
+    origem: 'Web',
+  },
+  {
+    data: '06/09/2026, 18:03',
+    dataISO: '2026-09-06',
+    usuario: 'Startup Teste',
+    email: 'startup@teste.com',
+    tipo: 'lgpd',
+    evento: 'Consentimento LGPD',
+    acao: 'Consentimento de "termos_uso" aceito',
+    resultado: 'Sucesso',
+    origem: 'Web',
+  },
+  {
+    data: '07/09/2026, 10:22',
+    dataISO: '2026-09-07',
+    usuario: 'Investidor Teste',
+    email: 'investidor@teste.com',
+    tipo: 'login',
+    evento: 'Login',
+    acao: 'Login realizado',
+    resultado: 'Sucesso',
+    origem: 'Web',
+  },
+  {
+    data: '07/09/2026, 10:24',
+    dataISO: '2026-09-07',
+    usuario: 'Admin Teste',
+    email: 'admin@teste.com',
+    tipo: 'login',
+    evento: 'Login',
+    acao: 'Tentativa de login com senha incorreta',
+    resultado: 'Falha',
+    origem: 'Web',
+  },
+];
+
+// Resumo de consentimentos LGPD de demonstração (GET /admin/lgpd-summary).
+export const MOCK_LGPD_SUMMARY: LgpdSummary = {
+  totalUsuarios: MOCK_USUARIOS.length,
+  totalConsentimentosAceitos: 5,
+  porTipo: { termos_uso: 3, privacidade: 1, marketing: 1 },
+};
+

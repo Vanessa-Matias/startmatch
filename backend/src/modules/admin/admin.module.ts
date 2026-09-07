@@ -5,6 +5,8 @@
 // entidade própria — só lê dados que já existem em outros módulos (usuário,
 // startup, investidor, mentor, match), por isso importa os repositórios direto
 // via TypeOrmModule.forFeature em vez de depender dos módulos inteiros.
+// Também expõe a leitura de auditoria (AuditModule) e o resumo agregado de
+// LGPD (usa o LgpdService, exportado por LgpdModule).
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from '../users/entities/usuario.entity';
@@ -14,10 +16,14 @@ import { Mentor } from '../mentors/entities/mentor.entity';
 import { Match } from '../matches/entities/match.entity';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
+import { AuditModule } from '../audit/audit.module';
+import { LgpdModule } from '../lgpd/lgpd.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Usuario, Startup, Investidor, Mentor, Match]),
+    AuditModule,
+    LgpdModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

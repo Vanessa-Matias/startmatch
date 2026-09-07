@@ -1,14 +1,13 @@
 // Tela: Auditoria — lógica
 // ==========================
-// Consulta e filtragem frontend dos registros disponíveis.
-//
-// O histórico permanece vazio enquanto os registros reais de
-// auditoria não estiverem disponíveis.
-// Não são usados dados da tela de Configurações ou localStorage.
-// A exportação em PDF usa a impressão do navegador.
+// Busca o histórico real de auditoria em GET /admin/audit-log (backend,
+// módulo audit) e aplica os filtros no frontend sobre os dados já
+// carregados. A exportação em PDF usa a impressão do navegador.
 
+import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
+import type { AuditLogItem, PaginatedResponse } from '../../scripts/types';
 
 const usuario = requireAuth(['admin']);
 
@@ -17,22 +16,11 @@ renderNav(
   usuario.tipo
 );
 
-interface EventoAuditoria {
-  data: string;
-  dataISO: string;
-  usuario: string;
-  email: string;
-  tipo: 'login' | 'plano' | 'mentor' | 'lgpd';
-  evento: string;
-  acao: string;
-  resultado: 'Sucesso' | 'Falha' | 'Pendente';
-  origem: string;
-}
+type EventoAuditoria = AuditLogItem;
 
-// Mantido vazio enquanto os registros reais de auditoria
-// não estiverem disponíveis.
-// Não são criados eventos fictícios nem registros de outras telas.
-const eventosAuditoria: EventoAuditoria[] = [];
+// Populado em carregarEventos() com o retorno real de GET /admin/audit-log.
+// Nenhum evento fictício é criado aqui.
+let eventosAuditoria: EventoAuditoria[] = [];
 
 const formFiltros = document.getElementById(
   'form-filtros-auditoria'
@@ -389,19 +377,31 @@ btnExportarAuditoria.addEventListener(
 );
 
 /* =========================================================
-   ESTADO INICIAL
+   CARREGAMENTO
    ========================================================= */
 
-renderizarTabela(
-  eventosAuditoria
-);
+async function carregarEventos(): Promise<void> {
+  statusRegistros.textContent = 'Carregando...';
 
-atualizarIndicadores(
-  eventosAuditoria
-);
+  try {
+    const resposta = await api.get<PaginatedResponse<AuditLogItem>>(
+      '/admin/audit-log?limit=200'
+    );
 
-statusRegistros.textContent =
-  'Aguardando registros';
+    eventosAuditoria = resposta.items;
 
-descricaoResultado.textContent =
-  'O histórico será exibido quando os registros de auditoria estiverem disponíveis.';
+    consultarEventos();
+  } catch (error) {
+    renderizarTabela([]);
+    atualizarIndicadores([]);
+
+    statusRegistros.textContent = 'Erro ao carregar';
+
+    descricaoResultado.textContent =
+      error instanceof ApiError
+        ? error.message
+        : 'Não foi possível carregar o histórico de auditoria.';
+  }
+}
+
+carregarEventos();

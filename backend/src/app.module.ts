@@ -25,6 +25,7 @@ import { BusinessCanvasModule } from './modules/business-canvas/business-canvas.
 import { LgpdModule } from './modules/lgpd/lgpd.module';
 import { BetaEvaluationModule } from './modules/beta-evaluation/beta-evaluation.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { AdminModule } from './modules/admin/admin.module';
     BusinessCanvasModule,
     LgpdModule,
     BetaEvaluationModule,
+    AuditModule,
     AdminModule,
   ],
 })

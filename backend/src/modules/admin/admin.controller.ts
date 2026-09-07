@@ -1,15 +1,17 @@
 // admin.controller.ts
 // =====================
 // Endpoints usados só pela área administrativa do frontend (dashboard-admin,
-// admin-planos, admin-relatorios). Todos exigem login + papel "admin" — é o
-// backend que garante essa restrição (RolesGuard), o frontend só evita mostrar o
-// link para quem não é admin.
-import { Controller, Get, UseGuards } from '@nestjs/common';
+// admin-planos, admin-relatorios, admin-auditoria, admin-lgpd). Todos exigem
+// login + papel "admin" — é o backend que garante essa restrição (RolesGuard),
+// o frontend só evita mostrar o link para quem não é admin.
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles } from '../../common/decorators';
 import { TipoUsuario } from '../../common/enums';
-import { AdminService, AdminMetrics } from './admin.service';
+import { AdminService, AdminMetrics, LgpdSummary } from './admin.service';
+import { AuditLogQueryDto } from '../audit/dto/audit-log-query.dto';
+import { AuditLogResponseDto } from '../audit/dto/audit-log-response.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -24,5 +26,21 @@ export class AdminController {
   @Get('metrics')
   async metrics(): Promise<AdminMetrics> {
     return this.adminService.getMetrics();
+  }
+
+  // Histórico de auditoria (tela admin-auditoria) — suporta filtro por tipo
+  // de evento, por usuário (nome/e-mail) e paginação.
+  @Get('audit-log')
+  async auditLog(
+    @Query() query: AuditLogQueryDto,
+  ): Promise<AuditLogResponseDto> {
+    return this.adminService.getAuditLog(query);
+  }
+
+  // Resumo agregado de consentimentos LGPD (tela admin-lgpd) — quantos
+  // usuários já aceitaram cada tipo de termo.
+  @Get('lgpd-summary')
+  async lgpdSummary(): Promise<LgpdSummary> {
+    return this.adminService.getLgpdSummary();
   }
 }

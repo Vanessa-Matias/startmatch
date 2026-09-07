@@ -1,28 +1,33 @@
 // usuarios-teste.seed.ts
 // ========================
 // Cria contas de teste — uma para cada papel (Startup, Investidor, Mentor,
-// Admin) — com senha simples (123456), para a Agnes conseguir logar e estilizar
-// TODAS as telas sem precisar se cadastrar na mão em cada uma. A Vanessa troca
-// essas senhas antes de qualquer entrega/demonstração real.
+// Admin) — para logar direto na demonstração/apresentação sem precisar
+// cadastrar nada na hora.
+//
+// Padrão de credenciais do projeto: e-mail sempre "<algo>@teste.com" e senha
+// sempre um número de 1 a 6, na ordem em que a conta aparece abaixo (mais
+// fácil de lembrar/digitar numa demonstração ao vivo do que uma senha única
+// repetida). Isso não é uma prática de segurança para produção — é só a
+// convenção combinada para as contas de demonstração/teste do projeto.
 //
 // Como o e-mail é único por conta (regra do backend, não dá pra ter o mesmo
 // e-mail em 4 contas diferentes), cada papel ganhou seu próprio e-mail dentro do
-// mesmo padrão memorável: <papel>@teste.com — todos com a senha 123456.
+// mesmo padrão memorável: <papel>@teste.com.
 //
 // Idempotente: rodar `npm run seed` de novo não duplica nada (cada função checa
 // se o registro já existe antes de criar).
 //
 // Contas criadas:
-//   startup@teste.com     / 123456  -> perfil de Startup completo
-//   startup2@teste.com    / 123456  -> 2º perfil de Startup (só pra Busca não ficar com 1 card só)
-//   investidor@teste.com  / 123456  -> perfil de Investidor completo
-//   investidor2@teste.com / 123456  -> 2º perfil de Investidor
-//   mentor@teste.com      / 123456  -> perfil de Mentor (vinculado ao Porto Digital)
-//   admin@teste.com       / 123456  -> conta admin (sem perfil de negócio)
+//   startup@teste.com     / 1  -> perfil de Startup completo
+//   startup2@teste.com    / 2  -> 2º perfil de Startup (só pra Busca não ficar com 1 card só)
+//   investidor@teste.com  / 3  -> perfil de Investidor completo
+//   investidor2@teste.com / 4  -> 2º perfil de Investidor
+//   mentor@teste.com      / 5  -> perfil de Mentor (vinculado ao Porto Digital)
+//   admin@teste.com       / 6  -> conta admin (sem perfil de negócio)
 //
 // Além disso, cria um match real entre startup@teste.com e investidor@teste.com
 // (com conversa + 2 mensagens), pra Matches/Mensagens/Interesses não aparecerem
-// vazios na primeira vez que a Agnes abrir o site.
+// vazios na primeira vez que alguém abrir o site.
 
 import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -45,24 +50,32 @@ import {
   OrigemInteresse,
 } from '../../common/enums';
 
-const SENHA_PADRAO = '123456';
-
 async function upsertUsuario(
   repo: Repository<Usuario>,
-  dados: { nome: string; email: string; tipo: TipoUsuario },
+  dados: { nome: string; email: string; tipo: TipoUsuario; senha: string },
 ): Promise<Usuario> {
   const existente = await repo.findOne({ where: { email: dados.email } });
   if (existente) return existente;
 
-  const senhaHash = await bcrypt.hash(SENHA_PADRAO, 10);
-  const usuario = repo.create({ ...dados, senhaHash });
+  const senhaHash = await bcrypt.hash(dados.senha, 10);
+  const usuario = repo.create({
+    nome: dados.nome,
+    email: dados.email,
+    tipo: dados.tipo,
+    senhaHash,
+  });
   return repo.save(usuario);
 }
 
-async function segmentoPorSlug(repo: Repository<Segmento>, slug: string): Promise<Segmento> {
+async function segmentoPorSlug(
+  repo: Repository<Segmento>,
+  slug: string,
+): Promise<Segmento> {
   const segmento = await repo.findOne({ where: { slug } });
   if (!segmento) {
-    throw new Error(`Segmento "${slug}" não encontrado — rode o seed de segmentos primeiro.`);
+    throw new Error(
+      `Segmento "${slug}" não encontrado — rode o seed de segmentos primeiro.`,
+    );
   }
   return segmento;
 }
@@ -89,31 +102,37 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     nome: 'Startup Teste',
     email: 'startup@teste.com',
     tipo: TipoUsuario.STARTUP,
+    senha: '1',
   });
   const usuarioStartup2 = await upsertUsuario(usuarioRepo, {
     nome: 'Startup Teste 2',
     email: 'startup2@teste.com',
     tipo: TipoUsuario.STARTUP,
+    senha: '2',
   });
   const usuarioInvestidor = await upsertUsuario(usuarioRepo, {
     nome: 'Investidor Teste',
     email: 'investidor@teste.com',
     tipo: TipoUsuario.INVESTIDOR,
+    senha: '3',
   });
   const usuarioInvestidor2 = await upsertUsuario(usuarioRepo, {
     nome: 'Investidor Teste 2',
     email: 'investidor2@teste.com',
     tipo: TipoUsuario.INVESTIDOR,
+    senha: '4',
   });
   const usuarioMentor = await upsertUsuario(usuarioRepo, {
     nome: 'Mentor Teste',
     email: 'mentor@teste.com',
     tipo: TipoUsuario.MENTOR,
+    senha: '5',
   });
   await upsertUsuario(usuarioRepo, {
     nome: 'Admin Teste',
     email: 'admin@teste.com',
     tipo: TipoUsuario.ADMIN,
+    senha: '6',
   });
 
   // ---------- Perfil de Startup ----------
@@ -122,7 +141,9 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     dados: Omit<Parameters<typeof startupRepo.create>[0], 'usuarioId'>,
     segmentos: { segmento: Segmento; principal: boolean }[],
   ): Promise<Startup> {
-    const existente = await startupRepo.findOne({ where: { usuarioId: usuario.id } });
+    const existente = await startupRepo.findOne({
+      where: { usuarioId: usuario.id },
+    });
     if (existente) return existente;
 
     const startup = await startupRepo.save(
@@ -130,7 +151,11 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     );
     for (const s of segmentos) {
       await startupSegmentoRepo.save(
-        startupSegmentoRepo.create({ startup, segmento: s.segmento, principal: s.principal }),
+        startupSegmentoRepo.create({
+          startup,
+          segmento: s.segmento,
+          principal: s.principal,
+        }),
       );
     }
     return startup;
@@ -140,7 +165,8 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     usuarioStartup,
     {
       nomeFantasia: 'Nortech Soluções',
-      descricao: 'Plataforma de gestão financeira para pequenos negócios do Porto Digital.',
+      descricao:
+        'Plataforma de gestão financeira para pequenos negócios do Porto Digital.',
       estagio: EstagioStartup.MVP,
       investimentoPretendido: 250000,
       cidade: 'Recife',
@@ -171,7 +197,9 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     dados: Omit<Parameters<typeof investidorRepo.create>[0], 'usuarioId'>,
     segmentos: { segmento: Segmento; prioridade: number }[],
   ): Promise<Investidor> {
-    const existente = await investidorRepo.findOne({ where: { usuarioId: usuario.id } });
+    const existente = await investidorRepo.findOne({
+      where: { usuarioId: usuario.id },
+    });
     if (existente) return existente;
 
     const investidor = await investidorRepo.save(
@@ -193,7 +221,8 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
     usuarioInvestidor,
     {
       tipo: TipoInvestidor.ANJO,
-      teseInvestimento: 'Fintechs e SaaS B2B em estágio inicial no Nordeste, com foco em Recife.',
+      teseInvestimento:
+        'Fintechs e SaaS B2B em estágio inicial no Nordeste, com foco em Recife.',
       investimentoMin: 100000,
       investimentoMax: 400000,
       cidade: 'Recife',
@@ -221,7 +250,9 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
   );
 
   // ---------- Perfil de Mentor ----------
-  const mentorExistente = await mentorRepo.findOne({ where: { usuarioId: usuarioMentor.id } });
+  const mentorExistente = await mentorRepo.findOne({
+    where: { usuarioId: usuarioMentor.id },
+  });
   if (!mentorExistente) {
     await mentorRepo.save(
       mentorRepo.create({
@@ -237,7 +268,11 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
 
   // ---------- Match, conversa e mensagens (startup <-> investidor) ----------
   let interesseStartup = await interesseRepo.findOne({
-    where: { startupId: startup.id, investidorId: investidor.id, origem: OrigemInteresse.STARTUP },
+    where: {
+      startupId: startup.id,
+      investidorId: investidor.id,
+      origem: OrigemInteresse.STARTUP,
+    },
   });
   if (!interesseStartup) {
     interesseStartup = await interesseRepo.save(
@@ -250,7 +285,11 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
   }
 
   let interesseInvestidor = await interesseRepo.findOne({
-    where: { startupId: startup.id, investidorId: investidor.id, origem: OrigemInteresse.INVESTIDOR },
+    where: {
+      startupId: startup.id,
+      investidorId: investidor.id,
+      origem: OrigemInteresse.INVESTIDOR,
+    },
   });
   if (!interesseInvestidor) {
     interesseInvestidor = await interesseRepo.save(
@@ -299,21 +338,27 @@ export async function seedUsuariosTeste(dataSource: DataSource): Promise<void> {
 
   let conversa = await conversaRepo.findOne({ where: { matchId: match.id } });
   if (!conversa) {
-    conversa = await conversaRepo.save(conversaRepo.create({ matchId: match.id }));
+    conversa = await conversaRepo.save(
+      conversaRepo.create({ matchId: match.id }),
+    );
   }
 
-  const mensagensExistentes = await mensagemRepo.count({ where: { conversaId: conversa.id } });
+  const mensagensExistentes = await mensagemRepo.count({
+    where: { conversaId: conversa.id },
+  });
   if (mensagensExistentes === 0) {
     await mensagemRepo.save([
       mensagemRepo.create({
         conversaId: conversa.id,
         remetenteId: usuarioInvestidor.id,
-        conteudo: 'Olá! Vi seu perfil e gostei muito da proposta da Nortech. Podemos conversar?',
+        conteudo:
+          'Olá! Vi seu perfil e gostei muito da proposta da Nortech. Podemos conversar?',
       }),
       mensagemRepo.create({
         conversaId: conversa.id,
         remetenteId: usuarioStartup.id,
-        conteudo: 'Olá! Claro, ficamos muito felizes com o interesse. Podemos marcar uma call essa semana.',
+        conteudo:
+          'Olá! Claro, ficamos muito felizes com o interesse. Podemos marcar uma call essa semana.',
       }),
     ]);
   }

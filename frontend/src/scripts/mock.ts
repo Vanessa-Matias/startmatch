@@ -24,10 +24,12 @@ import type {
 } from './types';
 import {
   MOCK_ADMIN_METRICS,
+  MOCK_AUDIT_LOG,
   MOCK_CONVERSAS,
   MOCK_INTERESSES_ENVIADOS,
   MOCK_INTERESSES_RECEBIDOS,
   MOCK_INVESTIDORES,
+  MOCK_LGPD_SUMMARY,
   MOCK_MATCHES,
   MOCK_MENSAGENS,
   MOCK_MENTORES,
@@ -323,6 +325,17 @@ export async function mockRequest<T>(
   // ---------- Admin ----------
   if (rota === '/admin/metrics') {
     return MOCK_ADMIN_METRICS as T;
+  }
+  if (rota === '/admin/audit-log') {
+    return {
+      items: MOCK_AUDIT_LOG,
+      total: MOCK_AUDIT_LOG.length,
+      page: 1,
+      limit: MOCK_AUDIT_LOG.length,
+    } as T;
+  }
+  if (rota === '/admin/lgpd-summary') {
+    return MOCK_LGPD_SUMMARY as T;
   }
 
   throw new Error(
