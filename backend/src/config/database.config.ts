@@ -9,6 +9,8 @@ export const buildDatabaseConfig = (
   const database = configService.get('database', { infer: true });
   const nodeEnv = configService.get('app', { infer: true }).nodeEnv;
 
+  const isLocalHost = ['localhost', '127.0.0.1'].includes(database.host);
+
   return {
     type: 'postgres',
     host: database.host,
@@ -21,5 +23,7 @@ export const buildDatabaseConfig = (
     // synchronize=true só é seguro em desenvolvimento local.
     synchronize: nodeEnv === 'development',
     namingStrategy: new SnakeNamingStrategy(),
+    // Conexões diretas do Supabase (e provedores gerenciados em geral) exigem SSL.
+    ssl: isLocalHost ? undefined : { rejectUnauthorized: false },
   };
 };
