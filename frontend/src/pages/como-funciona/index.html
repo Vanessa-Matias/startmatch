@@ -26,9 +26,11 @@
       /* Timeline horizontal: linha contínua passando pelos .step-badge,
          ligando os 6 passos da esquerda para a direita como uma linha do
          tempo. Tablet: 3 colunas. Celular: volta à timeline vertical. */
-      .timeline-wrap {
+      /* .container.timeline-wrap (2 classes) para vencer a regra genérica
+         .container { padding: 0 ... } independente da ordem do CSS no build */
+      .container.timeline-wrap {
         max-width: 1320px;
-        padding: var(--spacing-2xl) var(--spacing-xl);
+        padding: 112px var(--spacing-xl) 128px;
       }
       .timeline {
         position: relative;
@@ -231,8 +233,8 @@
       }
 
       @media (max-width: 900px) {
-        .timeline-wrap {
-          padding: var(--spacing-xl) var(--spacing-lg);
+        .container.timeline-wrap {
+          padding: 88px var(--spacing-lg) 104px;
         }
         .timeline {
           grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -244,8 +246,8 @@
       }
 
       @media (max-width: 720px) {
-        .timeline-wrap {
-          padding: var(--spacing-xl) var(--spacing-md);
+        .container.timeline-wrap {
+          padding: 64px var(--spacing-md) 80px;
         }
         .timeline {
           display: flex;
@@ -324,7 +326,7 @@
       }
 
       /* FAQ: cards lado a lado no desktop, um abaixo do outro no celular */
-      .faq-wrap {
+      .container.faq-wrap {
         max-width: 1000px;
       }
       .faq-section {
