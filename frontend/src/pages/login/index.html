@@ -84,7 +84,7 @@
         flex-shrink: 0;
       }
       .login-brand footer {
-        color: #5c6a94;
+        color: #ffffff;
         font-size: 13px;
       }
       .login-form-side {
@@ -102,6 +102,41 @@
         align-items: center;
         gap: 6px;
         margin-bottom: var(--spacing-lg);
+      }
+      /* "Voltar para o site": botão verde sólido com brilho neon, igual ao
+         "Já tenho conta" do hero da Home; escurece ao passar o cursor. */
+      .back-link a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #4ade80;
+        border-radius: var(--radius);
+        background: #22c55e;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.92rem;
+        text-decoration: none;
+        box-shadow:
+          0 0 10px rgba(74, 222, 128, 0.4),
+          inset 0 0 6px rgba(255, 255, 255, 0.12);
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease,
+          box-shadow 0.15s ease,
+          transform 0.15s ease;
+      }
+      .back-link a:hover,
+      .back-link a:focus-visible {
+        background: #16a34a;
+        border-color: #86efac;
+        color: #ffffff;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow:
+          0 0 16px rgba(74, 222, 128, 0.6),
+          0 10px 20px -8px rgba(22, 163, 74, 0.55);
+        outline: none;
       }
       @media (max-width: 860px) {
         .login-split {
@@ -146,11 +181,12 @@
             </div>
             <div class="field">
               <label for="senha">Senha</label>
-              <input class="input" id="senha" name="senha" type="password" required />
+              <input class="input" id="senha" name="senha" type="password" maxlength="8" required />
             </div>
 
             <button class="btn btn-primary btn-block" type="submit">Entrar</button>
-            <p class="form-error" id="form-error"></p>
+            <p class="form-error" id="form-error" role="alert"></p>
+            <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
           </form>
 
           <p class="text-muted">

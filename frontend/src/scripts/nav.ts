@@ -38,6 +38,10 @@ export const NAV_BY_ROLE: Record<
       label: 'Canvas',
     },
     {
+      href: '../eventos/index.html',
+      label: 'Eventos',
+    },
+    {
       href: '../plano/index.html',
       label: 'Plano',
     },
@@ -65,6 +69,10 @@ export const NAV_BY_ROLE: Record<
       label: 'Relatórios',
     },
     {
+      href: '../eventos/index.html',
+      label: 'Eventos',
+    },
+    {
       href: '../plano/index.html',
       label: 'Plano',
     },
@@ -78,6 +86,10 @@ export const NAV_BY_ROLE: Record<
   {
     href: '../agenda/index.html',
     label: 'Agenda',
+  },
+  {
+    href: '../eventos/index.html',
+    label: 'Eventos',
   },
   {
     href: '../solicitacoes/index.html',
@@ -117,6 +129,10 @@ export const NAV_BY_ROLE: Record<
     {
       href: '../admin-relatorios/index.html',
       label: 'Relatórios',
+    },
+    {
+      href: '../eventos/index.html',
+      label: 'Eventos',
     },
     {
       href: '../admin-lgpd/index.html',

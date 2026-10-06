@@ -15,7 +15,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -33,6 +33,7 @@ import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 export class InvestorsController {
   constructor(private readonly investorsService: InvestorsService) {}
 
+  @ApiOperation({ summary: 'Cria o perfil do investidor logado' })
   @Post()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,6 +46,7 @@ export class InvestorsController {
     return plainToInstance(InvestorResponseDto, investidor);
   }
 
+  @ApiOperation({ summary: 'Lista/filtra investidores' })
   @Get()
   async findAll(
     @Query() query: InvestorSearchQueryDto,
@@ -56,6 +58,7 @@ export class InvestorsController {
     };
   }
 
+  @ApiOperation({ summary: 'Retorna o perfil do investidor logado' })
   @Get('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -65,6 +68,7 @@ export class InvestorsController {
     return plainToInstance(InvestorResponseDto, investidor);
   }
 
+  @ApiOperation({ summary: 'Busca um investidor pelo id' })
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -73,6 +77,7 @@ export class InvestorsController {
     return plainToInstance(InvestorResponseDto, investidor);
   }
 
+  @ApiOperation({ summary: 'Atualiza o perfil do investidor logado' })
   @Patch('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)

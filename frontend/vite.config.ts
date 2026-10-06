@@ -1,6 +1,6 @@
 // vite.config.ts
 
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'node:path';
 import fg from 'fast-glob';
 
@@ -14,7 +14,13 @@ const pageEntries = fg
     return acc;
   }, {});
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // API_PROXY_TARGET (em frontend/.env.local) escolhe qual backend o `npm run dev`
+  // usa: o local (padrão) ou o publicado, ex.: https://startmatch-api.onrender.com
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiTarget = env.API_PROXY_TARGET || 'http://localhost:3000';
+
+  return {
   root: '.',
 
   build: {
@@ -29,9 +35,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: apiTarget,
         changeOrigin: true,
       },
     },
   },
+};
 });

@@ -15,7 +15,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard } from '../../common/guards';
 import { RolesGuard } from '../../common/guards';
@@ -34,6 +34,7 @@ import { PaginatedResponseDto } from '../../common/dto/paginated-response.dto';
 export class StartupsController {
   constructor(private readonly startupsService: StartupsService) {}
 
+  @ApiOperation({ summary: 'Cria o perfil da startup logada' })
   @Post()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -46,6 +47,7 @@ export class StartupsController {
     return plainToInstance(StartupResponseDto, startup);
   }
 
+  @ApiOperation({ summary: 'Lista/filtra startups' })
   @Get()
   async findAll(
     @Query() query: StartupSearchQueryDto,
@@ -57,6 +59,7 @@ export class StartupsController {
     };
   }
 
+  @ApiOperation({ summary: 'Retorna o perfil da startup logada' })
   @Get('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -66,6 +69,7 @@ export class StartupsController {
     return plainToInstance(StartupResponseDto, startup);
   }
 
+  @ApiOperation({ summary: 'Busca uma startup pelo id' })
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -74,6 +78,7 @@ export class StartupsController {
     return plainToInstance(StartupResponseDto, startup);
   }
 
+  @ApiOperation({ summary: 'Atualiza o perfil da startup logada' })
   @Patch('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)

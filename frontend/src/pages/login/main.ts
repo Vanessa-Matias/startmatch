@@ -7,7 +7,12 @@
 //      chamando GET /startups/me). Se SIM -> vai direto pro dashboard. Se NÃO
 //      (backend responde 404) -> vai para a tela de cadastro daquele perfil
 //      específico (é o caso de alguém que criou a conta mas não terminou o cadastro).
-//   3. Se o login falhar (senha errada, etc.), mostra o erro em #form-error.
+//   3. Se o login der certo, mostra "Login efetuado com sucesso!" em #form-success
+//      por um instante antes de redirecionar.
+//   4. Se o login falhar, mostra o erro em #form-error: senha/e-mail errado ->
+//      "Senha ou e-mail incorretos, digite novamente."; e-mail sem cadastro ->
+//      "Você não possui cadastro. Efetue o seu cadastro para poder acessar a plataforma."
+//      (as mensagens vêm do backend, em auth.service.ts).
 //
 // (Também liga o fundo animado de "rede de pontos" do painel de marca — puramente
 // decorativo, ver scripts/particleNetwork.ts.)
@@ -41,10 +46,21 @@ const CADASTRO_PERFIL_PATH: Record<TipoUsuario, string> = {
 
 const form = document.getElementById('form-login') as HTMLFormElement;
 const errorEl = document.getElementById('form-error') as HTMLParagraphElement;
+const successEl = document.getElementById('form-success') as HTMLParagraphElement;
+
+// Tempo que a mensagem de sucesso fica visível antes de ir para a próxima tela.
+const REDIRECT_DELAY_MS = 1200;
+
+function redirectTo(path: string): void {
+  window.setTimeout(() => {
+    window.location.href = path;
+  }, REDIRECT_DELAY_MS);
+}
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   errorEl.textContent = '';
+  successEl.textContent = '';
 
   const formData = new FormData(form);
   const email = String(formData.get('email') ?? '');
@@ -52,10 +68,11 @@ form.addEventListener('submit', async (event) => {
 
   try {
     const usuario = await login(email, senha);
+    successEl.textContent = 'Login efetuado com sucesso!';
 
     // ADMIN NÃO PASSA PELO CADASTRO DE PERFIL
     if (usuario.tipo === 'admin') {
-      window.location.href = '../dashboard-admin/index.html';
+      redirectTo('../dashboard-admin/index.html');
       return;
     }
 
@@ -63,15 +80,16 @@ form.addEventListener('submit', async (event) => {
 
     try {
       await api.get(checkPath!);
-      window.location.href = dashboardPathForRole(usuario.tipo);
+      redirectTo(dashboardPathForRole(usuario.tipo));
     } catch (profileError) {
       if (profileError instanceof ApiError && profileError.status === 404) {
-        window.location.href = CADASTRO_PERFIL_PATH[usuario.tipo];
+        redirectTo(CADASTRO_PERFIL_PATH[usuario.tipo]);
       } else {
         throw profileError;
       }
     }
   } catch (error) {
+    successEl.textContent = '';
     errorEl.textContent =
       error instanceof ApiError
         ? error.message

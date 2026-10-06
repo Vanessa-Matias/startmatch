@@ -14,7 +14,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -30,6 +30,7 @@ import { MentorResponseDto } from './dto/mentor-response.dto';
 export class MentorsController {
   constructor(private readonly mentorsService: MentorsService) {}
 
+  @ApiOperation({ summary: 'Cria o perfil do mentor logado' })
   @Post()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,6 +43,7 @@ export class MentorsController {
     return plainToInstance(MentorResponseDto, mentor);
   }
 
+  @ApiOperation({ summary: 'Retorna o perfil do mentor logado' })
   @Get('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -54,12 +56,14 @@ export class MentorsController {
   // Lista pública de mentores (usada pela tela "Mentorias" da Startup, para
   // escolher com quem solicitar uma sessão). Sem guard: qualquer visitante
   // logado pode ver a vitrine de mentores, igual à busca de startups/investidores.
+  @ApiOperation({ summary: 'Lista os mentores' })
   @Get()
   async findAll(): Promise<MentorResponseDto[]> {
     const mentores = await this.mentorsService.findAll();
     return plainToInstance(MentorResponseDto, mentores);
   }
 
+  @ApiOperation({ summary: 'Busca um mentor pelo id' })
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -68,6 +72,7 @@ export class MentorsController {
     return plainToInstance(MentorResponseDto, mentor);
   }
 
+  @ApiOperation({ summary: 'Atualiza o perfil do mentor logado' })
   @Patch('me')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)

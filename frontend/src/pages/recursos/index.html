@@ -20,7 +20,35 @@
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
-    <style></style>
+    <style>
+      /* 3 colunas no desktop; "Privacidade e LGPD" fica na coluna do meio,
+         logo abaixo de "Dashboard personalizado". */
+      .recursos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+      .recursos-grid .card-lgpd {
+        grid-column: 2;
+      }
+      @media (max-width: 900px) {
+        .recursos-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .recursos-grid .card-lgpd {
+          grid-column: auto;
+        }
+      }
+      @media (max-width: 600px) {
+        .recursos-grid {
+          grid-template-columns: 1fr;
+        }
+        /* em coluna única, PWA vai para o fim para LGPD seguir o Dashboard */
+        .recursos-grid .card-pwa {
+          order: 1;
+        }
+      }
+    </style>
   </head>
   <body>
     <header class="navbar">
@@ -60,7 +88,7 @@
 
     <div class="container">
       <div class="spacer-xl"></div>
-      <div class="grid">
+      <div class="recursos-grid">
         <div class="card card-feature sm-reveal">
           <div class="icon-circle" style="background: #eff6ff">
             <svg
@@ -172,7 +200,7 @@
             relevantes.
           </p>
         </div>
-        <div class="card card-feature sm-reveal" style="animation-delay: 0.25s">
+        <div class="card card-feature card-pwa sm-reveal" style="animation-delay: 0.25s">
           <div class="icon-circle" style="background: #fef2f2">
             <svg
               width="24"
@@ -193,7 +221,7 @@
             Instale a plataforma como aplicativo no computador ou celular.
           </p>
         </div>
-        <div class="card card-feature sm-reveal" style="animation-delay: 0.3s">
+        <div class="card card-feature card-lgpd sm-reveal" style="animation-delay: 0.3s">
           <div class="icon-circle" style="background: #eff6ff">
             <svg
               width="24"

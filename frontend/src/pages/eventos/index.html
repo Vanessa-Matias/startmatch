@@ -1,0 +1,327 @@
+<!--
+  Tela: Eventos e Editais
+  ==========================
+  Página única para os três perfis (o main.ts mostra só o que cada um pode usar):
+    - ADMIN: cria, edita e remove eventos; vê as startups inscritas.
+    - STARTUP: vê os eventos e se inscreve com um mini-pitch.
+    - INVESTIDOR: vê os eventos e as startups inscritas.
+-->
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>StartMatch — Eventos e Editais</title>
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+
+      /* respiro entre a barra de menu e o título da página */
+      .eventos-header {
+        padding-top: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .eventos-header h1 {
+        margin-bottom: 4px;
+      }
+
+      .demo-banner {
+        padding: var(--spacing-sm) var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        border-left: 4px solid var(--color-accent);
+        background: var(--color-surface);
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+      }
+
+      .evento-card {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: var(--spacing-lg);
+        align-items: start;
+      }
+
+      .evento-card.sem-imagem {
+        grid-template-columns: 1fr;
+      }
+
+      .evento-imagem {
+        width: 100%;
+        border-radius: var(--radius);
+        display: block;
+      }
+
+      @media (max-width: 700px) {
+        .evento-card {
+          grid-template-columns: 1fr;
+        }
+
+        .evento-imagem {
+          max-width: 320px;
+        }
+      }
+
+      .eventos-lista {
+        display: grid;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .evento-card h2 {
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .evento-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm) var(--spacing-lg);
+        margin: var(--spacing-sm) 0;
+        color: var(--color-text-muted);
+        font-size: 0.92rem;
+      }
+
+      .evento-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+      }
+
+      .evento-painel {
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        border-top: 1px solid var(--color-border);
+      }
+
+      .evento-painel[hidden] {
+        display: none;
+      }
+
+      .inscrito-item {
+        padding: var(--spacing-sm) 0;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .inscrito-item:last-child {
+        border-bottom: 0;
+      }
+
+      .inscrito-item p {
+        margin: 2px 0 0;
+      }
+
+      /* ---------- Inscrição: mini-pitch em texto + vídeo opcional ---------- */
+      .inscricao-form {
+        display: grid;
+        gap: var(--spacing-md);
+      }
+
+      .video-drop {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 180px;
+        padding: var(--spacing-lg);
+        border: 2px dashed #bfdbfe;
+        border-radius: var(--radius-lg);
+        background: #f8fbff;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+
+      .video-drop:hover,
+      .video-drop.arrastando,
+      .video-drop:focus-within {
+        border-color: var(--color-accent);
+        background: #eff6ff;
+      }
+
+      .video-drop.tem-video {
+        border-style: solid;
+        border-color: #4ade80;
+        background: #f0fdf4;
+      }
+
+      .video-drop input[type='file'] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .video-drop-icone {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dbeafe;
+        color: var(--color-accent);
+      }
+
+      .video-drop.tem-video .video-drop-icone {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      .video-drop strong {
+        font-size: 0.98rem;
+      }
+
+      .video-drop small {
+        color: var(--color-text-muted);
+      }
+
+      .inscricao-acoes {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-sm);
+      }
+
+      @media (max-width: 600px) {
+        .inscricao-acoes .btn {
+          flex: 1;
+        }
+      }
+
+      .eventos-form {
+        display: grid;
+        gap: var(--spacing-xs);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .eventos-form label {
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+
+      .eventos-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 var(--spacing-md);
+      }
+
+      @media (max-width: 700px) {
+        .eventos-form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <header class="eventos-header">
+        <h1>Eventos e Editais</h1>
+
+        <p class="text-muted" id="eventos-subtitulo">
+          Oportunidades para as startups se apresentarem ao ecossistema.
+        </p>
+      </header>
+
+      <!-- Formulário de cadastro/edição (só admin) -->
+      <section class="card eventos-form" id="evento-form-card" hidden>
+        <h2 class="card-title" id="evento-form-titulo">Cadastrar novo evento (simulação)</h2>
+
+        <form id="evento-form" novalidate>
+          <div class="field">
+            <label for="ev-titulo">Título</label>
+            <input class="input" id="ev-titulo" name="titulo" required />
+          </div>
+
+          <div class="field">
+            <label for="ev-descricao">Descrição</label>
+            <textarea
+              class="textarea"
+              id="ev-descricao"
+              name="descricao"
+              required
+            ></textarea>
+          </div>
+
+          <div class="eventos-form-grid">
+            <div class="field">
+              <label for="ev-data">Data e hora do evento</label>
+              <input
+                class="input"
+                id="ev-data"
+                name="dataEvento"
+                type="datetime-local"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="ev-local">Local</label>
+              <input class="input" id="ev-local" name="local" required />
+            </div>
+
+            <div class="field">
+              <label for="ev-link">Link do edital/site (opcional)</label>
+              <input
+                class="input"
+                id="ev-link"
+                name="linkExterno"
+                type="url"
+                placeholder="https://"
+              />
+            </div>
+          </div>
+
+          <p class="form-error" id="evento-form-error" role="alert"></p>
+          <p class="form-success" id="evento-form-success" role="status"></p>
+
+          <div class="evento-acoes">
+            <button class="btn btn-primary" type="submit" id="evento-salvar">
+              Publicar evento
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <p class="demo-banner">
+        <strong>Modo demonstração:</strong> esta tela é uma simulação (plus do
+        projeto). Os eventos são reais, mas as inscrições e os eventos
+        cadastrados aqui ficam salvos apenas neste navegador, não no banco de
+        dados.
+      </p>
+
+      <p class="form-error" id="eventos-error" role="alert"></p>
+      <p class="form-success" id="eventos-success" role="status"></p>
+
+      <section class="eventos-lista" id="eventos-lista" aria-live="polite">
+        <div class="empty-state">Carregando eventos...</div>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

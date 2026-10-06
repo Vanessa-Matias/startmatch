@@ -32,13 +32,21 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('StartMatch API')
     .setDescription(
-      'API REST do StartMatch — matchmaking entre startups, investidores e mentores.',
+      [
+        'API REST do StartMatch — matchmaking entre startups, investidores e mentores.',
+        '',
+        'Como usar: 1) faça POST /api/auth/login (ou /api/auth/register) para obter o accessToken; ' +
+          '2) clique em "Authorize" e cole o token; 3) use "Try it out" em qualquer endpoint.',
+      ].join('\n'),
     )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: 'StartMatch API — Documentação',
+    swaggerOptions: { persistAuthorization: true, docExpansion: 'list' },
+  });
 
   await app.listen(appConfig.port);
 }

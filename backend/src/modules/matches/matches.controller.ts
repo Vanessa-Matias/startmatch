@@ -11,7 +11,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -28,6 +28,7 @@ import { SuggestionResponseDto } from './dto/suggestion-response.dto';
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
+  @ApiOperation({ summary: 'Lista os matches do usuário logado' })
   @Get()
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async findAll(@CurrentUser() user: RequestUser): Promise<MatchResponseDto[]> {
@@ -38,6 +39,7 @@ export class MatchesController {
     return plainToInstance(MatchResponseDto, matches);
   }
 
+  @ApiOperation({ summary: 'Sugere perfis compatíveis (matchmaking)' })
   @Get('suggestions')
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async suggestions(
@@ -47,6 +49,7 @@ export class MatchesController {
     return plainToInstance(SuggestionResponseDto, sugestoes);
   }
 
+  @ApiOperation({ summary: 'Busca um match pelo id' })
   @Get(':id')
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async findOne(

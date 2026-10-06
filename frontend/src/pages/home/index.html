@@ -128,17 +128,21 @@
 
         border-radius: 100px;
 
-        padding: 8px 16px;
+        padding: 6px 13px;
 
         color: #dbeafe;
 
-        font-size: 13px;
+        font-size: 11px;
 
         font-weight: 700;
 
         letter-spacing: 0.6px;
 
         margin-bottom: var(--spacing-md);
+
+        /* sobe o selo, afastando-o do título */
+        position: relative;
+        top: -24px;
 
         box-shadow:
           0 0 0 1px rgba(0, 0, 0, 0.2),
@@ -186,7 +190,7 @@
          ========================================================= */
 
       .hero p.lead {
-        color: #a9b4cc;
+        color: #e6ecf7;
 
         font-size: 17px;
 
@@ -211,18 +215,35 @@
         margin-top: var(--spacing-lg);
       }
 
+      /* "Já tenho conta": verde sólido (mesma cor do destaque do título),
+         com brilho neon; escurece ao passar o cursor. */
       .hero .btn-outline {
-        border-color: rgba(255, 255, 255, 0.28);
+        background: #22c55e;
+
+        border-color: #4ade80;
 
         color: #ffffff;
+
+        box-shadow:
+          0 0 10px rgba(74, 222, 128, 0.4),
+          inset 0 0 6px rgba(255, 255, 255, 0.12);
       }
 
-      .hero .btn-outline:hover:not(:disabled) {
-        border-color: #ffffff;
+      .hero .btn-outline:hover:not(:disabled),
+      .hero .btn-outline:focus-visible {
+        background: #16a34a;
+
+        border-color: #86efac;
 
         color: #ffffff;
 
-        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-1px);
+
+        box-shadow:
+          0 0 16px rgba(74, 222, 128, 0.6),
+          0 10px 20px -8px rgba(22, 163, 74, 0.55);
+
+        outline: none;
       }
 
       /* =========================================================
@@ -479,7 +500,9 @@
         .hero-eyebrow {
           font-size: 10px;
 
-          padding: 7px 12px;
+          padding: 6px 11px;
+
+          top: -12px;
 
           letter-spacing: 0.4px;
         }
@@ -993,6 +1016,16 @@
           ·
 
           <a href="../planos/index.html"> Planos </a>
+
+          ·
+
+          <a
+            href="https://startmatch-api.onrender.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentação da API
+          </a>
         </p>
 
         <p>

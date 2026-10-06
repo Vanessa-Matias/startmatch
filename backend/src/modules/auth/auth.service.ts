@@ -10,7 +10,11 @@
 // modules/audit) — cadastro e login (sucesso e falha) são, junto com o
 // consentimento LGPD e o cadastro de mentor, os eventos que alimentam a tela
 // admin-auditoria.
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
@@ -85,12 +89,18 @@ export class AuthService {
   async validateCredentials(email: string, senha: string): Promise<Usuario> {
     const usuario = await this.usersService.findByEmail(email);
     if (!usuario) {
-      throw new UnauthorizedException('E-mail ou senha inválidos.');
+      // E-mail sem cadastro: 404 com mensagem própria, para o frontend orientar
+      // a pessoa a se cadastrar (requisito de QA).
+      throw new NotFoundException(
+        'Você não possui cadastro. Efetue o seu cadastro para poder acessar a plataforma.',
+      );
     }
 
     const senhaValida = await bcrypt.compare(senha, usuario.senhaHash);
     if (!senhaValida) {
-      throw new UnauthorizedException('E-mail ou senha inválidos.');
+      throw new UnauthorizedException(
+        'Senha ou e-mail incorretos, digite novamente.',
+      );
     }
 
     return usuario;

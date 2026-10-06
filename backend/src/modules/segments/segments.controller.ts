@@ -5,7 +5,7 @@
 // pública e somente leitura — os segmentos são cadastrados via seed
 // (database/seeds/segmento.seed.ts), não por essa API.
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { SegmentsService } from './segments.service';
 import { SegmentoResponseDto } from './dto/segmento-response.dto';
@@ -15,6 +15,7 @@ import { SegmentoResponseDto } from './dto/segmento-response.dto';
 export class SegmentsController {
   constructor(private readonly segmentsService: SegmentsService) {}
 
+  @ApiOperation({ summary: 'Lista os segmentos de mercado disponíveis' })
   @Get()
   async findAll(): Promise<SegmentoResponseDto[]> {
     const segmentos = await this.segmentsService.findAll();

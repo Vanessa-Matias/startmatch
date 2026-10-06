@@ -7,7 +7,7 @@
 // GET /admin/lgpd-summary (modules/admin), não aqui — este controller só
 // cuida do consentimento do próprio usuário logado.
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard } from '../../common/guards';
 import { CurrentUser } from '../../common/decorators';
@@ -23,6 +23,7 @@ import { ConsentResponseDto } from './dto/consent-response.dto';
 export class LgpdController {
   constructor(private readonly lgpdService: LgpdService) {}
 
+  @ApiOperation({ summary: 'Registra o consentimento LGPD do usuário' })
   @Post('consent')
   async register(
     @CurrentUser() user: RequestUser,
@@ -32,6 +33,7 @@ export class LgpdController {
     return plainToInstance(ConsentResponseDto, consentimento);
   }
 
+  @ApiOperation({ summary: 'Lista os consentimentos LGPD do usuário logado' })
   @Get('consent')
   async findMine(
     @CurrentUser() user: RequestUser,

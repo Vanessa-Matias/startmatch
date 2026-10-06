@@ -5,7 +5,7 @@
 // (criação de conta) mora em auth.controller.ts — aqui é só leitura/edição de
 // quem já existe.
 import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { CurrentUser, Roles } from '../../common/decorators';
@@ -24,6 +24,7 @@ export class UsersController {
 
   // Listagem completa de usuários — só para o painel administrativo
   // (Etapa 7 do fluxo de telas: "Gestão de usuários").
+  @ApiOperation({ summary: 'Lista todos os usuários (admin)' })
   @Get()
   @UseGuards(RolesGuard)
   @Roles(TipoUsuario.ADMIN)
@@ -32,12 +33,14 @@ export class UsersController {
     return plainToInstance(UserResponseDto, usuarios);
   }
 
+  @ApiOperation({ summary: 'Retorna a conta do usuário logado' })
   @Get('me')
   async me(@CurrentUser() user: RequestUser): Promise<UserResponseDto> {
     const usuario = await this.usersService.findById(user.id);
     return plainToInstance(UserResponseDto, usuario);
   }
 
+  @ApiOperation({ summary: 'Atualiza a conta do usuário logado' })
   @Patch('me')
   async updateMe(
     @CurrentUser() user: RequestUser,

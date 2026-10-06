@@ -5,7 +5,7 @@
 // listar todas — pensado para rodar com usuários reais na fase de validação
 // (2ª entrega).
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -22,6 +22,7 @@ import { BetaEvaluationResponseDto } from './dto/beta-evaluation-response.dto';
 export class BetaEvaluationController {
   constructor(private readonly betaEvaluationService: BetaEvaluationService) {}
 
+  @ApiOperation({ summary: 'Envia uma avaliação da versão beta' })
   @Post()
   async create(
     @CurrentUser() user: RequestUser,
@@ -31,6 +32,7 @@ export class BetaEvaluationController {
     return plainToInstance(BetaEvaluationResponseDto, avaliacao);
   }
 
+  @ApiOperation({ summary: 'Lista todas as avaliações beta (admin)' })
   @Get()
   @UseGuards(RolesGuard)
   @Roles(TipoUsuario.ADMIN)

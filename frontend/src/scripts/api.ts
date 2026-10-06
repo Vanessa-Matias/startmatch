@@ -71,7 +71,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     },
   });
 
-  if (res.status === 401) {
+  // Nas rotas de autenticação (/auth/login, /auth/register) o 401 significa
+  // "senha ou e-mail incorretos", não "sessão expirada" — então deixamos passar
+  // para o tratamento de erro abaixo, que exibe a mensagem enviada pelo backend.
+  if (res.status === 401 && !path.startsWith('/auth/')) {
     handleUnauthorized();
     throw new ApiError(401, 'Sessão expirada. Faça login novamente.');
   }

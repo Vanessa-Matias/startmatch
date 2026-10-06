@@ -12,7 +12,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -30,6 +30,7 @@ import { MessageResponseDto } from './dto/message-response.dto';
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
+  @ApiOperation({ summary: 'Lista as conversas do usuário logado' })
   @Get()
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async findAll(
@@ -39,6 +40,7 @@ export class ConversationsController {
     return plainToInstance(ConversationResponseDto, conversas);
   }
 
+  @ApiOperation({ summary: 'Lista as mensagens de uma conversa' })
   @Get(':id/messages')
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async findMessages(
@@ -49,6 +51,7 @@ export class ConversationsController {
     return plainToInstance(MessageResponseDto, mensagens);
   }
 
+  @ApiOperation({ summary: 'Envia uma mensagem em uma conversa' })
   @Post(':id/messages')
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async postMessage(

@@ -45,12 +45,10 @@ import {
 // ============================================================================
 // LIGA/DESLIGA O MODO DEMONSTRAÇÃO AQUI
 // ============================================================================
-// true  = nunca chama o backend de verdade — tudo vem de mockData.ts (padrão
-//         atual, enquanto o banco de dados ainda não existe).
-// false = volta a chamar a API real (localhost:3000, ou VITE_API_URL) — troque
-//         para false quando o banco de dados estiver pronto e você quiser
-//         testar com dados reais.
-export const MOCK_MODE = (import.meta.env.VITE_MOCK_MODE ?? 'true') !== 'false';
+// Por padrão o site fala com a API REAL (só aceita e-mails cadastrados).
+// O modo demonstração (aceita qualquer e-mail/senha, dados de mentira) só liga
+// se existir VITE_MOCK_MODE=true no .env do frontend — use só para estilizar telas.
+export const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
 
 // -----------------------------------------------------------------------------
 // PERFIS DO MODO DEMONSTRAÇÃO

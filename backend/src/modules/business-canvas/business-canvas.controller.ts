@@ -4,7 +4,7 @@
 // "me" — é 1:1 com o perfil de startup do usuário logado, não existe
 // listagem nem leitura por terceiros.
 import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
@@ -22,6 +22,7 @@ import { BusinessCanvasResponseDto } from './dto/business-canvas-response.dto';
 export class BusinessCanvasController {
   constructor(private readonly businessCanvasService: BusinessCanvasService) {}
 
+  @ApiOperation({ summary: 'Busca o Business Model Canvas da startup logada' })
   @Get('me')
   async me(
     @CurrentUser() user: RequestUser,
@@ -30,6 +31,9 @@ export class BusinessCanvasController {
     return plainToInstance(BusinessCanvasResponseDto, plano);
   }
 
+  @ApiOperation({
+    summary: 'Cria ou atualiza o Business Model Canvas da startup logada',
+  })
   @Put('me')
   async upsert(
     @CurrentUser() user: RequestUser,
