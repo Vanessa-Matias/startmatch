@@ -14,11 +14,13 @@
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
+import { renderNav } from '../../scripts/nav';
 import { MOCK_MODE } from '../../scripts/mock';
 import { populateUfSelect } from '../../scripts/ufs';
 import type { Segmento, Startup } from '../../scripts/types';
 
-requireAuth(['startup']);
+const usuario = requireAuth(['startup']);
+renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
 const form = document.getElementById('form-startup') as HTMLFormElement;
 const errorEl = document.getElementById('form-error') as HTMLParagraphElement;

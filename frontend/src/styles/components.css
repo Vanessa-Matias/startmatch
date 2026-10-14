@@ -322,11 +322,11 @@ label {
    ========================================================= */
 
 .navbar {
-  background: linear-gradient(
-    180deg,
-    #0f2148 0%,
-    #152a54 100%
-  );
+  /* menu fixo no topo durante a rolagem, em todas as telas */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--navbar-gradient);
   color: #fff;
   padding: 14px 0;
   margin-bottom: var(--spacing-lg);
@@ -436,14 +436,9 @@ label {
       rgba(255, 255, 255, 0.08) 1.2px,
       transparent 1.2px
     ),
-    linear-gradient(
-      180deg,
-      #0f2148 0%,
-      #152a54 100%
-    );
-  background-size:
-    22px 22px,
-    100% 100%;
+    var(--banner-gradient);
+  background-color: var(--banner-dark);
+  background-size: 22px 22px, 100% 100%, 100% 100%, 100% 100%;
 }
 
 .page-hero h1 {
@@ -469,27 +464,53 @@ label {
    SECTION EYEBROW
    ========================================================= */
 
+/* Selo de seção, no formato do "Dúvidas frequentes": pílula com ponto,
+   fundo tingido, borda e brilho suave. .dark é a versão para fundos
+   escuros (mesmo selo do hero da Home). */
 .section-eyebrow {
+  --eyebrow-rgb: 37, 99, 235;
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
   width: fit-content;
-  font-size: 12px;
+  padding: 6px 13px;
+  border-radius: 100px;
+  background: rgba(var(--eyebrow-rgb), 0.14);
+  border: 1px solid rgba(var(--eyebrow-rgb), 0.55);
+  color: #1e40af;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.6px;
-  padding: 6px 12px;
-  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(var(--eyebrow-rgb), 0.18);
   margin-bottom: var(--spacing-sm);
 }
-
-.section-eyebrow.blue {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1d4ed8;
+.section-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgb(var(--eyebrow-rgb));
 }
-
+.section-eyebrow.blue {
+  --eyebrow-rgb: 37, 99, 235;
+  color: #1e40af;
+}
 .section-eyebrow.green {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #047857;
+  --eyebrow-rgb: 22, 163, 74;
+  color: #166534;
+}
+.section-eyebrow.dark {
+  background: rgba(37, 99, 235, 0.35);
+  border-color: rgba(96, 165, 250, 0.8);
+  color: #dbeafe;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 6px 18px rgba(37, 99, 235, 0.35);
+}
+.section-eyebrow.dark::before {
+  background: #60a5fa;
 }
 
 /* =========================================================
@@ -502,7 +523,7 @@ label {
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: 50%;
   font-family: var(--font-family-display);
   font-weight: 700;
   font-size: 13px;
@@ -516,8 +537,11 @@ label {
    ========================================================= */
 
 .site-footer {
-  background: #0f2148;
-  padding: var(--spacing-lg) 0;
+  background: var(--banner-gradient);
+  background-color: var(--banner-dark);
+  /* barra fina com os cantos de cima arredondados */
+  border-radius: clamp(20px, 3vw, 36px) clamp(20px, 3vw, 36px) 0 0;
+  padding: var(--spacing-md) 0;
   text-align: center;
 }
 
@@ -529,6 +553,42 @@ label {
   color: #5c6a94;
   font-size: 13px;
 }
+/* linha de copyright: texto branco e o nome de cada autora num badge
+   branco neon suave (link para o LinkedIn) */
+.site-footer p.copy-rights {
+  color: #ffffff;
+  line-height: 2.2;
+}
+.site-footer .copy-rights a {
+  display: inline-block;
+  padding: 2px 12px;
+  margin: 0 2px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.6;
+  text-decoration: none;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.18),
+    inset 0 0 6px rgba(255, 255, 255, 0.08);
+  transition:
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+.site-footer .copy-rights a:hover,
+.site-footer .copy-rights a:focus-visible {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 14px rgba(255, 255, 255, 0.32),
+    inset 0 0 8px rgba(255, 255, 255, 0.12);
+  outline: none;
+}
 
 /* =========================================================
    NAVBAR PÚBLICA
@@ -539,11 +599,7 @@ label {
   z-index: 20;
   margin-bottom: 0;
   padding: 14px 0;
-  background: linear-gradient(
-    180deg,
-    #0f2148 0%,
-    #152a54 100%
-  );
+  background: var(--navbar-gradient);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 18px rgba(6, 14, 36, 0.12);
 }
@@ -1778,4 +1834,889 @@ label {
     padding-left: 5px;
     padding-right: 5px;
   }
+}
+/* ---------- Chatbot Stella (como-funciona) ---------- */
+.chat-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: 560px;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-primary);
+  color: #fff;
+}
+.chat-avatar {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
+  padding: 3px;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.45);
+}
+.chat-header strong {
+  display: block;
+  font-size: 1.05rem;
+}
+.chat-header span {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+.chat-msg {
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.chat-msg--bot {
+  align-self: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: 4px;
+}
+.chat-msg--user {
+  align-self: flex-end;
+  background: var(--color-accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.chat-msg--typing {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.chat-form {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font: inherit;
+}
+.chat-form input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+
+/* =========================================================
+   BOTÕES MODERNOS (substituem os links "Ver ... →")
+   ========================================================= */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 10px 22px -10px rgba(47, 111, 235, 0.65);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px -10px rgba(47, 111, 235, 0.75);
+  filter: brightness(1.06);
+}
+.btn-pill:active {
+  transform: translateY(0);
+}
+.btn-pill:focus-visible {
+  outline: 3px solid rgba(47, 111, 235, 0.35);
+  outline-offset: 3px;
+}
+.btn-pill-arrow {
+  flex: none;
+  padding: 4px;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease;
+}
+.btn-pill:hover .btn-pill-arrow {
+  transform: translateX(4px);
+}
+/* botão "Voltar": a seta (para a esquerda) vem antes do texto */
+.btn-pill:hover .btn-pill-arrow--back {
+  transform: translateX(-4px);
+}
+.btn-pill--ghost {
+  background: transparent;
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: none;
+}
+.btn-pill--ghost .btn-pill-arrow {
+  background: rgba(47, 111, 235, 0.12);
+}
+.btn-pill--ghost:hover {
+  background: rgba(47, 111, 235, 0.08);
+  box-shadow: none;
+}
+/* verde do hero da Home ("Já tenho conta"), com brilho neon */
+.btn-pill--green {
+  background: #22c55e;
+  border-color: #4ade80;
+  color: #fff;
+  box-shadow:
+    0 0 10px rgba(74, 222, 128, 0.4),
+    inset 0 0 6px rgba(255, 255, 255, 0.12);
+}
+.btn-pill--green:hover {
+  background: #16a34a;
+  border-color: #86efac;
+  box-shadow:
+    0 0 16px rgba(74, 222, 128, 0.6),
+    0 10px 20px -8px rgba(22, 163, 74, 0.55);
+}
+.btn-pill--green:focus-visible {
+  outline-color: rgba(34, 197, 94, 0.4);
+}
+.btn-pill--sm {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  gap: 6px;
+}
+
+/* =========================================================
+   BADGES NEON (nome do plano/serviço) + preço
+   ========================================================= */
+.plan-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+.plan-price {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+/* Badge neon no estilo do selo do hero da home: vidro escuro tingido,
+   borda acesa e brilho suave. Cada variante define a cor em RGB. */
+.badge-neon {
+  --neon-rgb: 37, 99, 235;
+  --neon-text: #dbeafe;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background:
+    linear-gradient(rgba(var(--neon-rgb), 0.35), rgba(var(--neon-rgb), 0.35)),
+    #0b1220;
+  border: 1px solid rgba(var(--neon-rgb), 0.85);
+  color: var(--neon-text);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 8px rgba(var(--neon-rgb), 0.7);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 6px 18px rgba(var(--neon-rgb), 0.4);
+}
+.badge-neon--green { --neon-rgb: 34, 197, 94; --neon-text: #dcfce7; }
+.badge-neon--sky { --neon-rgb: 56, 189, 248; --neon-text: #e0f2fe; }
+.badge-neon--blue { --neon-rgb: 37, 99, 235; --neon-text: #dbeafe; }
+
+/* Badge do plano no formato dos selos de seção ("Pacotes", "Como
+   funciona"): pílula com ponto, fundo tingido, borda e brilho suave. */
+.badge-plan {
+  --plan-rgb: 100, 116, 139;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(var(--plan-rgb), 0.14);
+  border: 1px solid rgba(var(--plan-rgb), 0.55);
+  box-shadow: 0 6px 18px rgba(var(--plan-rgb), 0.18);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+.badge-plan::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgb(var(--plan-rgb));
+}
+.badge-plan--gray {
+  --plan-rgb: 100, 116, 139;
+  color: #334155;
+}
+.badge-plan--blue {
+  --plan-rgb: 37, 99, 235;
+  color: #1e40af;
+}
+.badge-plan--green {
+  --plan-rgb: 22, 163, 74;
+  color: #166534;
+}
+
+/* =========================================================
+   MARQUEE (faixa de texto em carrossel)
+   ========================================================= */
+
+/* Faixa fina em carrossel acima do banner: a frase percorre a tela
+   em loop contínuo. O conteúdo é duplicado (2 grupos idênticos) e a
+   animação desloca -50%, então o fim emenda no começo sem salto. */
+.marquee {
+  overflow: hidden;
+  background: linear-gradient(90deg, #0f2148, #16305f, #0f2148);
+  border-top: 1px solid rgba(96, 165, 250, 0.35);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.35);
+  padding: 10px 0;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 45s linear infinite;
+}
+.marquee-group {
+  display: flex;
+  flex-shrink: 0;
+}
+.marquee-group span {
+  font-family: var(--font-family-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #dbeafe;
+  padding: 0 28px;
+}
+.marquee-group span::after {
+  content: '•';
+  margin-left: 56px;
+  color: #4ade80;
+}
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+@media (max-width: 720px) {
+  .marquee-group span {
+    font-size: 0.75rem;
+    padding: 0 18px;
+  }
+  .marquee-group span::after {
+    margin-left: 36px;
+  }
+}
+
+/* =========================================================
+   LINK COM FORMATO DE BOTÃO
+   Links de texto do conteúdo (fora do menu e do rodapé) viram
+   um botão pequeno em pílula. --green usa o verde do hero.
+   ========================================================= */
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-decoration: none;
+  vertical-align: middle;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+.btn-link:hover,
+.btn-link:focus-visible {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.btn-link--green {
+  background: #22c55e;
+  border-color: #4ade80;
+  color: #ffffff;
+  box-shadow:
+    0 0 10px rgba(74, 222, 128, 0.4),
+    inset 0 0 6px rgba(255, 255, 255, 0.12);
+}
+.btn-link--green:hover,
+.btn-link--green:focus-visible {
+  background: #16a34a;
+  border-color: #86efac;
+  color: #ffffff;
+  box-shadow:
+    0 0 16px rgba(74, 222, 128, 0.6),
+    0 10px 20px -8px rgba(22, 163, 74, 0.55);
+  outline: none;
+}
+
+/* =========================================================
+   CAMPO DE SENHA COM "OLHINHO" (scripts/passwordToggle.ts)
+   ========================================================= */
+
+.password-field {
+  position: relative;
+}
+.password-field .input {
+  padding-right: 44px;
+}
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  background: rgba(47, 111, 235, 0.1);
+  color: var(--color-accent);
+  outline: none;
+}
+
+/* =========================================================
+   PAGAMENTO (cartão / PIX) — scripts/payment.ts
+   ========================================================= */
+
+.payment-card {
+  margin-top: var(--spacing-xl);
+  max-width: 720px;
+}
+
+.payment-methods {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: var(--spacing-md);
+
+  margin: var(--spacing-md) 0;
+}
+
+.payment-method {
+  border: 1px solid var(--color-border);
+
+  border-radius: 10px;
+
+  padding: var(--spacing-md);
+
+  background: #fff;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.payment-method:hover {
+  border-color: var(--color-primary);
+}
+
+.payment-method.active {
+  border-color: var(--color-primary);
+
+  box-shadow: 0 0 0 2px rgba(47, 111, 235, 0.12);
+}
+
+.payment-method-title {
+  font-weight: 700;
+
+  margin-bottom: var(--spacing-xs);
+}
+
+.payment-form {
+  margin-top: var(--spacing-lg);
+}
+
+.payment-form .field {
+  margin-bottom: var(--spacing-md);
+}
+
+.payment-form-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: var(--spacing-md);
+}
+
+.pix-box {
+  padding: var(--spacing-lg);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  margin-top: var(--spacing-md);
+}
+
+.pix-code {
+  margin-top: var(--spacing-md);
+
+  padding: var(--spacing-md);
+
+  border-radius: 8px;
+
+  background: #fff;
+
+  border: 1px dashed var(--color-border);
+
+  word-break: break-all;
+
+  font-size: 0.85rem;
+}
+
+.payment-success {
+  margin-top: var(--spacing-md);
+
+  padding: var(--spacing-md);
+
+  border-radius: 8px;
+
+  background: #ecfdf5;
+
+  color: #166534;
+
+  border: 1px solid #bbf7d0;
+}
+
+/*
+ * Estado verde do botão após
+ * confirmação do pagamento.
+ */
+.btn-payment-success {
+  background: #16a34a !important;
+
+  border-color: #16a34a !important;
+
+  color: #ffffff !important;
+}
+
+@media (max-width: 600px) {
+  .payment-methods,
+  .payment-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* área de pagamento centralizada abaixo dos cards */
+.payment-card {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* cards de plano/pacote centralizados (telas logadas) */
+.plan-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
+  justify-content: center;
+}
+.plan-grid .plan-card {
+  display: flex;
+  flex-direction: column;
+}
+.plan-grid .plan-actions {
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+}
+
+/* =========================================================
+   MENU HAMBÚRGUER DAS TELAS LOGADAS (scripts/nav.ts)
+   ========================================================= */
+
+/* o painel do menu precisa poder "vazar" para fora da barra */
+.navbar:has(nav.nav--hamburger) {
+  overflow: visible;
+}
+.navbar:has(nav.nav--hamburger) .container {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+.navbar nav.nav--hamburger {
+  position: relative;
+  width: auto;
+  flex-wrap: nowrap;
+}
+.nav-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.nav-toggle:hover,
+.nav-toggle:focus-visible,
+.nav-toggle[aria-expanded='true'] {
+  background: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.4);
+  outline: none;
+}
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ffffff;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+/* vira um "X" quando aberto */
+.nav-toggle[aria-expanded='true'] span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle[aria-expanded='true'] span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded='true'] span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 200;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 10px;
+  background: linear-gradient(160deg, #031035 0%, #06184a 100%);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.7);
+}
+.nav-menu[hidden] {
+  display: none;
+}
+.navbar .nav-menu a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+.navbar .nav-menu a[aria-current='page'] {
+  opacity: 1;
+  background: rgba(96, 165, 250, 0.18);
+  border-color: rgba(96, 165, 250, 0.45);
+}
+.navbar .nav-menu .nav-logout {
+  margin-top: 6px;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  .navbar:has(nav.nav--hamburger) > .container > a:first-child {
+    width: 150px;
+    height: 48px;
+    flex: 0 0 150px;
+    background-size: 180px 180px;
+  }
+  .nav-menu {
+    min-width: min(280px, calc(100vw - 24px));
+  }
+}
+
+/* Badge pequeno no formato dos selos de seção ("Como funciona"):
+   pílula com ponto, fundo tingido e brilho suave. */
+.badge-eyebrow {
+  --eyebrow-rgb: 37, 99, 235;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(var(--eyebrow-rgb), 0.12);
+  border: 1px solid rgba(var(--eyebrow-rgb), 0.5);
+  color: #1e40af;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 12px rgba(var(--eyebrow-rgb), 0.16);
+}
+.badge-eyebrow::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgb(var(--eyebrow-rgb));
+}
+.badge-eyebrow--green {
+  --eyebrow-rgb: 22, 163, 74;
+  color: #166534;
+}
+.badge-eyebrow--sky {
+  --eyebrow-rgb: 14, 165, 233;
+  color: #075985;
+}
+
+/* Selo de verificado (estilo Instagram): círculo azul "ondulado" com check */
+.selo-verificado {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: -3px;
+  margin-left: 4px;
+}
+
+/* =========================================================
+   CARDS DE INDICADORES (KPI) — mesmo visual do dashboard do
+   investidor: ícone, rótulo pequeno em cima e valor moderado.
+   Uso: <section class="kpi-grid"> com <div class="card kpi-card">
+   ========================================================= */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  min-width: 0;
+}
+.kpi-icon {
+  --kpi-rgb: 37, 99, 235;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(var(--kpi-rgb), 0.1);
+  color: rgb(var(--kpi-rgb));
+}
+.kpi-icon--green { --kpi-rgb: 22, 163, 74; }
+.kpi-icon--sky { --kpi-rgb: 14, 165, 233; }
+.kpi-icon--violet { --kpi-rgb: 124, 58, 237; }
+.kpi-icon--amber { --kpi-rgb: 217, 119, 6; }
+.kpi-body {
+  min-width: 0;
+}
+.kpi-label {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+.kpi-value {
+  font-family: var(--font-family-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+/* Cabeçalho padrão das telas logadas: selo + título + frase */
+.page-head {
+  margin-bottom: var(--spacing-lg);
+}
+.page-head h1 {
+  margin: 0 0 6px;
+}
+.page-head p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* Variantes extras do badge pequeno (formato dos selos de seção) */
+.badge-eyebrow--gray {
+  --eyebrow-rgb: 100, 116, 139;
+  color: #334155;
+}
+.badge-eyebrow--amber {
+  --eyebrow-rgb: 217, 119, 6;
+  color: #92400e;
+}
+.badge-eyebrow--red {
+  --eyebrow-rgb: 220, 38, 38;
+  color: #991b1b;
+}
+.badge-eyebrow--violet {
+  --eyebrow-rgb: 124, 58, 237;
+  color: #5b21b6;
+}
+
+/* Lista de sessões/solicitações em cards com cabeçalho e detalhes */
+.item-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+.item-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+.item-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.item-card-title h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.item-card-title p {
+  margin: 2px 0 0;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+.item-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.item-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.item-detail-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+.item-detail-value {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.item-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  font-size: 0.92rem;
+  color: #475569;
+  line-height: 1.55;
+}
+.item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.lista-vazia {
+  padding: 28px;
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
 }

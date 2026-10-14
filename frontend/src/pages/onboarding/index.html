@@ -44,7 +44,9 @@
       .auth-brand {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        /* mesmo fundo do hero da Home e dos banners */
+        background: var(--banner-gradient);
+        background-color: var(--banner-dark);
         padding: 48px;
         display: flex;
         flex-direction: column;
@@ -67,15 +69,50 @@
         position: relative;
         z-index: 1;
       }
+      /* selo, título e texto no mesmo estilo do hero da Home */
+      .auth-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(37, 99, 235, 0.35);
+        border: 1px solid rgba(96, 165, 250, 0.8);
+        border-radius: 100px;
+        padding: 6px 13px;
+        color: #dbeafe;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        margin-bottom: var(--spacing-md);
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.2),
+          0 6px 18px rgba(37, 99, 235, 0.35);
+      }
+      .auth-eyebrow .dot {
+        width: 6px;
+        height: 6px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #60a5fa;
+      }
       .auth-brand h2 {
         color: #fff;
-        font-size: 26px;
-        line-height: 1.3;
-        max-width: 380px;
+        font-size: clamp(30px, 3.2vw, 44px);
+        line-height: 1.14;
+        max-width: 460px;
+        margin: 0;
+      }
+      .auth-brand h2 .highlight {
+        background: linear-gradient(90deg, #5b9bff, #4ade80, #5b9bff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
       .auth-brand p {
-        color: #a9b4cc;
-        max-width: 360px;
+        color: #e6ecf7;
+        font-size: 17px;
+        line-height: 1.6;
+        max-width: 420px;
       }
       .auth-brand footer {
         color: #5c6a94;
@@ -136,7 +173,14 @@
         <a href="../home/index.html">StartMatch</a>
 
         <div>
-          <h2>Conectando startups a investidores e mentores.</h2>
+          <span class="auth-eyebrow"
+            ><span class="dot sm-pulse-dot"></span>ECOSSISTEMA DE INOVAÇÃO -
+            RECIFE</span
+          >
+          <h2>
+            Conectando startups a
+            <span class="highlight sm-gradient-text">investidores e mentores</span>.
+          </h2>
           <div class="spacer-md"></div>
           <p>
             Leva menos de 5 minutos: escolha seu perfil, complete o cadastro e
@@ -151,7 +195,7 @@
       <div class="auth-form-side">
         <div class="container--narrow sm-reveal">
           <p class="text-muted back-link">
-            <a href="../home/index.html">&larr; Voltar para o site</a>
+            <a class="btn-pill btn-pill--sm" href="../home/index.html"><svg class="btn-pill-arrow btn-pill-arrow--back" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar para o site</a>
           </p>
           <h1>Qual é o seu perfil?</h1>
           <p class="text-muted">
@@ -218,17 +262,19 @@
               >
             </button>
             <button
-              class="btn btn-outline btn-block tipo-btn"
+              class="btn btn-primary btn-block tipo-btn"
               data-tipo="mentor"
               type="button"
             >
-              <span class="icon-circle" style="background: #fef2f2"
+              <span
+                class="icon-circle"
+                style="background: rgba(255, 255, 255, 0.18)"
                 ><svg
                   width="19"
                   height="19"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#dc2626"
+                  stroke="#fff"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -256,14 +302,17 @@
               <div class="card-title">Administrador</div>
               <p class="text-muted">
                 Acesso interno, provisionado pela equipe do StartMatch. Se você
-                já tem uma conta de administrador,
-                <a href="../login/index.html">entre por aqui</a>.
+                já tem uma conta de administrador, entre por aqui:
               </p>
+              <div class="spacer-sm"></div>
+              <a class="btn-link btn-link--green" href="../login/index.html"
+                >Entrar como administrador</a
+              >
             </div>
           </div>
           <div class="spacer-md"></div>
-          <p class="text-muted">
-            Já tem conta? <a href="../login/index.html">Entrar</a>
+          <p class="text-muted text-center">
+            Já tem conta? <a class="btn btn-primary" href="../login/index.html">Entrar</a>
           </p>
         </div>
       </div>

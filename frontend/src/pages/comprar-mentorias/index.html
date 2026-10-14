@@ -1,0 +1,200 @@
+<!--
+  Tela: Mentorias extras (Startup logada)
+  ========================================
+  Item "Mentorias extras" do menu da Startup. Mostra os 3 pacotes avulsos de
+  mentoria (os mesmos da página pública mentorias-extras/) e deixa comprar
+  por cartão ou PIX, com a mesma área de pagamento da tela de Plano
+  (scripts/payment.ts). Pagamento só de demonstração, feito no frontend.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Mentorias extras</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0f2148" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      /* Banner de ponta a ponta, como o "Como o match é calculado": faixa escura
+         com a imagem ancorada à direita (celular) e o texto em HTML à esquerda.
+         A imagem é escalada pela ALTURA (nunca é cortada nem esticada); a cor de
+         fundo é a mesma da borda esquerda da imagem, então a emenda não aparece. */
+      .me-hero {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        min-height: clamp(420px, 36vw, 600px);
+        color: #ffffff;
+        overflow: hidden;
+        background-color: #010614;
+      }
+      /* imagem 16:9 (proporção real do arquivo) escalada pela altura, colada à direita; a borda esquerda some
+         num degradê (máscara), então não aparece emenda com o fundo escuro */
+      .me-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        aspect-ratio: 1672 / 941;
+        background: url('/imagens/banner-mentorias-extras.jpg') right center / 100% 100% no-repeat;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+        pointer-events: none;
+      }
+      /* container mais largo que o padrão (1100px): o texto fica mais à
+         esquerda, afastado da imagem */
+      .me-hero .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1320px;
+        padding-left: clamp(16px, 4vw, 48px);
+        padding-right: clamp(16px, 4vw, 48px);
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-xl);
+      }
+      .me-hero-text {
+        max-width: 440px;
+      }
+      .me-hero h1 {
+        font-family: var(--font-family-display);
+        font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+        line-height: 1.12;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 var(--spacing-sm);
+        text-wrap: balance;
+      }
+      .me-hero h1 .me-highlight {
+        background: linear-gradient(90deg, #5b9bff, #4ade80);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .me-hero p.me-lead {
+        color: #e6ecf7;
+        font-size: 0.98rem;
+        line-height: 1.55;
+        margin: 0 0 var(--spacing-md);
+      }
+      .me-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+      }
+      @media (max-width: 900px) {
+        .me-hero {
+          display: block;
+          min-height: 0;
+          padding-bottom: 56.3vw;
+        }
+        .me-hero::before {
+          top: auto;
+          height: 56.3vw;
+        }
+        .me-hero-text {
+          max-width: none;
+        }
+      }
+      .pacote-card.plan-selected {
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 2px rgba(47, 111, 235, 0.15);
+      }
+      .pacote-lista {
+        margin: var(--spacing-sm) 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+      }
+      .pacote-lista li::before {
+        content: '✓';
+        margin-right: 8px;
+        color: #16a34a;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <!-- Mesmo banner e carrossel da página pública mentorias-extras/ -->
+    <section class="me-hero" aria-label="Mentorias extras: pacotes de 5, 8 e 10 mentorias">
+      <div class="container">
+        <div class="me-hero-text">
+          <span class="section-eyebrow dark">Mentorias extras</span>
+          <h1>Mais mentorias, <span class="me-highlight">mais tração</span> para a sua startup</h1>
+          <p class="me-lead">
+            Precisa de mais sessões do que o seu plano inclui? Compre pacotes
+            avulsos de 5, 8 ou 10 mentorias com mentores verificados.
+          </p>
+          <div class="me-actions">
+            <a class="btn-pill" href="#pacotes-titulo">Ver pacotes <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn-pill btn-pill--green" href="../mentorias/index.html">Ver mentores <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <div class="marquee-group">
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+        </div>
+        <div class="marquee-group">
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+        </div>
+      </div>
+    </div>
+
+
+    <main class="container">
+      <div class="spacer-xl"></div>
+
+      <div class="text-center">
+        <span class="section-eyebrow blue">Pacotes</span>
+        <h2 id="pacotes-titulo">Escolha quantas mentorias você precisa</h2>
+        <p class="text-muted">
+          Pagamento único. As sessões ficam no seu saldo até serem usadas.
+        </p>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <div class="grid plan-grid" id="pacotes"></div>
+
+      <div class="spacer-lg"></div>
+
+      <!-- Área de pagamento (cartão/PIX), criada por scripts/payment.ts -->
+      <div id="pagamento-area"></div>
+
+      <p class="form-success" id="compra-sucesso" role="status" aria-live="polite"></p>
+
+      <div class="spacer-xl"></div>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

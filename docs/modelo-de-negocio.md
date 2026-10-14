@@ -64,20 +64,31 @@ para diferenciar funcionalidades por nível de acesso:
 | Plano | Preço | Inclui |
 |---|---|---|
 | Básico | Grátis | Perfil completo, aparece na busca dos investidores, interesses limitados por mês, Canvas simples |
-| Plus | ~R$ 149–199/mês | Perfil em destaque, interesses ilimitados, métricas de visualização, mentoria paga por sessão avulsa |
-| Premium | ~R$ 349–399/mês | Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado", 4 sessões de mentoria grátis/mês |
+| Plus | R$ 350/mês | Perfil em destaque, interesses ilimitados, métricas de visualização, 1 mentoria/mês incluída |
+| Premium | R$ 500/mês | Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado", 3 mentorias/mês incluídas |
 
 **Investidores**
 
 | Plano | Preço | Inclui |
 |---|---|---|
 | Básico | Grátis | Busca com filtros simples (segmento, estágio), interesses limitados por mês |
-| Plus | ~R$ 199–249/mês | Filtros avançados (faixa de investimento, tração, localização), sugestões automáticas, interesses ilimitados |
-| Premium | ~R$ 499–599/mês | Tese estruturada, acesso antecipado a startups do seu perfil, relatórios agregados do ecossistema, matchmaking assistido por mentor |
+| Plus | R$ 400/mês | Filtros avançados (faixa de investimento, tração, localização), sugestões automáticas, interesses ilimitados |
+| Premium | R$ 600/mês | Tese estruturada, acesso antecipado a startups do seu perfil, relatórios agregados do ecossistema, matchmaking assistido por mentor |
 
-Mentores vinculados ao Porto Digital têm desconto de 70–80% sobre a
-assinatura, como forma de incentivar a participação de mentores da própria
-comunidade (campo `vinculoPortoDigital` no cadastro de mentor).
+**Mentores**
+
+| Plano | Preço | Inclui |
+|---|---|---|
+| Independente | R$ 200/mês | Vitrine de startups, certificados comprovando as mentorias, destaque de perfil nas indicações de mentorias extras |
+| Rede parceira | R$ 160/mês (20% de desconto) | Tudo do independente + badge exclusivo (campo `vinculoPortoDigital` no cadastro de mentor) |
+
+**Mentorias extras (avulsas)** — startups Plus/Premium podem comprar pacotes
+Básico com 5 mentorias online de 30 min (R$ 400, R$ 80 cada), Start com 8
+mentorias de 1h (R$ 750, com resumo e próximos passos após cada sessão) ou
+Premium com 10 mentorias de 1h (R$ 1.200, presenciais ou online, de segunda a
+sexta) além das incluídas no
+plano. Parte do valor é repassada ao mentor, o que gera receita para a
+plataforma e renda para o mentor. Valores dos pacotes são sugestão inicial.
 
 ## 6. Estratégia inicial de Go-to-Market
 

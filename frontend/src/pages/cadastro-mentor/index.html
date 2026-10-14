@@ -1,7 +1,8 @@
 <!--
   Tela: Perfil do Mentor
   =======================
-  Formulário de cadastro de perfil do mentor. Destaque de negócio: o checkbox
+  Formulário de cadastro de perfil do mentor, no mesmo padrão visual das telas de
+  perfil de startup e investidor. Destaque de negócio: o checkbox
   "vinculoPortoDigital" — marca se o mentor é funcionário de uma empresa do Porto
   Digital, o que dá direito ao desconto na assinatura da plataforma (campo
   Mentor.vinculoPortoDigital no backend).
@@ -18,69 +19,222 @@
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      /* Formulário em seções (cards), no padrão das telas logadas */
+      .perfil-form-page {
+        max-width: 920px;
+        padding-bottom: var(--spacing-2xl);
+      }
+      .perfil-form-header {
+        margin-bottom: var(--spacing-lg);
+      }
+      .perfil-form-header h1 {
+        margin: 0 0 6px;
+      }
+      .perfil-form-header p {
+        margin: 0;
+      }
+      .form-section {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: clamp(20px, 3vw, 28px);
+        margin-bottom: var(--spacing-md);
+      }
+      .form-section-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: var(--spacing-md);
+      }
+      .form-section-head h2 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      .form-section-head p {
+        margin: 2px 0 0;
+        font-size: 0.88rem;
+        color: var(--color-text-muted);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+      .form-row .field,
+      .form-section .field:last-child {
+        margin-bottom: 0;
+      }
+      .form-section textarea {
+        min-height: 110px;
+      }
+
+      /* Segmentos: chips lado a lado, com a prioridade dentro do chip */
+      .segmentos-chips {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .segmentos-chips .seg-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px 8px 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 18px;
+        background: #f8fafc;
+        transition:
+          border-color 0.15s ease,
+          background 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .segmentos-chips .seg-chip:hover {
+        border-color: #93c5fd;
+      }
+      .segmentos-chips .seg-chip:has(.segmento-check:checked) {
+        background: #eff6ff;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 2px rgba(47, 111, 235, 0.12);
+      }
+      .seg-chip .segmento-check {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        accent-color: var(--color-accent);
+        cursor: pointer;
+      }
+      .seg-chip label {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.9rem;
+        line-height: 1.25;
+        cursor: pointer;
+      }
+      .seg-chip .segmento-prioridade {
+        width: 52px;
+        flex-shrink: 0;
+        padding: 4px 6px;
+        text-align: center;
+        font-size: 0.85rem;
+        border-radius: 999px;
+      }
+      .seg-chip .segmento-prioridade:disabled {
+        opacity: 0.45;
+      }
+
+      .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        margin-top: var(--spacing-lg);
+      }
+      .form-footer .checkbox-row label {
+        margin: 0;
+        font-weight: 500;
+      }
+      .form-footer .btn {
+        min-width: 220px;
+      }
+      @media (max-width: 640px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-footer .btn {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="container container--narrow">
-      <div class="spacer-lg"></div>
-      <h1>Perfil do Mentor</h1>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <!-- Preenchido dinamicamente por main.ts (renderNav) -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container perfil-form-page">
+      <div class="perfil-form-header">
+        <span class="section-eyebrow blue">Perfil do mentor</span>
+        <h1>Complete seu perfil</h1>
+        <p class="text-muted">
+          Essas informações aparecem para as startups quando elas escolhem com
+          quem fazer uma mentoria.
+        </p>
+      </div>
 
       <form id="form-mentor">
-        <div class="field">
-          <label for="areaAtuacao">Área de atuação</label>
-          <input
-            class="input"
-            id="areaAtuacao"
-            name="areaAtuacao"
-            type="text"
-            required
-          />
-        </div>
-        <div class="field">
-          <label for="bio">Bio</label>
-          <textarea class="textarea" id="bio" name="bio" required></textarea>
-        </div>
-        <div class="field">
-          <label for="especialidades">Especialidades</label>
-          <input
-            class="input"
-            id="especialidades"
-            name="especialidades"
-            type="text"
-            placeholder="ex.: growth, produto, fundraising"
-            required
-          />
-          <!-- main.ts separa esse texto por vírgula e transforma num array antes de enviar -->
-          <p class="form-hint">Separe por vírgula.</p>
-        </div>
-        <div class="field">
-          <label for="disponibilidade">Disponibilidade</label>
-          <textarea
-            class="textarea"
-            id="disponibilidade"
-            name="disponibilidade"
-            placeholder="ex.: 2 sessões por mês, terças à tarde"
-            required
-          ></textarea>
-        </div>
-        <div class="field checkbox-row">
-          <!-- Flag de negócio: dá direito ao desconto na assinatura (ver modelo de negócio) -->
-          <input
-            id="vinculoPortoDigital"
-            name="vinculoPortoDigital"
-            type="checkbox"
-          />
-          <label for="vinculoPortoDigital"
-            >Sou vinculado a uma empresa parceira do ecossistema
-            StartMatch.</label
-          >
-        </div>
+        <!-- 1. SOBRE VOCÊ -->
+        <section class="form-section">
+          <div class="form-section-head">
+            <span class="step-badge">1</span>
+            <div>
+              <h2>Sobre você</h2>
+              <p>Sua área e um pouco da sua trajetória.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="areaAtuacao">Área de atuação</label>
+            <input class="input" id="areaAtuacao" name="areaAtuacao" type="text" required />
+          </div>
+          <div class="field" style="margin-top: var(--spacing-md)">
+            <label for="bio">Bio</label>
+            <textarea class="textarea" id="bio" name="bio" required></textarea>
+          </div>
+        </section>
 
-        <button class="btn btn-primary btn-block" type="submit">
-          Salvar e continuar
-        </button>
+        <!-- 2. ESPECIALIDADES E DISPONIBILIDADE -->
+        <section class="form-section">
+          <div class="form-section-head">
+            <span class="step-badge">2</span>
+            <div>
+              <h2>Especialidades e disponibilidade</h2>
+              <p>No que você ajuda e quando pode atender.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="especialidades">Especialidades</label>
+            <input
+              class="input"
+              id="especialidades"
+              name="especialidades"
+              type="text"
+              placeholder="ex.: growth, produto, fundraising"
+              required
+            />
+            <!-- main.ts separa esse texto por vírgula e transforma num array antes de enviar -->
+            <p class="form-hint">Separe por vírgula.</p>
+          </div>
+          <div class="field" style="margin-top: var(--spacing-md)">
+            <label for="disponibilidade">Disponibilidade</label>
+            <textarea
+              class="textarea"
+              id="disponibilidade"
+              name="disponibilidade"
+              placeholder="ex.: 2 sessões por mês, terças à tarde"
+              required
+            ></textarea>
+          </div>
+        </section>
+
+        <div class="form-footer">
+          <div class="checkbox-row">
+            <!-- Flag de negócio: dá direito ao desconto na assinatura (ver modelo de negócio) -->
+            <input id="vinculoPortoDigital" name="vinculoPortoDigital" type="checkbox" />
+            <label for="vinculoPortoDigital">Sou vinculado a uma empresa parceira do ecossistema StartMatch.</label>
+          </div>
+          <button class="btn btn-primary" type="submit">Salvar e continuar</button>
+        </div>
         <p class="form-error" id="form-error"></p>
       </form>
-    </div>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

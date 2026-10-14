@@ -29,6 +29,16 @@
   --color-accent: #2f6feb; /* azul vibrante — cor de destaque: botões primários, links, foco */
   --color-accent-hover: #1d4ed8; /* azul mais escuro — hover/estado ativo do azul de destaque */
 
+  /* Fundo dos banners (quase preto azulado com brilho azul à direita, como as
+     imagens banner.png / banner-mentorias-extras.jpg / banner_rodape.png).
+     Usado no menu, no hero da Home e nos heros das páginas públicas. */
+  --banner-dark: #010614;
+  --banner-gradient:
+    radial-gradient(ellipse 55% 90% at 100% 0%, rgba(37, 99, 235, 0.5), transparent 70%),
+    radial-gradient(ellipse 35% 70% at 80% 100%, rgba(29, 78, 216, 0.22), transparent 70%),
+    linear-gradient(90deg, #010614 0%, #020b24 55%, #06184a 100%);
+  --navbar-gradient: linear-gradient(90deg, #010614 0%, #031035 60%, #0b2a78 100%);
+
   /* Neutros */
   --color-bg: #f5f7fa; /* fundo geral */
   --color-surface: #ffffff; /* cards, formulários */

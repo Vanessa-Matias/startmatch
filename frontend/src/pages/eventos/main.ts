@@ -126,7 +126,7 @@ function renderEvento(evento: EventoDemo): string {
     ? `<img class="evento-imagem" src="${escapeHtml(evento.imagem)}" alt="Divulgação: ${escapeHtml(evento.titulo)}" loading="lazy" />`
     : '';
   const link = evento.linkExterno
-    ? `<p><a href="${escapeHtml(evento.linkExterno)}" target="_blank" rel="noopener noreferrer">Saiba mais sobre o evento</a></p>`
+    ? `<p><a class="btn-link" href="${escapeHtml(evento.linkExterno)}" target="_blank" rel="noopener noreferrer">Saiba mais sobre o evento</a></p>`
     : '';
 
   return `

@@ -250,6 +250,12 @@ export async function mockRequest<T>(
   if (rota === '/mentors' && method === 'POST') {
     return { ...MOCK_MENTORES[0], ...body } as T;
   }
+  // Edição do perfil (tela perfil-mentor): atualiza o mentor de mentira em
+  // memória, para o restante das telas enxergar a mudança.
+  if (rota === '/mentors/me' && method === 'PATCH') {
+    Object.assign(MOCK_MENTORES[0], body);
+    return MOCK_MENTORES[0] as T;
+  }
   if (rota === '/mentors' && method === 'GET') {
     return MOCK_MENTORES as T;
   }

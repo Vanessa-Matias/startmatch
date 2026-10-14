@@ -10,4 +10,6 @@
 
 // /investors/me ou /mentors/me.
 
-export {};
+import { initReveal } from '../../scripts/reveal';
+
+initReveal();

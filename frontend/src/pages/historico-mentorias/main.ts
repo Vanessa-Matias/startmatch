@@ -1,263 +1,77 @@
 // Tela: Histórico de mentorias — lógica
-
 // =======================================
 //
-// Nesta primeira entrega, ainda não existe endpoint de sessões
-// de mentoria no backend.
-//
-// Os dados abaixo são demonstrativos e ficam somente no frontend,
-// deixando a estrutura pronta para receber os dados reais futuramente.
-//
-// =======================================
+// Ainda não existe endpoint de sessões de mentoria no backend. As sessões
+// realizadas são demonstrativas e vêm de scripts/mentorDemo.ts — as mesmas que
+// o Dashboard usa para somar as "Horas de mentoria".
 
 import { requireAuth } from '../../scripts/auth';
+import {
+  SESSOES_REALIZADAS,
+  formatarHoras,
+  iniciais,
+  totalHoras,
+} from '../../scripts/mentorDemo';
 import { renderNav } from '../../scripts/nav';
 
 const usuario = requireAuth(['mentor']);
 
-renderNav(
-  document.getElementById('nav-links') as HTMLElement,
-  usuario.tipo
-);
+renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
-// --------------------------------------------------
-// Dados demonstrativos
-// --------------------------------------------------
+const historicoList = document.getElementById('historico-list') as HTMLElement;
 
-interface SessaoMentoria {
-  startup: string;
-  data: string;
-  horario: string;
-  duracao: string;
-  formato: string;
-  tema: string;
-}
+const texto = (id: string, valor: string) => {
+  (document.getElementById(id) as HTMLElement).textContent = valor;
+};
 
-const sessoes: SessaoMentoria[] = [
-  {
-    startup: 'Startup #1',
-    data: '02/09/2026',
-    horario: '14:00',
-    duracao: '1h',
-    formato: 'Online',
-    tema: 'Estratégia e crescimento da startup'
-  }
-];
-
-// --------------------------------------------------
-// Elementos
-// --------------------------------------------------
-
-const historicoList = document.getElementById(
-  'historico-list'
-) as HTMLElement;
-
-const horasRealizadas = document.getElementById(
-  'horas-realizadas'
-) as HTMLElement;
-
-const mentoriasConcluidas = document.getElementById(
-  'mentorias-concluidas'
-) as HTMLElement;
-
-const startupsAtendidas = document.getElementById(
-  'startups-atendidas'
-) as HTMLElement;
-
-const sessoesRealizadas = document.getElementById(
-  'sessoes-realizadas'
-) as HTMLElement;
-
-const metaMentorias = document.getElementById(
-  'meta-mentorias'
-) as HTMLElement;
-
-const progressoMentorias = document.getElementById(
-  'progresso-mentorias'
-) as HTMLElement;
-
-// --------------------------------------------------
-// Calcula e atualiza os indicadores
-// --------------------------------------------------
+// Meta demonstrativa de sessões por mês
+const META_MENSAL = 5;
 
 function atualizarResumo(): void {
-  const totalSessoes = sessoes.length;
+  const totalSessoes = SESSOES_REALIZADAS.length;
+  const startupsUnicas = new Set(SESSOES_REALIZADAS.map((s) => s.startup));
 
-  const startupsUnicas = new Set(
-    sessoes.map((sessao) => sessao.startup)
-  );
+  texto('horas-realizadas', formatarHoras(totalHoras()));
+  texto('mentorias-concluidas', String(totalSessoes));
+  texto('startups-atendidas', String(startupsUnicas.size));
+  texto('sessoes-realizadas', String(totalSessoes));
 
-  const totalHoras = sessoes.reduce(
-    (total, sessao) => {
-      const duracao = sessao.duracao
-        .replace('h', '')
-        .replace(',', '.')
-        .trim();
-
-      const horas = Number(duracao);
-
-      return total + (Number.isNaN(horas) ? 0 : horas);
-    },
-    0
-  );
-
-  // Horas realizadas
-  horasRealizadas.textContent =
-    totalHoras > 0
-      ? `${totalHoras}h`
-      : '0h';
-
-  // Mentorias concluídas
-  mentoriasConcluidas.textContent =
-    String(totalSessoes);
-
-  // Startups atendidas
-  startupsAtendidas.textContent =
-    String(startupsUnicas.size);
-
-  // Sessões realizadas
-  sessoesRealizadas.textContent =
-    String(totalSessoes);
-
-  // --------------------------------------------------
-  // Meta demonstrativa mensal
-  // --------------------------------------------------
-
-  const meta = 5;
-
-  const realizadas = Math.min(
-    totalSessoes,
-    meta
-  );
-
-  metaMentorias.textContent =
-    `${realizadas} / ${meta}`;
-
-  const percentual =
-    meta > 0
-      ? Math.min(
-          (realizadas / meta) * 100,
-          100
-        )
-      : 0;
-
-  progressoMentorias.style.width =
-    `${percentual}%`;
+  const realizadas = Math.min(totalSessoes, META_MENSAL);
+  texto('meta-mentorias', `${realizadas} / ${META_MENSAL}`);
+  (document.getElementById('progresso-mentorias') as HTMLElement).style.width =
+    `${Math.min((realizadas / META_MENSAL) * 100, 100)}%`;
 }
 
-// --------------------------------------------------
-// Renderiza as sessões
-// --------------------------------------------------
-
 function renderSessoes(): void {
-  if (sessoes.length === 0) {
-    historicoList.innerHTML = `
-      <div class="card">
-        <p class="text-muted">
-          Nenhuma sessão registrada ainda.
-        </p>
-      </div>
-    `;
-
+  if (SESSOES_REALIZADAS.length === 0) {
+    historicoList.innerHTML = '<div class="lista-vazia">Nenhuma sessão registrada ainda.</div>';
     return;
   }
 
-  historicoList.innerHTML = sessoes
-    .map(
-      (sessao) => `
-        <article class="card historico-sessao">
-
-          <div class="historico-sessao-header">
-
-            <div class="historico-sessao-empresa">
-
+  historicoList.innerHTML = SESSOES_REALIZADAS.map(
+    (sessao) => `
+      <article class="card item-card">
+        <div class="item-card-head">
+          <div class="item-card-title">
+            <span class="item-avatar" aria-hidden="true">${iniciais(sessao.startup)}</span>
+            <div>
               <h3>${sessao.startup}</h3>
-
-              <p>
-                Mentoria concluída
-              </p>
-
+              <p>${sessao.tema}</p>
             </div>
-
-            <span class="badge badge-success">
-              Concluída
-            </span>
-
           </div>
+          <span class="badge-eyebrow badge-eyebrow--green">Concluída</span>
+        </div>
 
-          <div class="historico-sessao-detalhes">
-
-            <div class="historico-detalhe">
-
-              <span class="historico-detalhe-label">
-                Data
-              </span>
-
-              <strong>
-                ${sessao.data}
-              </strong>
-
-            </div>
-
-            <div class="historico-detalhe">
-
-              <span class="historico-detalhe-label">
-                Horário
-              </span>
-
-              <strong>
-                ${sessao.horario}
-              </strong>
-
-            </div>
-
-            <div class="historico-detalhe">
-
-              <span class="historico-detalhe-label">
-                Duração
-              </span>
-
-              <strong>
-                ${sessao.duracao}
-              </strong>
-
-            </div>
-
-            <div class="historico-detalhe">
-
-              <span class="historico-detalhe-label">
-                Formato
-              </span>
-
-              <strong>
-                ${sessao.formato}
-              </strong>
-
-            </div>
-
-          </div>
-
-          <div class="historico-sessao-tema">
-
-            <span>
-              Tema da mentoria
-            </span>
-
-            <strong>
-              ${sessao.tema}
-            </strong>
-
-          </div>
-
-        </article>
-      `
-    )
-    .join('');
+        <div class="item-details">
+          <div><span class="item-detail-label">Data</span><span class="item-detail-value">${sessao.data}</span></div>
+          <div><span class="item-detail-label">Horário</span><span class="item-detail-value">${sessao.horario}</span></div>
+          <div><span class="item-detail-label">Duração</span><span class="item-detail-value">${formatarHoras(sessao.horas)}</span></div>
+          <div><span class="item-detail-label">Formato</span><span class="item-detail-value">${sessao.formato}</span></div>
+        </div>
+      </article>
+    `,
+  ).join('');
 }
-
-// --------------------------------------------------
-// Inicialização
-// --------------------------------------------------
 
 atualizarResumo();
 renderSessoes();

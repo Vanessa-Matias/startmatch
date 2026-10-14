@@ -362,39 +362,52 @@
 
     <main class="container historico-page">
       <!-- Cabeçalho -->
-      <header class="historico-header">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Área do mentor</span>
         <h1>Histórico de mentorias</h1>
-
-        <p class="text-muted">
+        <p>
           Acompanhe suas sessões realizadas, horas de mentoria e a evolução do
           seu trabalho com startups.
         </p>
-      </header>
+      </div>
 
       <!-- Indicadores principais -->
-      <section class="historico-stats" aria-label="Resumo do histórico">
-        <div class="card historico-stat">
-          <div class="historico-stat-value" id="horas-realizadas">0h</div>
-
-          <p class="historico-stat-label">Horas realizadas</p>
+      <section class="kpi-grid" aria-label="Resumo do histórico">
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Horas realizadas</p>
+            <div class="kpi-value" id="horas-realizadas">—</div>
+          </div>
         </div>
-
-        <div class="card historico-stat">
-          <div class="historico-stat-value" id="mentorias-concluidas">0</div>
-
-          <p class="historico-stat-label">Mentorias concluídas</p>
+        <div class="card kpi-card">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Mentorias concluídas</p>
+            <div class="kpi-value" id="mentorias-concluidas">—</div>
+          </div>
         </div>
-
-        <div class="card historico-stat">
-          <div class="historico-stat-value" id="startups-atendidas">0</div>
-
-          <p class="historico-stat-label">Startups atendidas</p>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--violet" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Startups atendidas</p>
+            <div class="kpi-value" id="startups-atendidas">—</div>
+          </div>
         </div>
-
-        <div class="card historico-stat">
-          <div class="historico-stat-value" id="sessoes-realizadas">0</div>
-
-          <p class="historico-stat-label">Sessões realizadas</p>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--sky" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Sessões realizadas</p>
+            <div class="kpi-value" id="sessoes-realizadas">—</div>
+          </div>
         </div>
       </section>
 
@@ -442,7 +455,7 @@
           </div>
         </div>
 
-        <div id="historico-list" class="historico-sessoes-list">
+        <div id="historico-list" class="historico-sessoes-list" style="display: flex; flex-direction: column; gap: var(--spacing-md)">
           <p class="text-muted">Nenhuma sessão registrada ainda.</p>
         </div>
       </section>

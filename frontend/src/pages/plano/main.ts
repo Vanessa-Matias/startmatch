@@ -1,14 +1,17 @@
 // Tela: Plano e assinatura — lógica
 //
 // Mostra os planos correspondentes ao tipo
-// de usuário logado.
+// de usuário logado, com os mesmos nomes,
+// badges e preços da página pública de Planos.
 //
-// A seleção e o formulário de pagamento são
-// tratados somente no frontend nesta etapa.
+// A seleção e o pagamento (cartão ou PIX) são
+// tratados somente no frontend nesta etapa —
+// ver scripts/payment.ts.
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
+import { createPayment } from '../../scripts/payment';
 import type {
   Investidor,
   PlanoAssinatura,
@@ -27,256 +30,99 @@ renderNav(
 );
 
 const planoAtualEl =
-  document.getElementById(
-    'plano-atual',
-  ) as HTMLSpanElement;
+  document.getElementById('plano-atual') as HTMLSpanElement;
 
 const comparacaoEl =
-  document.getElementById(
-    'planos-comparacao',
-  ) as HTMLDivElement;
+  document.getElementById('planos-comparacao') as HTMLDivElement;
 
 const errorEl =
-  document.getElementById(
-    'form-error',
-  ) as HTMLParagraphElement;
+  document.getElementById('form-error') as HTMLParagraphElement;
 
-const pagamentoEl =
-  document.getElementById(
-    'pagamento',
-  ) as HTMLElement;
-
-const planoSelecionadoTextoEl =
-  document.getElementById(
-    'plano-selecionado-texto',
-  ) as HTMLParagraphElement;
-
-const btnCartao =
-  document.getElementById(
-    'btn-cartao',
-  ) as HTMLButtonElement;
-
-const btnPix =
-  document.getElementById(
-    'btn-pix',
-  ) as HTMLButtonElement;
-
-const formCartao =
-  document.getElementById(
-    'form-cartao',
-  ) as HTMLFormElement;
-
-const formPix =
-  document.getElementById(
-    'form-pix',
-  ) as HTMLDivElement;
-
-const btnConfirmarPagamento =
-  document.getElementById(
-    'btn-confirmar-pagamento',
-  ) as HTMLButtonElement;
-
-const nomeCartaoEl =
-  document.getElementById(
-    'nome-cartao',
-  ) as HTMLInputElement;
-
-const numeroCartaoEl =
-  document.getElementById(
-    'numero-cartao',
-  ) as HTMLInputElement;
-
-const validadeCartaoEl =
-  document.getElementById(
-    'validade-cartao',
-  ) as HTMLInputElement;
-
-const cvvCartaoEl =
-  document.getElementById(
-    'cvv-cartao',
-  ) as HTMLInputElement;
-
-const btnGerarPix =
-  document.getElementById(
-    'btn-gerar-pix',
-  ) as HTMLButtonElement;
-
-const pixGerado =
-  document.getElementById(
-    'pix-gerado',
-  ) as HTMLDivElement;
-
-const pixCodeEl =
-  document.getElementById(
-    'pix-code',
-  ) as HTMLDivElement;
-
-const btnCopiarPix =
-  document.getElementById(
-    'btn-copiar-pix',
-  ) as HTMLButtonElement;
-
+const pagamento = createPayment(
+  document.getElementById('pagamento-area') as HTMLElement,
+  {
+    onPaid: () => marcarSelecionado(''),
+  },
+);
 
 /*
  * ================================
- * PLANOS
+ * PLANOS (iguais aos da página pública /planos)
  * ================================
+ * badge: classe do badge do nome do plano.
  */
 
-const PLANOS_STARTUP = [
+interface Plano {
+  nome: string;
+  preco: string;
+  detalhe: string;
+  badge: string;
+}
+
+const PLANOS_STARTUP: Plano[] = [
   {
     nome: 'Básico',
-    preco: 'grátis',
+    preco: 'Grátis',
+    badge: 'badge-plan badge-plan--gray',
     detalhe:
       'Perfil completo, aparece na busca dos investidores, interesses limitados por mês, Canvas simples.',
   },
   {
     nome: 'Plus',
-    preco: '~R$ 149–199/mês',
+    preco: 'R$ 350/mês',
+    badge: 'badge-plan badge-plan--blue',
     detalhe:
-      'Perfil em destaque, interesses ilimitados, métricas de visualização, mentoria paga por sessão avulsa.',
+      'Perfil em destaque, interesses ilimitados, métricas de visualização e 1 mentoria por mês incluída. Precisa de mais? Compre pacotes de mentorias extras.',
   },
   {
     nome: 'Premium',
-    preco: '~R$ 349–399/mês',
+    preco: 'R$ 500/mês',
+    badge: 'badge-plan badge-plan--green',
     detalhe:
-      'Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado", 4 sessões de mentoria grátis por mês.',
+      'Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado" e 3 mentorias por mês incluídas.',
   },
 ];
 
-const PLANOS_INVESTIDOR = [
+const PLANOS_INVESTIDOR: Plano[] = [
   {
     nome: 'Básico',
-    preco: 'grátis',
+    preco: 'Grátis',
+    badge: 'badge-plan badge-plan--gray',
     detalhe:
       'Busca com filtros simples (segmento, estágio), interesses limitados por mês.',
   },
   {
     nome: 'Plus',
-    preco: '~R$ 199–249/mês',
+    preco: 'R$ 400/mês',
+    badge: 'badge-plan badge-plan--blue',
     detalhe:
       'Filtros avançados (faixa de investimento, tração, localização), sugestões automáticas, interesses ilimitados.',
   },
   {
     nome: 'Premium',
-    preco: '~R$ 499–599/mês',
+    preco: 'R$ 600/mês',
+    badge: 'badge-plan badge-plan--green',
     detalhe:
       'Tese estruturada, acesso antecipado a startups do seu perfil, relatórios agregados do ecossistema, matchmaking assistido por mentor.',
   },
 ];
 
-const PLANOS_MENTOR = [
+const PLANOS_MENTOR: Plano[] = [
   {
     nome: 'Mentor da Rede Parceira',
-    preco: '70–80% de desconto',
+    preco: '20% de desconto · R$ 160/mês',
+    badge: 'badge-neon badge-neon--green',
     detalhe:
-      'Para mentores vinculados a empresas parceiras — badge exclusivo, certificado de horas exportável e acesso à vitrine de startups.',
+      'Plano do mentor independente com 20% de desconto, badge exclusivo, certificado de horas exportável, acesso à vitrine de startups e destaque de perfil nas mentorias extras.',
   },
   {
     nome: 'Mentor independente',
-    preco: '~R$ 79–99/mês',
+    preco: 'R$ 200/mês',
+    badge: 'badge-neon badge-neon--sky',
     detalhe:
-      'Acesso à mesma vitrine de startups — ferramenta de networking e captação de clientes.',
+      'Acesso à vitrine de startups, certificados que comprovam suas mentorias e destaque de perfil nas indicações de mentorias extras.',
   },
 ];
-
-let planoSelecionado = '';
-
-
-/*
- * ================================
- * REGRAS DOS CAMPOS DO CARTÃO
- * ================================
- */
-
-/*
- * Número do cartão:
- * aceita somente números e no máximo 16.
- */
-
-numeroCartaoEl.addEventListener(
-  'input',
-  () => {
-    numeroCartaoEl.value =
-      numeroCartaoEl.value
-        .replace(/\D/g, '')
-        .slice(0, 16);
-  },
-);
-
-
-/*
- * Validade:
- * aceita somente números.
- *
- * Depois dos dois primeiros números,
- * adiciona automaticamente a barra.
- *
- * Exemplo:
- * 0528 -> 05/28
- */
-
-validadeCartaoEl.addEventListener(
-  'input',
-  () => {
-    const numeros =
-      validadeCartaoEl.value
-        .replace(/\D/g, '')
-        .slice(0, 4);
-
-    if (numeros.length > 2) {
-      validadeCartaoEl.value =
-        `${numeros.slice(0, 2)}/${numeros.slice(2)}`;
-    } else {
-      validadeCartaoEl.value =
-        numeros;
-    }
-  },
-);
-
-
-/*
- * CVV:
- * aceita somente números e no máximo 3.
- */
-
-cvvCartaoEl.addEventListener(
-  'input',
-  () => {
-    cvvCartaoEl.value =
-      cvvCartaoEl.value
-        .replace(/\D/g, '')
-        .slice(0, 3);
-  },
-);
-
-
-/*
- * ================================
- * MÉTODO DE PAGAMENTO
- * ================================
- */
-
-function selecionarMetodo(
-  metodo: 'cartao' | 'pix',
-): void {
-  btnCartao.classList.toggle(
-    'active',
-    metodo === 'cartao',
-  );
-
-  btnPix.classList.toggle(
-    'active',
-    metodo === 'pix',
-  );
-
-  formCartao.hidden =
-    metodo !== 'cartao';
-
-  formPix.hidden =
-    metodo !== 'pix';
-}
-
 
 /*
  * ================================
@@ -284,73 +130,21 @@ function selecionarMetodo(
  * ================================
  */
 
-function selecionarPlano(
-  nome: string,
-  preco: string,
-): void {
-  planoSelecionado = nome;
-
-  planoSelecionadoTextoEl.textContent =
-    `Plano selecionado: ${nome} — ${preco}`;
-
-  /*
-   * Marca visualmente o plano escolhido.
-   */
-
+function marcarSelecionado(nome: string): void {
   document
     .querySelectorAll('.plan-card')
     .forEach((card) => {
       card.classList.toggle(
         'plan-selected',
-        card.getAttribute('data-plano') === nome,
+        nome !== '' && card.getAttribute('data-plano') === nome,
       );
     });
-
-  /*
-   * Coloca o pagamento imediatamente
-   * abaixo do plano selecionado.
-   *
-   * Não usamos scrollIntoView.
-   */
-
-  const planoCard = Array.from(
-    document.querySelectorAll<HTMLElement>(
-      '.plan-card',
-    ),
-  ).find(
-    (card) =>
-      card.getAttribute('data-plano') === nome,
-  );
-
-  if (planoCard) {
-    planoCard.after(pagamentoEl);
-  }
-
-  pagamentoEl.hidden = false;
-
-  /*
-   * Sempre começa pelo cartão.
-   */
-
-  selecionarMetodo('cartao');
-
-  /*
-   * Garante que o botão esteja
-   * preparado para um novo pagamento.
-   */
-
-  btnConfirmarPagamento.classList.remove(
-    'btn-payment-success',
-  );
-
-  btnConfirmarPagamento.classList.add(
-    'btn-primary',
-  );
-
-  btnConfirmarPagamento.textContent =
-    'Confirmar pagamento';
 }
 
+function selecionarPlano(nome: string, preco: string): void {
+  marcarSelecionado(nome);
+  pagamento.open(`Plano ${nome} — ${preco}`, nome);
+}
 
 /*
  * ================================
@@ -358,10 +152,8 @@ function selecionarPlano(
  * ================================
  */
 
-function renderComparacao(
-  planoAtual: PlanoAssinatura,
-): void {
-  let planos;
+function renderComparacao(planoAtual: PlanoAssinatura): void {
+  let planos: Plano[];
 
   if (usuario.tipo === 'startup') {
     planos = PLANOS_STARTUP;
@@ -371,133 +163,46 @@ function renderComparacao(
     planos = PLANOS_MENTOR;
   }
 
-  const nomeAtualNormalizado =
-    planoAtual.toLowerCase();
+  const nomeAtualNormalizado = planoAtual.toLowerCase();
 
   comparacaoEl.innerHTML = `
-    <div class="grid">
+    <div class="grid plan-grid">
       ${planos
         .map((plano) => {
-          const ativo =
-            plano.nome.toLowerCase() ===
-            nomeAtualNormalizado;
+          const ativo = plano.nome.toLowerCase() === nomeAtualNormalizado;
 
-          /*
-           * O Básico é gratuito.
-           * Não deve abrir pagamento.
-           */
+          // O Básico é gratuito: não abre pagamento.
+          const planoGratuito = plano.nome === 'Básico';
 
-          const planoGratuito =
-            plano.nome === 'Básico';
-
-          let badge = '';
-
-          if (plano.nome === 'Básico') {
-            badge =
-              '<span class="badge">grátis</span>';
-          } else if (
-            usuario.tipo === 'mentor' &&
-            plano.nome ===
-              'Mentor da Rede Parceira'
-          ) {
-            badge =
-              '<span class="badge badge-success">70–80% de desconto</span>';
-          } else {
-            badge = `
-              <span class="badge badge-accent">
-                ${plano.preco}
-              </span>
-            `;
-          }
-
-          /*
-           * Plano atual:
-           * mostra somente "Plano atual".
-           */
-
+          let acao = '';
           if (ativo) {
-            return `
-              <div
-                class="card plan-card plan-current"
+            acao = '<span class="badge badge-success">Plano atual</span>';
+          } else if (!planoGratuito) {
+            acao = `
+              <button
+                type="button"
+                class="btn btn-primary btn-escolher-plano"
                 data-plano="${plano.nome}"
-                data-pago="${planoGratuito ? 'false' : 'true'}"
+                data-preco="${plano.preco}"
               >
-                <div class="card-title">
-                  ${plano.nome}
-                  ${badge}
-
-                  <span class="badge badge-success">
-                    atual
-                  </span>
-                </div>
-
-                <p class="text-muted">
-                  ${plano.detalhe}
-                </p>
-
-                <div class="plan-actions">
-                  <span class="badge">
-                    Plano atual
-                  </span>
-                </div>
-              </div>
+                Assinar plano
+              </button>
             `;
           }
-
-          /*
-           * Plano Básico:
-           * não possui botão.
-           */
-
-          if (planoGratuito) {
-            return `
-              <div
-                class="card plan-card"
-                data-plano="${plano.nome}"
-                data-pago="false"
-              >
-                <div class="card-title">
-                  ${plano.nome}
-                  ${badge}
-                </div>
-
-                <p class="text-muted">
-                  ${plano.detalhe}
-                </p>
-              </div>
-            `;
-          }
-
-          /*
-           * Planos pagos:
-           * possuem botão para abrir o pagamento.
-           */
 
           return `
             <div
-              class="card plan-card"
+              class="card plan-card ${ativo ? 'plan-current' : ''}"
               data-plano="${plano.nome}"
-              data-pago="true"
             >
-              <div class="card-title">
-                ${plano.nome}
-                ${badge}
+              <div class="card-title plan-head">
+                <span class="${plano.badge}">${plano.nome}</span>
+                <span class="plan-price">${plano.preco}</span>
               </div>
 
-              <p class="text-muted">
-                ${plano.detalhe}
-              </p>
+              <p class="text-muted">${plano.detalhe}</p>
 
-              <div class="plan-actions">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-escolher-plano"
-                  data-plano="${plano.nome}"
-                  data-preco="${plano.preco}"
-                >
-                  Assinar plano
-                </button>
-              </div>
+              ${acao ? `<div class="plan-actions">${acao}</div>` : ''}
             </div>
           `;
         })
@@ -505,310 +210,19 @@ function renderComparacao(
     </div>
   `;
 
-  /*
-   * Eventos dos botões dos planos pagos.
-   */
-
   document
-    .querySelectorAll<HTMLButtonElement>(
-      '.btn-escolher-plano',
-    )
+    .querySelectorAll<HTMLButtonElement>('.btn-escolher-plano')
     .forEach((button) => {
-      button.addEventListener(
-        'click',
-        () => {
-          const nome =
-            button.dataset.plano ?? '';
-
-          const preco =
-            button.dataset.preco ?? '';
-
-          if (!nome) {
-            return;
-          }
-
-          /*
-           * O Básico não possui pagamento.
-           * Esta verificação permanece como
-           * proteção adicional.
-           */
-
-          if (nome === 'Básico') {
-            return;
-          }
-
-          selecionarPlano(
-            nome,
-            preco,
-          );
-        },
-      );
+      button.addEventListener('click', () => {
+        const nome = button.dataset.plano ?? '';
+        const preco = button.dataset.preco ?? '';
+        if (!nome || nome === 'Básico') {
+          return;
+        }
+        selecionarPlano(nome, preco);
+      });
     });
 }
-
-
-/*
- * ================================
- * PAGAMENTO COM CARTÃO
- * ================================
- */
-
-btnCartao.addEventListener(
-  'click',
-  () => {
-    selecionarMetodo('cartao');
-  },
-);
-
-btnPix.addEventListener(
-  'click',
-  () => {
-    selecionarMetodo('pix');
-  },
-);
-
-
-/*
- * Confirmação do cartão.
- */
-
-formCartao.addEventListener(
-  'submit',
-  (event) => {
-    event.preventDefault();
-
-    if (!planoSelecionado) {
-      return;
-    }
-
-    const nome =
-      nomeCartaoEl.value.trim();
-
-    const numero =
-      numeroCartaoEl.value.trim();
-
-    const validade =
-      validadeCartaoEl.value.trim();
-
-    const cvv =
-      cvvCartaoEl.value.trim();
-
-
-    /*
-     * Nome obrigatório.
-     */
-
-    if (!nome) {
-      nomeCartaoEl.focus();
-      return;
-    }
-
-
-    /*
-     * Número precisa ter exatamente
-     * 16 números.
-     */
-
-    const numeroValido =
-      /^\d{16}$/.test(numero);
-
-    if (!numeroValido) {
-      numeroCartaoEl.focus();
-      return;
-    }
-
-
-    /*
-     * Validade precisa estar no formato
-     * MM/AA.
-     */
-
-    const validadeValida =
-      /^(0[1-9]|1[0-2])\/\d{2}$/.test(
-        validade,
-      );
-
-    if (!validadeValida) {
-      validadeCartaoEl.focus();
-      return;
-    }
-
-
-    /*
-     * CVV precisa ter exatamente
-     * 3 números.
-     */
-
-    const cvvValido =
-      /^\d{3}$/.test(cvv);
-
-    if (!cvvValido) {
-      cvvCartaoEl.focus();
-      return;
-    }
-
-
-    /*
-     * ==============================
-     * PAGAMENTO CONFIRMADO
-     * ==============================
-     *
-     * Somente o botão muda para verde.
-     */
-
-    btnConfirmarPagamento.classList.remove(
-      'btn-primary',
-    );
-
-    btnConfirmarPagamento.classList.add(
-      'btn-payment-success',
-    );
-
-    btnConfirmarPagamento.textContent =
-      'Pagamento confirmado';
-
-
-    /*
-     * Após 1,2 segundo:
-     *
-     * - limpa os campos;
-     * - limpa o plano;
-     * - remove o verde;
-     * - fecha pagamento;
-     * - prepara para outro pagamento.
-     */
-
-    window.setTimeout(() => {
-
-      /*
-       * Limpa os dados digitados.
-       */
-
-      formCartao.reset();
-
-
-      /*
-       * Botão volta para azul.
-       */
-
-      btnConfirmarPagamento.classList.remove(
-        'btn-payment-success',
-      );
-
-      btnConfirmarPagamento.classList.add(
-        'btn-primary',
-      );
-
-      btnConfirmarPagamento.textContent =
-        'Confirmar pagamento';
-
-
-      /*
-       * Limpa o plano selecionado.
-       */
-
-      planoSelecionado = '';
-
-      planoSelecionadoTextoEl.textContent =
-        '';
-
-
-      /*
-       * Remove a seleção visual
-       * dos planos.
-       */
-
-      document
-        .querySelectorAll('.plan-card')
-        .forEach((card) => {
-          card.classList.remove(
-            'plan-selected',
-          );
-        });
-
-
-      /*
-       * Limpa o PIX anterior.
-       */
-
-      pixGerado.hidden = true;
-
-      pixCodeEl.textContent = '';
-
-
-      /*
-       * Fecha a área de pagamento.
-       */
-
-      pagamentoEl.hidden = true;
-
-
-      /*
-       * Próximo pagamento começa
-       * novamente pelo cartão.
-       */
-
-      selecionarMetodo('cartao');
-
-    }, 1200);
-  },
-);
-
-
-/*
- * ================================
- * PAGAMENTO VIA PIX
- * ================================
- */
-
-btnGerarPix.addEventListener(
-  'click',
-  () => {
-    if (!planoSelecionado) {
-      return;
-    }
-
-    const codigoPix =
-      `STARTMATCH-${planoSelecionado.toUpperCase()}-${Date.now()}`;
-
-    pixCodeEl.textContent =
-      codigoPix;
-
-    pixGerado.hidden = false;
-  },
-);
-
-
-btnCopiarPix.addEventListener(
-  'click',
-  async () => {
-    const codigo =
-      pixCodeEl.textContent ?? '';
-
-    if (!codigo) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(
-        codigo,
-      );
-
-      btnCopiarPix.textContent =
-        'Código copiado!';
-
-      window.setTimeout(() => {
-        btnCopiarPix.textContent =
-          'Copiar código PIX';
-      }, 2000);
-
-    } catch {
-      btnCopiarPix.textContent =
-        'Não foi possível copiar';
-    }
-  },
-);
-
 
 /*
  * ================================
@@ -833,15 +247,11 @@ async function init(): Promise<void> {
     { planoAssinatura: PlanoAssinatura }
   >(path);
 
-  const planoAtual =
-    perfil.planoAssinatura;
+  const planoAtual = perfil.planoAssinatura;
 
-  planoAtualEl.textContent =
-    planoAtual;
+  planoAtualEl.textContent = planoAtual;
 
-  renderComparacao(
-    planoAtual,
-  );
+  renderComparacao(planoAtual);
 }
 
 init().catch((error) => {

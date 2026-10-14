@@ -1,0 +1,360 @@
+<!--
+  Tela: Perfil do Mentor (edição)
+  ================================
+  Item "Perfil" do menu do mentor. O mentor edita foto, cargo, empresa, tempo de
+  experiência e as informações de atuação — exatamente o que a startup vê na
+  tela de Mentorias ao escolher com quem solicitar uma sessão. Ao lado, uma
+  prévia ao vivo do card que a startup vê.
+
+  Salvamento (ver main.ts e scripts/mentorDemo.ts):
+    - área, bio, especialidades, disponibilidade e rede parceira -> PATCH /mentors/me
+    - foto, nome exibido, cargo, empresa, experiência, modalidade, LinkedIn
+      -> navegador (o backend ainda não tem essas colunas)
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Meu perfil</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <style>
+      .perfil-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: var(--spacing-lg);
+        align-items: start;
+      }
+      .form-section {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: clamp(20px, 3vw, 28px);
+        margin-bottom: var(--spacing-md);
+      }
+      .form-section-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: var(--spacing-md);
+      }
+      .form-section-head h2 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      .form-section-head p {
+        margin: 2px 0 0;
+        font-size: 0.88rem;
+        color: var(--color-text-muted);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+      .form-row .field {
+        margin-bottom: 0;
+      }
+      .form-row + .form-row,
+      .form-row + .field,
+      .field + .form-row {
+        margin-top: var(--spacing-md);
+      }
+      .form-section .field:last-child {
+        margin-bottom: 0;
+      }
+      .form-section textarea {
+        min-height: 110px;
+      }
+
+      /* Foto */
+      .foto-campo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        margin-bottom: var(--spacing-md);
+      }
+      .foto-preview {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center top;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(47, 111, 235, 0.25);
+      }
+      .foto-iniciais {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #2f6feb, #16a34a);
+        color: #fff;
+        font-family: var(--font-family-display);
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+      .foto-acoes {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .foto-acoes .form-hint {
+        margin: 0;
+      }
+      .foto-botoes {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      /* Prévia do card que a startup vê */
+      .previa {
+        position: sticky;
+        top: 104px;
+      }
+      .previa-titulo {
+        margin: 0 0 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+      }
+      .previa-card {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .previa-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .previa-head .foto-preview {
+        width: 56px;
+        height: 56px;
+        font-size: 1.05rem;
+        box-shadow: 0 0 0 2px rgba(47, 111, 235, 0.3);
+      }
+      .previa-nome {
+        margin: 0;
+        font-weight: 700;
+        font-family: var(--font-family-display);
+      }
+      .previa-cargo {
+        margin: 2px 0 0;
+        font-size: 0.88rem;
+        color: var(--color-text-muted);
+      }
+      .previa-card p {
+        margin: 0;
+        font-size: 0.92rem;
+      }
+      .previa-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .previa-info {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.86rem;
+        color: var(--color-text-muted);
+      }
+      .previa-info strong {
+        color: var(--color-text);
+      }
+
+      .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        margin-top: var(--spacing-lg);
+      }
+      .form-footer .btn {
+        min-width: 220px;
+      }
+
+      @media (max-width: 960px) {
+        .perfil-layout {
+          grid-template-columns: 1fr;
+        }
+        .previa {
+          position: static;
+        }
+      }
+      @media (max-width: 640px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .form-footer .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Meu perfil</span>
+        <h1>Perfil do mentor</h1>
+        <p>
+          Essas informações aparecem para as startups na tela de Mentorias, na
+          hora de escolher com quem solicitar uma sessão.
+        </p>
+      </div>
+
+      <div class="perfil-layout">
+        <form id="form-perfil" novalidate>
+          <!-- 1. FOTO E IDENTIFICAÇÃO -->
+          <section class="form-section">
+            <div class="form-section-head">
+              <span class="step-badge">1</span>
+              <div>
+                <h2>Foto e identificação</h2>
+                <p>Quem você é e onde trabalha.</p>
+              </div>
+            </div>
+
+            <div class="foto-campo">
+              <span id="foto-preview" class="foto-preview foto-iniciais" aria-hidden="true">M</span>
+              <div class="foto-acoes">
+                <div class="foto-botoes">
+                  <label class="btn btn-outline" for="foto">Escolher foto</label>
+                  <button type="button" class="btn btn-outline" id="remover-foto" hidden>Remover</button>
+                </div>
+                <input class="visually-hidden" id="foto" type="file" accept="image/png, image/jpeg, image/webp" />
+                <p class="form-hint">JPG, PNG ou WEBP. A imagem é reduzida automaticamente.</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="nome">Nome exibido</label>
+                <input class="input" id="nome" type="text" placeholder="Ex.: Mariana Albuquerque" />
+              </div>
+              <div class="field">
+                <label for="linkedin">LinkedIn (opcional)</label>
+                <input class="input" id="linkedin" type="url" placeholder="https://www.linkedin.com/in/seu-perfil" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="cargo">Cargo</label>
+                <input class="input" id="cargo" type="text" placeholder="Ex.: Engenheira de Dados Sênior" />
+              </div>
+              <div class="field">
+                <label for="empresa">Empresa onde trabalha</label>
+                <input class="input" id="empresa" type="text" placeholder="Ex.: Hub de Inovação Bradesco" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="anos">Tempo de experiência (anos)</label>
+                <input class="input" id="anos" type="number" min="0" max="60" placeholder="Ex.: 8" />
+              </div>
+              <div class="field">
+                <label for="modalidade">Modalidade das mentorias</label>
+                <select class="select" id="modalidade">
+                  <option value="online">Online</option>
+                  <option value="presencial">Presencial (Recife)</option>
+                  <option value="ambos">Online ou presencial (Recife)</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. ATUAÇÃO -->
+          <section class="form-section">
+            <div class="form-section-head">
+              <span class="step-badge">2</span>
+              <div>
+                <h2>Atuação</h2>
+                <p>No que você pode ajudar as startups.</p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="areaAtuacao">Área de atuação</label>
+              <input class="input" id="areaAtuacao" type="text" placeholder="Ex.: Estratégia e captação de investimento" required />
+            </div>
+            <div class="field">
+              <label for="bio">Sobre você</label>
+              <textarea class="textarea" id="bio" placeholder="Conte sua trajetória e como você costuma ajudar as startups." required></textarea>
+            </div>
+            <div class="field">
+              <label for="especialidades">Especialidades</label>
+              <input class="input" id="especialidades" type="text" placeholder="Ex.: Pitch, Valuation, Rodada anjo" required />
+              <p class="form-hint">Separe por vírgula.</p>
+            </div>
+          </section>
+
+          <!-- 3. DISPONIBILIDADE E REDE -->
+          <section class="form-section">
+            <div class="form-section-head">
+              <span class="step-badge">3</span>
+              <div>
+                <h2>Disponibilidade e rede</h2>
+                <p>Quando você atende e seu vínculo com o ecossistema.</p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="disponibilidade">Disponibilidade</label>
+              <input class="input" id="disponibilidade" type="text" placeholder="Ex.: Segunda a sexta, 14:00 às 18:00" required />
+              <p class="form-hint">
+                Também é atualizada quando você salva os dias e horários na
+                <a class="btn-link" href="../agenda/index.html">Agenda</a>.
+              </p>
+            </div>
+            <div class="checkbox-row">
+              <input id="vinculoPortoDigital" type="checkbox" />
+              <label for="vinculoPortoDigital">Sou vinculado a uma empresa parceira (Mentor da Rede Parceira)</label>
+            </div>
+          </section>
+
+          <div class="form-footer">
+            <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary" type="submit" id="btn-salvar">Salvar perfil</button>
+          </div>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+
+        <!-- PRÉVIA AO VIVO -->
+        <aside class="previa" aria-label="Prévia do seu perfil">
+          <p class="previa-titulo">Como as startups veem seu perfil</p>
+          <div class="card previa-card" id="previa"></div>
+        </aside>
+      </div>
+
+      <div class="spacer-xl"></div>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

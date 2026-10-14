@@ -1,0 +1,327 @@
+<!doctype html>
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>StartMatch — Mentorias extras</title>
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta name="theme-color" content="#0f2148" />
+
+    <link rel="stylesheet" href="../../styles/variables.css" />
+
+    <link rel="stylesheet" href="../../styles/global.css" />
+
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      /* Banner de ponta a ponta, como o "Como o match é calculado": faixa escura
+         com a imagem ancorada à direita (celular) e o texto em HTML à esquerda.
+         A imagem é escalada pela ALTURA (nunca é cortada nem esticada); a cor de
+         fundo é a mesma da borda esquerda da imagem, então a emenda não aparece. */
+      .me-hero {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        min-height: clamp(420px, 36vw, 600px);
+        color: #ffffff;
+        overflow: hidden;
+        background-color: #010614;
+      }
+      /* imagem 16:9 (proporção real do arquivo) escalada pela altura, colada à direita; a borda esquerda some
+         num degradê (máscara), então não aparece emenda com o fundo escuro */
+      .me-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        aspect-ratio: 1672 / 941;
+        background: url('/imagens/banner-mentorias-extras.jpg') right center / 100% 100% no-repeat;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+        pointer-events: none;
+      }
+      /* container mais largo que o padrão (1100px): o texto fica mais à
+         esquerda, afastado da imagem */
+      .me-hero .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1320px;
+        padding-left: clamp(16px, 4vw, 48px);
+        padding-right: clamp(16px, 4vw, 48px);
+        padding-top: var(--spacing-xl);
+        padding-bottom: var(--spacing-xl);
+      }
+      .me-hero-text {
+        max-width: 440px;
+      }
+      .me-hero h1 {
+        font-family: var(--font-family-display);
+        font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+        line-height: 1.12;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 var(--spacing-sm);
+        text-wrap: balance;
+      }
+      .me-hero h1 .me-highlight {
+        background: linear-gradient(90deg, #5b9bff, #4ade80);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .me-hero p.me-lead {
+        color: #e6ecf7;
+        font-size: 0.98rem;
+        line-height: 1.55;
+        margin: 0 0 var(--spacing-md);
+      }
+      .me-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+      }
+      .me-section-head {
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .me-steps {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+      .me-steps .step-badge {
+        margin-bottom: var(--spacing-sm);
+      }
+      .me-benefits {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+      .me-cta {
+        text-align: center;
+      }
+      @media (max-width: 900px) {
+        .me-hero {
+          display: block;
+          min-height: 0;
+          padding-bottom: 56.3vw;
+        }
+        .me-hero::before {
+          top: auto;
+          height: 56.3vw;
+        }
+        .me-hero-text {
+          max-width: none;
+        }
+        .me-steps {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 560px) {
+        .me-steps,
+        .me-benefits {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+
+        <nav>
+          <a href="../home/index.html">Home</a>
+
+          <a href="../sobre/index.html">Sobre</a>
+
+          <a href="../como-funciona/index.html">Como funciona</a>
+
+          <a href="../recursos/index.html">Recursos</a>
+
+          <a href="../planos/index.html">Planos</a>
+
+
+          <a href="./index.html">Mentorias extras</a>
+
+          <a href="../login/index.html">Entrar</a>
+
+          <a class="btn btn-accent" href="../onboarding/index.html"
+            >Criar conta</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <section class="me-hero" aria-label="Mentorias extras do StartMatch: pacotes de 5, 8 e 10 mentorias">
+      <div class="container">
+        <div class="me-hero-text">
+          <span class="section-eyebrow dark">Mentorias extras</span>
+          <h1>Mais mentorias, <span class="me-highlight">mais tração</span> para a sua startup</h1>
+          <p class="me-lead">
+            Precisa de mais sessões do que o seu plano inclui? Compre pacotes
+            avulsos de 5, 8 ou 10 mentorias com mentores verificados.
+          </p>
+          <div class="me-actions">
+            <a class="btn-pill" href="../onboarding/index.html">Criar conta grátis <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn-pill btn-pill--green" href="../planos/index.html">Ver planos <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <div class="marquee-group">
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+        </div>
+        <div class="marquee-group">
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+          <span>Inovação que transforma</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="spacer-xl"></div>
+
+      <div class="me-section-head">
+        <span class="section-eyebrow blue">PACOTES</span>
+        <h2>Escolha quantas mentorias você precisa</h2>
+        <p class="section-lead">
+          Pagamento único. As sessões ficam no seu saldo até serem usadas.
+        </p>
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <div class="grid">
+        <div class="card sm-reveal">
+          <div class="card-title plan-head"><span class="badge-neon badge-neon--sky">Pacote Básico</span><span class="plan-price">R$ 400</span></div>
+          <p class="text-muted">
+            5 mentorias online de 30 min · R$ 80 por sessão. Ideal para
+            validar uma hipótese ou preparar um pitch.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.05s">
+          <div class="card-title plan-head"><span class="badge-neon badge-neon--blue">Pacote Start</span><span class="plan-price">R$ 750</span></div>
+          <p class="text-muted">
+            8 mentorias de 1h · R$ 93,75 por sessão, com resumo e próximos
+            passos enviados após cada sessão. Para acompanhar uma fase
+            inteira do negócio.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.1s">
+          <div class="card-title plan-head"><span class="badge-neon badge-neon--green">Pacote Premium</span><span class="plan-price">R$ 1.200</span></div>
+          <p class="text-muted">
+            10 mentorias de 1h · R$ 120 por sessão, presenciais ou online,
+            em qualquer dia de segunda a sexta. Para quem quer
+            acompanhamento intenso e ir fundo.
+          </p>
+        </div>
+      </div>
+
+      <div class="spacer-xl"></div>
+
+      <div class="me-section-head">
+        <span class="section-eyebrow blue">COMO FUNCIONA</span>
+        <h2>Da compra à sessão em 4 passos</h2>
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <div class="me-steps">
+        <div class="card sm-reveal">
+          <span class="step-badge">1</span>
+          <div class="card-title">Assine Plus ou Premium</div>
+          <p class="text-muted">
+            Os pacotes são exclusivos para startups assinantes. As mentorias do
+            plano são usadas primeiro.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.05s">
+          <span class="step-badge">2</span>
+          <div class="card-title">Escolha o pacote</div>
+          <p class="text-muted">
+            5, 8 ou 10 mentorias, com pagamento único. O saldo fica na sua
+            conta.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.1s">
+          <span class="step-badge">3</span>
+          <div class="card-title">Veja os mentores indicados</div>
+          <p class="text-muted">
+            A plataforma sugere mentores compatíveis. Mentores assinantes
+            aparecem em destaque.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.15s">
+          <span class="step-badge">4</span>
+          <div class="card-title">Faça a sessão e receba o certificado</div>
+          <p class="text-muted">
+            Cada sessão realizada gera um certificado que comprova a mentoria.
+          </p>
+        </div>
+      </div>
+
+      <div class="spacer-xl"></div>
+
+      <div class="me-benefits">
+        <div class="card sm-reveal">
+          <div class="card-title">Para a startup</div>
+          <p class="text-muted">
+            Mais acesso a mentoria quando o negócio mais precisa, sem trocar de
+            plano, com certificado de cada sessão.
+          </p>
+        </div>
+        <div class="card sm-reveal" style="animation-delay: 0.05s">
+          <div class="card-title">Para o mentor</div>
+          <p class="text-muted">
+            Parte do valor de cada pacote é repassada ao mentor: uma nova fonte
+            de renda, com destaque de perfil para quem é assinante.
+          </p>
+        </div>
+      </div>
+
+      <div class="spacer-xl"></div>
+
+      <div class="me-cta">
+        <a class="btn-pill" href="../onboarding/index.html">Criar conta grátis <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+
+      <div class="spacer-xl"></div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="copy copy-rights">
+          © 2026 StartMatch. Todos os direitos reservados a
+          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
+          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+          e
+          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

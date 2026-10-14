@@ -90,94 +90,48 @@
         text-wrap: pretty;
       }
 
-      /* Faixa fina em carrossel acima do banner: a frase percorre a tela
-         em loop contínuo. O conteúdo é duplicado (2 grupos idênticos) e a
-         animação desloca -50%, então o fim emenda no começo sem salto. */
-      .marquee {
-        overflow: hidden;
-        background: linear-gradient(90deg, #0f2148, #16305f, #0f2148);
-        border-top: 1px solid rgba(96, 165, 250, 0.35);
-        border-bottom: 1px solid rgba(96, 165, 250, 0.35);
-        padding: 10px 0;
-      }
-      .marquee-track {
-        display: flex;
-        width: max-content;
-        animation: marquee-scroll 45s linear infinite;
-      }
-      .marquee-group {
-        display: flex;
-        flex-shrink: 0;
-      }
-      .marquee-group span {
-        font-family: var(--font-family-display);
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        white-space: nowrap;
-        color: #dbeafe;
-        padding: 0 28px;
-      }
-      .marquee-group span::after {
-        content: '•';
-        margin-left: 56px;
-        color: #4ade80;
-      }
-      @keyframes marquee-scroll {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(-50%);
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .marquee-track {
-          animation: none;
-        }
-      }
-
-      /* Banner "como o match é calculado": faixa de ponta a ponta da tela.
-         A imagem é fundo (cover, ancorada embaixo, onde estão as mãos) e o
-         texto é HTML por cima, na tipografia do site. */
+      /* Banner "como o match é calculado": faixa escura de ponta a ponta
+         dividida em duas partes, para nenhum texto ficar sobre as mãos:
+         1) .match-banner-visual: a imagem, com o título na área escura
+            vazia do topo;
+         2) .match-banner-criteria: os três critérios numa barra logo
+            abaixo da imagem, no mesmo fundo escuro. */
       .match-banner {
-        position: relative;
         width: 100%;
-        min-height: clamp(560px, 56.3vw, 880px);
         background-color: #01060f;
-        background-image: url('/imagens/banner.png');
-        background-size: cover;
-        background-position: center bottom;
-        background-repeat: no-repeat;
         color: #ffffff;
       }
-      /* escurece o topo para o texto ter contraste sobre a imagem */
-      .match-banner::before {
+      .match-banner-visual {
+        position: relative;
+        min-height: clamp(420px, 36vw, 600px);
+        background-image: url('/imagens/banner.png');
+        background-size: cover;
+        background-position: center 55%;
+        background-repeat: no-repeat;
+      }
+      /* escurece o topo (contraste do título) e funde a base da imagem
+         com a barra de critérios, sem emenda */
+      .match-banner-visual::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(1, 6, 15, 0.75) 0%,
-          rgba(1, 6, 15, 0.25) 45%,
-          rgba(1, 6, 15, 0) 65%
-        );
+        background:
+          linear-gradient(
+            180deg,
+            rgba(1, 6, 15, 0.8) 0%,
+            rgba(1, 6, 15, 0.35) 30%,
+            rgba(1, 6, 15, 0) 45%
+          ),
+          linear-gradient(0deg, #01060f 0%, rgba(1, 6, 15, 0) 18%);
         pointer-events: none;
       }
-      .match-banner .container {
+      .match-banner-visual .container {
         position: relative;
         z-index: 1;
-        padding-top: clamp(48px, 7vw, 104px);
+        padding-top: clamp(40px, 4.5vw, 72px);
       }
-      .match-banner-eyebrow {
-        display: inline-block;
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 1.6px;
-        text-transform: uppercase;
-        color: #93c5fd;
-        margin-bottom: var(--spacing-sm);
+      .match-banner-criteria {
+        padding: var(--spacing-md) 0 clamp(40px, 4.5vw, 64px);
       }
       .match-banner h2 {
         font-family: var(--font-family-display);
@@ -197,7 +151,7 @@
       }
       .match-criteria {
         list-style: none;
-        margin: clamp(28px, 3.5vw, 48px) 0 0;
+        margin: 0;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -283,30 +237,25 @@
           display: block;
         }
 
-        .marquee-group span {
-          font-size: 0.75rem;
-          padding: 0 18px;
-        }
-        .marquee-group span::after {
-          margin-left: 36px;
-        }
-
         /* No celular o texto vem primeiro e a imagem ocupa a parte de
            baixo, mostrando as mãos sem ficar atrás das palavras. */
-        .match-banner {
+        .match-banner-visual {
           min-height: 0;
           background-size: 190% auto;
+          background-position: center bottom;
           padding-bottom: 92vw;
         }
-        .match-banner::before {
-          background: linear-gradient(
-            180deg,
-            rgba(1, 6, 15, 0.9) 0%,
-            rgba(1, 6, 15, 0.6) 55%,
-            rgba(1, 6, 15, 0) 80%
-          );
+        .match-banner-visual::before {
+          background:
+            linear-gradient(
+              180deg,
+              rgba(1, 6, 15, 0.9) 0%,
+              rgba(1, 6, 15, 0.6) 55%,
+              rgba(1, 6, 15, 0) 80%
+            ),
+            linear-gradient(0deg, #01060f 0%, rgba(1, 6, 15, 0) 18%);
         }
-        .match-banner .container {
+        .match-banner-visual .container {
           padding-top: var(--spacing-xl);
         }
         .match-criteria {
@@ -325,23 +274,88 @@
         }
       }
 
-      /* FAQ: cards lado a lado no desktop, um abaixo do outro no celular */
+      /* Ajuda: FAQ à esquerda e chatbot Stella à direita (empilha no celular) */
       .container.faq-wrap {
-        max-width: 1000px;
+        max-width: 1100px;
       }
-      .faq-section {
+      .help-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: var(--spacing-md);
+        padding: 6px 13px;
+        border-radius: 100px;
+        background: rgba(37, 99, 235, 0.14);
+        border: 1px solid rgba(37, 99, 235, 0.55);
+        color: #1e40af;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+      }
+      .help-eyebrow .dot {
+        width: 6px;
+        height: 6px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #2563eb;
+      }
+      /* Duas colunas: títulos na mesma linha, FAQ e chat começando juntos */
+      .help-layout {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+          'tl tr'
+          'lead .'
+          'faq chat';
+        column-gap: 72px;
+        row-gap: var(--spacing-sm);
         align-items: start;
-        gap: var(--spacing-md);
+      }
+      .help-title {
+        margin: 0;
+        font-size: clamp(1.3rem, 2.2vw, 1.55rem);
+        line-height: 1.25;
+        align-self: end;
+      }
+      .help-title--left {
+        grid-area: tl;
+      }
+      .help-title--right {
+        grid-area: tr;
+      }
+      .help-lead {
+        grid-area: lead;
+        color: var(--color-text-muted);
+        margin: 0 0 var(--spacing-md);
+      }
+      .faq-section {
+        grid-area: faq;
+        display: grid;
+        gap: var(--spacing-sm);
       }
       .faq-section .faq-item + .faq-item {
         margin-top: 0;
       }
-      @media (max-width: 720px) {
-        .faq-section {
+      .help-layout .chat-card {
+        grid-area: chat;
+      }
+      @media (max-width: 860px) {
+        .help-layout {
           grid-template-columns: 1fr;
-          gap: var(--spacing-sm);
+          grid-template-areas:
+            'tl'
+            'lead'
+            'faq'
+            'tr'
+            'chat';
+          row-gap: var(--spacing-md);
+        }
+        .help-title--right {
+          margin-top: var(--spacing-lg);
+        }
+        .chat-card {
+          height: 480px;
         }
       }
     </style>
@@ -356,6 +370,8 @@
           <a href="./index.html">Como funciona</a>
           <a href="../recursos/index.html">Recursos</a>
           <a href="../planos/index.html">Planos</a>
+
+          <a href="../mentorias-extras/index.html">Mentorias extras</a>
           <a href="../login/index.html">Entrar</a>
           <a class="btn btn-accent" href="../onboarding/index.html"
             >Criar conta</a
@@ -367,12 +383,7 @@
     <section class="page-hero">
       <div class="container">
         <span
-          class="section-eyebrow blue"
-          style="
-            background: rgba(47, 111, 235, 0.14);
-            border-color: rgba(47, 111, 235, 0.4);
-            color: #a9c8ff;
-          "
+          class="section-eyebrow dark"
           >PASSO A PASSO</span
         >
         <h1>Como funciona</h1>
@@ -468,13 +479,17 @@
     </div>
 
     <section class="match-banner" aria-labelledby="match-banner-title">
-      <div class="container">
-        <span class="match-banner-eyebrow">Como o match é calculado</span>
-        <h2 id="match-banner-title">
-          O algoritmo de compatibilidade combina
-          <span class="highlight">três critérios</span>
-        </h2>
+      <div class="match-banner-visual">
+        <div class="container">
+          <span class="section-eyebrow dark">Como o match é calculado</span>
+          <h2 id="match-banner-title">
+            O algoritmo de compatibilidade combina
+            <span class="highlight">três critérios</span>
+          </h2>
+        </div>
+      </div>
 
+      <div class="container match-banner-criteria">
         <ul class="match-criteria">
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -515,11 +530,18 @@
     <div class="container faq-wrap">
       <div class="spacer-xl"></div>
 
-      <span class="section-eyebrow blue">DÚVIDAS FREQUENTES</span>
-      <h2>Perguntas frequentes</h2>
-      <p class="section-lead">O que mais perguntam antes de criar a conta.</p>
+      <span class="help-eyebrow"><span class="dot"></span>DÚVIDAS FREQUENTES</span>
 
-      <div class="faq-section">
+      <div class="help-layout">
+        <h2 class="help-title help-title--left">Tire suas dúvidas</h2>
+        <h2 class="help-title help-title--right" id="stella-title">
+          Fala com a Stella que ela vai te ajudar.
+        </h2>
+        <p class="help-lead">
+          Leia as perguntas mais comuns ou converse com a Stella.
+        </p>
+
+        <div class="faq-section">
         <details class="faq-item sm-reveal">
           <summary>
             O StartMatch é gratuito?<span class="faq-icon">+</span>
@@ -528,7 +550,7 @@
             Sim — o plano Básico é gratuito para Startups e Investidores, com
             perfil completo e busca com filtros. Os planos Plus e Premium
             liberam recursos extras, como interesses ilimitados e prioridade no
-            algoritmo de match (ver <a href="../planos/index.html">Planos</a>).
+            algoritmo de match (ver <a class="btn-link" href="../planos/index.html">Planos</a>).
           </p>
         </details>
         <details class="faq-item sm-reveal" style="animation-delay: 0.05s">
@@ -562,6 +584,28 @@
             privacidade) fica registrado individualmente.
           </p>
         </details>
+        </div>
+
+        <div class="chat-card" id="stella-chat" role="region" aria-labelledby="stella-title">
+          <div class="chat-header">
+            <img class="chat-avatar" src="/imagens/stella.gif" alt="Stella, assistente virtual" width="52" height="52" />
+            <div>
+              <strong>Stella</strong>
+              <span>Assistente virtual do StartMatch</span>
+            </div>
+          </div>
+          <div class="chat-log" data-chat-log role="log" aria-live="polite"></div>
+          <form class="chat-form" data-chat-form autocomplete="off">
+            <input
+              type="text"
+              data-chat-input
+              maxlength="300"
+              placeholder="Digite sua mensagem..."
+              aria-label="Mensagem para a Stella"
+            />
+            <button class="btn btn-primary" type="submit">Enviar</button>
+          </form>
+        </div>
       </div>
 
       <div class="spacer-xl"></div>
@@ -575,15 +619,12 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>
-          <a href="../home/index.html">Home</a> ·
-          <a href="../sobre/index.html">Sobre</a> ·
-          <a href="./index.html">Como funciona</a> ·
-          <a href="../recursos/index.html">Recursos</a> ·
-          <a href="../planos/index.html">Planos</a>
-        </p>
-        <p class="copy">
-          StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).
+        <p class="copy copy-rights">
+          © 2026 StartMatch. Todos os direitos reservados a
+          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
+          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+          e
+          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
         </p>
       </div>
     </footer>

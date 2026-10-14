@@ -1,13 +1,12 @@
 <!--
-  Tela: Solicitações (Mentor)
-  ===========================
-  Caixa de entrada de pedidos de mentoria enviados por startups.
-
-  Nesta primeira entrega, os dados são demonstrativos e ficam somente
-  no frontend, pois ainda não existe entidade/end-point de solicitação
-  de mentoria no backend.
+  Tela: Solicitações de mentoria (Mentor)
+  ========================================
+  Pedidos de sessão enviados por startups. Ainda não existe entidade de
+  solicitação no backend: os pedidos são de demonstração e ficam em
+  scripts/mentorDemo.ts, compartilhados com Dashboard, Agenda e Mensagens.
+  Aceitar uma solicitação a coloca em "Próximas sessões" na Agenda;
+  "Conversar" abre a conversa com a startup em Mensagens.
 -->
-
 <!doctype html>
 <html lang="pt-BR">
   <head>
@@ -24,229 +23,24 @@
     <link rel="stylesheet" href="../../styles/components.css" />
 
     <style>
-      .solicitacoes-page {
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding-top: var(--spacing-xl);
-        padding-bottom: var(--spacing-2xl);
-      }
-
-      .solicitacoes-header {
-        margin-bottom: var(--spacing-xl);
-      }
-
-      .solicitacoes-header h1 {
-        margin-bottom: var(--spacing-sm);
-      }
-
-      .solicitacoes-header p {
-        margin: 0;
-      }
-
-      .solicitacoes-stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: var(--spacing-md);
-        margin-bottom: var(--spacing-xl);
-      }
-
-      .solicitacoes-stat {
-        min-height: 125px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-
-      .solicitacoes-stat-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .solicitacoes-stat-label {
-        margin: 0;
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-      }
-
-      .solicitacoes-section {
-        margin-bottom: var(--spacing-xl);
-      }
-
-      .solicitacoes-section-header {
-        margin-bottom: var(--spacing-md);
-      }
-
-      .solicitacoes-section-header h2 {
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .solicitacoes-section-header p {
-        margin: 0;
-      }
-
       .solicitacoes-list {
         display: flex;
         flex-direction: column;
         gap: var(--spacing-md);
       }
-
-      .solicitacao-card {
-        padding: var(--spacing-lg);
-      }
-
-      .solicitacao-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: var(--spacing-md);
-        margin-bottom: var(--spacing-lg);
-      }
-
-      .solicitacao-startup {
-        min-width: 0;
-      }
-
-      .solicitacao-startup h3 {
-        margin: 0 0 var(--spacing-xs);
-        font-family: var(--font-display);
-        font-size: 1.15rem;
-      }
-
-      .solicitacao-startup p {
-        margin: 0;
-        color: var(--color-text-muted);
-      }
-
-      .solicitacao-status {
-        flex-shrink: 0;
-      }
-
-      .solicitacao-detalhes {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: var(--spacing-md);
-        padding: var(--spacing-md) 0;
-        border-top: 1px solid var(--color-border);
-        border-bottom: 1px solid var(--color-border);
-      }
-
-      .solicitacao-detalhe {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .solicitacao-detalhe-label {
-        color: var(--color-text-muted);
-        font-size: 0.8rem;
-      }
-
-      .solicitacao-detalhe strong {
-        font-size: 0.95rem;
-      }
-
-      .solicitacao-acoes {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: var(--spacing-sm);
-        margin-top: var(--spacing-lg);
-      }
-      .solicitacao-status {
-        flex-shrink: 0;
-        border-radius: 999px;
-        padding: 6px 12px;
-      }
-
-      .btn-solicitacao-recusar {
-        background: var(--color-accent);
-        border-color: var(--color-accent);
-        color: var(--color-error);
-      }
-
-      .btn-solicitacao-recusar:hover {
-        background: var(--color-accent-hover);
-        border-color: var(--color-accent-hover);
-        color: var(--color-error);
-      }
-
-      .btn-mensagens-solicitacao {
-        display: none;
-      }
-
-      .btn-mensagens-solicitacao.is-visible {
-        display: inline-flex;
-      }
-
-      .solicitacao-mensagem {
-        margin-top: var(--spacing-md);
-        padding: var(--spacing-md);
-        border-radius: var(--radius);
-        background: var(--color-bg);
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-        line-height: 1.5;
-      }
-
       .solicitacao-resultado {
-        display: none;
-        margin-top: var(--spacing-lg);
-        padding: var(--spacing-md);
-        border-radius: var(--radius);
-        font-weight: 600;
+        margin: 0;
         font-size: 0.9rem;
+        font-weight: 600;
       }
-
-      .solicitacao-resultado.is-visible {
-        display: block;
-      }
-
       .solicitacao-resultado.is-success {
-        background: var(--color-success-light);
         color: #166534;
       }
-
       .solicitacao-resultado.is-error {
-        background: #fee2e2;
         color: #991b1b;
       }
-
-      @media (max-width: 800px) {
-        .solicitacoes-stats {
-          grid-template-columns: 1fr;
-        }
-
-        .solicitacao-detalhes {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .solicitacoes-page {
-          padding-top: var(--spacing-lg);
-        }
-
-        .solicitacao-header {
-          flex-direction: column;
-        }
-
-        .solicitacao-status {
-          align-self: flex-start;
-        }
-
-        .solicitacao-acoes {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .solicitacao-acoes .btn {
-          width: 100%;
-        }
+      .item-card-head .badge-eyebrow {
+        flex-shrink: 0;
       }
     </style>
   </head>
@@ -259,126 +53,53 @@
       </div>
     </header>
 
-    <main class="container solicitacoes-page">
-      <header class="solicitacoes-header">
+    <main class="container">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Área do mentor</span>
         <h1>Solicitações de mentoria</h1>
+        <p>Pedidos de sessão enviados por startups, aguardando sua resposta.</p>
+      </div>
 
-        <p class="text-muted">
-          Pedidos de sessão enviados por startups, aguardando sua resposta.
-        </p>
-      </header>
-
-      <section class="solicitacoes-stats" aria-label="Resumo das solicitações">
-        <div class="card solicitacoes-stat">
-          <div class="solicitacoes-stat-number" id="total-solicitacoes">1</div>
-
-          <p class="solicitacoes-stat-label">Solicitações recebidas</p>
-        </div>
-
-        <div class="card solicitacoes-stat">
-          <div class="solicitacoes-stat-number" id="pendentes-solicitacoes">
-            1
+      <section class="kpi-grid" aria-label="Resumo das solicitações">
+        <div class="card kpi-card">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7z"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Solicitações recebidas</p>
+            <div class="kpi-value" id="total-solicitacoes">—</div>
           </div>
-
-          <p class="solicitacoes-stat-label">Aguardando resposta</p>
         </div>
-
-        <div class="card solicitacoes-stat">
-          <div class="solicitacoes-stat-number" id="aceitas-solicitacoes">
-            0
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--amber" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Aguardando resposta</p>
+            <div class="kpi-value" id="pendentes-solicitacoes">—</div>
           </div>
-
-          <p class="solicitacoes-stat-label">Solicitações aceitas</p>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Solicitações aceitas</p>
+            <div class="kpi-value" id="aceitas-solicitacoes">—</div>
+          </div>
         </div>
       </section>
 
-      <section class="solicitacoes-section">
-        <div class="solicitacoes-section-header">
-          <h2>Solicitações recebidas</h2>
+      <h2>Solicitações recebidas</h2>
+      <p class="text-muted">
+        Analise os pedidos das startups e escolha quais mentorias deseja aceitar.
+        Você pode mudar de ideia a qualquer momento.
+      </p>
+      <div class="spacer-sm"></div>
 
-          <p class="text-muted">
-            Analise os pedidos das startups e escolha quais mentorias deseja
-            aceitar.
-          </p>
-        </div>
+      <div class="solicitacoes-list" id="solicitacoes-list"></div>
 
-        <div class="solicitacoes-list" id="solicitacoes-list">
-          <article class="card solicitacao-card" id="solicitacao-1">
-            <div class="solicitacao-header">
-              <div class="solicitacao-startup">
-                <h3>Startup #1</h3>
-
-                <p>Solicitação de mentoria sobre captação de investimentos.</p>
-              </div>
-
-              <span
-                class="badge badge-accent solicitacao-status"
-                id="status-solicitacao"
-              >
-                Aguardando resposta
-              </span>
-            </div>
-
-            <div class="solicitacao-detalhes">
-              <div class="solicitacao-detalhe">
-                <span class="solicitacao-detalhe-label"> Data solicitada </span>
-
-                <strong>15 de setembro</strong>
-              </div>
-
-              <div class="solicitacao-detalhe">
-                <span class="solicitacao-detalhe-label"> Horário </span>
-
-                <strong>14:00 às 15:00</strong>
-              </div>
-
-              <div class="solicitacao-detalhe">
-                <span class="solicitacao-detalhe-label"> Formato </span>
-
-                <strong>Online</strong>
-              </div>
-            </div>
-
-            <div class="solicitacao-mensagem">
-              A startup deseja conversar sobre estratégias de captação,
-              preparação para conversar com investidores e próximos passos para
-              o desenvolvimento do negócio.
-            </div>
-
-            <div class="solicitacao-acoes" id="acoes-solicitacao">
-              <button
-                type="button"
-                class="btn btn-outline btn-solicitacao-recusar"
-                id="recusar-solicitacao"
-              >
-                Recusar
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-primary"
-                id="aceitar-solicitacao"
-              >
-                Aceitar mentoria
-              </button>
-
-              <a
-                href="../mensagens/index.html"
-                class="btn btn-primary btn-mensagens-solicitacao"
-                id="mensagens-solicitacao"
-              >
-                Ir para mensagens
-              </a>
-            </div>
-
-            <div
-              class="solicitacao-resultado"
-              id="resultado-solicitacao"
-              aria-live="polite"
-            ></div>
-          </article>
-        </div>
-      </section>
+      <div class="spacer-xl"></div>
     </main>
 
     <script type="module" src="./main.ts"></script>

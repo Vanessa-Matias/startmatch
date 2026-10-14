@@ -38,7 +38,9 @@
       .auth-brand {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        /* mesmo fundo do hero da Home e dos banners */
+        background: var(--banner-gradient);
+        background-color: var(--banner-dark);
         padding: 48px;
         display: flex;
         flex-direction: column;
@@ -140,7 +142,7 @@
 
       <div class="auth-form-side">
         <div class="container--narrow sm-reveal">
-          <p class="text-muted back-link"><a href="../onboarding/index.html">&larr; Voltar</a></p>
+          <p class="text-muted back-link"><a class="btn-pill btn-pill--sm" href="../onboarding/index.html"><svg class="btn-pill-arrow btn-pill-arrow--back" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar</a></p>
           <h1>Criar conta</h1>
           <p class="text-muted" id="tipo-descricao"></p>
 
@@ -168,8 +170,8 @@
             <p class="form-error" id="form-error"></p>
           </form>
 
-          <p class="text-muted">
-            Já tem conta? <a href="../login/index.html">Entrar</a>
+          <p class="text-muted text-center">
+            Já tem conta? <a class="btn btn-primary" href="../login/index.html">Entrar</a>
           </p>
         </div>
       </div>

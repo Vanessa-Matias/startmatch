@@ -7,10 +7,12 @@
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
+import { renderNav } from '../../scripts/nav';
 import { MOCK_MODE } from '../../scripts/mock';
 import type { Mentor } from '../../scripts/types';
 
-requireAuth(['mentor']);
+const usuario = requireAuth(['mentor']);
+renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
 const form = document.getElementById('form-mentor') as HTMLFormElement;
 const errorEl = document.getElementById('form-error') as HTMLParagraphElement;

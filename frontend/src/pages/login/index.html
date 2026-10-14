@@ -32,7 +32,9 @@
       .login-brand {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, #0f2148 0%, #152a54 100%);
+        /* mesmo fundo do hero da Home e dos banners */
+        background: var(--banner-gradient);
+        background-color: var(--banner-dark);
         padding: 48px;
         display: flex;
         flex-direction: column;
@@ -55,24 +57,33 @@
         position: relative;
         z-index: 1;
       }
+      /* título no mesmo estilo do hero da Home (o selo usa .section-eyebrow.dark) */
       .login-brand h2 {
         color: #fff;
-        font-size: 26px;
-        line-height: 1.3;
-        max-width: 380px;
+        font-size: clamp(30px, 3.2vw, 44px);
+        line-height: 1.14;
+        max-width: 480px;
+        margin: 0;
+      }
+      .login-brand h2 .highlight {
+        background: linear-gradient(90deg, #5b9bff, #4ade80, #5b9bff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
       .login-brand ul {
         display: flex;
         flex-direction: column;
         gap: 14px;
-        max-width: 380px;
+        max-width: 420px;
       }
       .login-brand li {
         display: flex;
         align-items: center;
         gap: 12px;
-        color: #c7d0e6;
-        font-size: 14.5px;
+        color: #e6ecf7;
+        font-size: 16px;
       }
       .login-brand .check {
         width: 28px;
@@ -103,41 +114,6 @@
         gap: 6px;
         margin-bottom: var(--spacing-lg);
       }
-      /* "Voltar para o site": botão verde sólido com brilho neon, igual ao
-         "Já tenho conta" do hero da Home; escurece ao passar o cursor. */
-      .back-link a {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
-        border: 1px solid #4ade80;
-        border-radius: var(--radius);
-        background: #22c55e;
-        color: #ffffff;
-        font-weight: 600;
-        font-size: 0.92rem;
-        text-decoration: none;
-        box-shadow:
-          0 0 10px rgba(74, 222, 128, 0.4),
-          inset 0 0 6px rgba(255, 255, 255, 0.12);
-        transition:
-          background 0.15s ease,
-          border-color 0.15s ease,
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
-      }
-      .back-link a:hover,
-      .back-link a:focus-visible {
-        background: #16a34a;
-        border-color: #86efac;
-        color: #ffffff;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow:
-          0 0 16px rgba(74, 222, 128, 0.6),
-          0 10px 20px -8px rgba(22, 163, 74, 0.55);
-        outline: none;
-      }
       @media (max-width: 860px) {
         .login-split {
           grid-template-columns: 1fr;
@@ -154,7 +130,11 @@
         <a href="../home/index.html">StartMatch</a>
 
         <div>
-          <h2>Conectando startups do Porto Digital a investidores e mentores.</h2>
+          <span class="section-eyebrow dark">ECOSSISTEMA DE INOVAÇÃO - RECIFE</span>
+          <h2>
+            Conectando startups do Porto Digital a
+            <span class="highlight sm-gradient-text">investidores e mentores</span>.
+          </h2>
           <div class="spacer-md"></div>
           <ul>
             <li><span class="check" style="background: rgba(47,111,235,0.18)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>Perfil completo por segmento e estágio</li>
@@ -169,7 +149,7 @@
 
       <div class="login-form-side">
         <div class="container--narrow sm-reveal">
-          <p class="text-muted back-link"><a href="../home/index.html">&larr; Voltar para o site</a></p>
+          <p class="text-muted back-link"><a class="btn-pill btn-pill--sm" href="../home/index.html"><svg class="btn-pill-arrow btn-pill-arrow--back" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar para o site</a></p>
           <h1>Entrar</h1>
           <p class="text-muted">Acesse sua conta StartMatch.</p>
           <div class="spacer-md"></div>
@@ -189,8 +169,8 @@
             <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
           </form>
 
-          <p class="text-muted">
-            Ainda não tem conta? <a href="../onboarding/index.html">Cadastre-se</a>
+          <p class="text-muted text-center">
+            Ainda não tem conta? <a class="btn btn-primary" href="../onboarding/index.html">Cadastre-se</a>
           </p>
         </div>
       </div>

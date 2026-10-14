@@ -19,18 +19,18 @@ de negócio e da governança da plataforma.
 
 | Item exigido | Status |
 |---|---|
-| Aplicação web responsiva/PWA funcional | PWA pronto (manifest + service worker); responsividade **em andamento** — 24 das 36 telas já têm breakpoints dedicados (mobile/tablet), faltam: busca, cadastro-startup, cadastro-investidor, cadastro-mentor, perfil-startup, perfil-investidor, interesses-startup, interesses-investidor, mentorias, planos, recursos, como-funciona |
+| Aplicação web responsiva/PWA funcional | ✅ PWA pronto (manifest + service worker). Em 13/10 as principais telas dos três perfis foram abertas em 390 px (celular) e em 1366 px (computador): nenhuma tem rolagem horizontal nem erro de JavaScript |
 | Frontend em React ou tecnologia equivalente | HTML + CSS + TypeScript puro com Vite (SPA/MPA moderna) — **tecnologicamente equivalente, mas não é React**; vale confirmar com o professor se aceita |
 | Backend em Node.js ou tecnologia equivalente | ✅ NestJS (Node.js) |
 | Backend disponibilizando API REST | ✅ Documentação viva em `/docs` (Swagger) |
-| Banco de dados integrado à aplicação | ⚠️ **Pendente** — TypeORM/entidades prontos, mas nenhum banco real foi conectado e testado de ponta a ponta ainda (decisão da equipe: banco só depois da Agnes terminar o frontend) |
-| Cadastro, login e autenticação de usuários | ✅ Implementado (JWT) — falta validar contra banco real |
+| Banco de dados integrado à aplicação | ✅ PostgreSQL no Supabase (conexão pelo pooler, com SSL), usado pela API publicada. O fluxo cadastro → login → perfil já foi testado gravando no banco em produção |
+| Cadastro, login e autenticação de usuários | ✅ Implementado (JWT, senha com hash bcrypt) e validado contra o banco real |
 | Diferenciação inicial dos perfis de Startup e Investidor | ✅ |
 | Cadastro de startups (segmento, estágio, localização, equipe, mercado de atuação, investimento pretendido) | ✅ Segmento/estágio/localização/investimento; **"equipe" e "mercado de atuação" não são campos próprios** hoje (ficam dentro da descrição livre) |
 | Cadastro de investidores (áreas de interesse, tese, faixa de investimento, localização) | ✅ |
 | Cadastro e gerenciamento das informações dos perfis | ✅ |
 | Mecanismo inicial de busca e filtros | ✅ |
-| Registro de interesse entre startups e investidores | ✅ |
+| Registro de interesse entre startups e investidores | ✅ `POST /interests` (botão no perfil da contraparte). Na apresentação, a lista de matches e as conversas de exemplo são **simuladas só no front-end** — ver a seção "Telas de demonstração" |
 | Implementação inicial do fluxo de matchmaking | ✅ Score de compatibilidade calculado no backend |
 | Dashboard inicial por perfil | ✅ |
 | Arquitetura cliente-servidor funcional e documentada | ✅ Funcional; documentação em `docs/arquitetura.md` |
@@ -40,9 +40,9 @@ de negócio e da governança da plataforma.
 | Definição inicial das regras de uso da plataforma | ⚠️ Existe o registro de aceite de termos (LGPD), mas falta redigir o texto de Termos de Uso em si |
 | Levantamento dos dados pessoais tratados + requisitos LGPD | ✅ `docs/arquitetura.md`, seção 5 |
 
-**Pendências reais antes de 15/10:** conectar e testar um banco de dados de
-verdade; deixar o frontend responsivo; redigir o texto de Termos de Uso; e
-(opcional) confirmar com o professor se a stack sem React é aceita.
+**Pendências antes de 15/10:** redigir o texto de Termos de Uso e (opcional)
+confirmar com o professor se a stack sem React é aceita. O banco de dados, o
+deploy e a responsividade já foram resolvidos.
 
 ## 2ª Entrega — 11/12/2026
 
@@ -58,18 +58,35 @@ completo, seguro, validado e preparado para o mercado.
 | Dashboard consolidado com indicadores da plataforma | ✅ Painel do Administrador com `GET /admin/metrics` (adiantado) |
 | Indicadores (nº de startups, investidores, interesses, matches, oportunidades) | ✅ (adiantado) |
 | Recursos administrativos de gestão da plataforma | ✅ Gestão de usuários e planos (adiantado) |
-| Deploy em ambiente de nuvem | ❌ Ainda não — planejado: frontend no Vercel, banco no Supabase |
+| Deploy em ambiente de nuvem | ✅ Frontend na Vercel, API no Render, banco no Supabase (adiantado) |
 | Controle de acesso por perfis e permissões | ✅ (adiantado) |
 | Autenticação, autorização e proteção das APIs | ✅ (adiantado) |
 | Requisitos de privacidade e proteção de dados (LGPD) | ⚠️ Módulo básico existe; painel agregado de consentimentos ainda não |
-| Registro básico de auditoria | ❌ Ainda não (tela `admin-auditoria` é um placeholder) |
-| Testes automatizados (backend/frontend) | ❌ Ainda não existem |
+| Registro básico de auditoria | ✅ Módulo `audit` registra eventos (cadastro, login, consentimento, mentor) e a tela `admin-auditoria` lê `GET /admin/audit-log` (adiantado) |
+| Testes automatizados (backend/frontend) | ❌ Ainda não existem (só o teste e2e de exemplo que vem com o NestJS, que não cobre as rotas do projeto) |
 | Testes com usuários reais/beta testers | ⚠️ Funcionalidade de avaliação pronta (`beta-evaluation`), falta rodar com usuários reais |
 | Finalização do Business Model Canvas / plano de negócio | ⚠️ Versão inicial pronta (`docs/modelo-de-negocio.md`), falta aprofundar |
 | Estratégia de monetização definida | ✅ Planos definidos; cobrança real ainda não integrada |
 | Estratégia inicial de Go-to-Market | ✅ `docs/modelo-de-negocio.md`, seção 6 |
-| Documentação técnica final (arquitetura, APIs, dados, implantação) | ⚠️ Arquitetura/dados/APIs documentados; falta a parte de implantação (depende do deploy) |
+| Documentação técnica final (arquitetura, APIs, dados, implantação) | ✅ Arquitetura, dados, APIs e implantação em `docs/arquitetura.md` (seção 6) |
 | Apresentação e demonstração da solução completa | — (etapa final, depende do restante) |
+
+## Telas de demonstração (somente front-end)
+
+Para a apresentação da 1ª entrega, algumas telas mostram dados de exemplo
+**guardados apenas no navegador** (`sessionStorage`/`localStorage`). Nada
+delas vai para a API nem para o banco de dados. O que grava no banco é o
+fluxo principal: cadastro → login → cadastro do perfil (startup, investidor
+ou mentor) → busca → manifestação de interesse.
+
+| Tela | O que é simulado |
+|---|---|
+| Matches (startup/investidor) | Matches de exemplo e o botão "Simular novo match" (`scripts/matchSimulado.ts`); os matches reais continuam vindo de `GET /matches` |
+| Mensagens | Conversas dos matches de exemplo, com resposta automática; no perfil Mentor, as conversas vêm das solicitações de mentoria de exemplo |
+| Mentorias (startup) | Mentores de exemplo e o aviso ao "Solicitar mentoria"; mentores reais vêm de `GET /mentors` |
+| Agenda, Solicitações, Histórico e Certificados (mentor) | Dados de exemplo em `scripts/mentorDemo.ts` |
+| Plano, Comprar mentorias (pagamento) | Cartão/PIX de demonstração (`scripts/payment.ts`); nada é cobrado |
+| Stella (Como funciona) | Assistente só com menu numerado, sem IA e sem chamar a API |
 
 ## Decisões de escopo da equipe (fora do material do professor)
 

@@ -57,6 +57,33 @@ const TIPO_INVESTIDOR_LABEL: Record<string, string> = {
 };
 
 
+// Nome e badge de cada plano (mesmo visual da página de Planos).
+const PLANO_LABEL: Record<string, { nome: string; badge: string }> = {
+  basico: { nome: 'Básico', badge: 'badge-plan--gray' },
+  plus: { nome: 'Plus', badge: 'badge-plan--blue' },
+  premium: { nome: 'Premium', badge: 'badge-plan--green' },
+};
+
+function planoHtml(plano: string | undefined): string {
+  if (!plano) return '—';
+  const info = PLANO_LABEL[plano.toLowerCase()] ?? { nome: plano, badge: 'badge-plan--gray' };
+  return `<span class="badge-plan ${info.badge}">${info.nome}</span>`;
+}
+
+// Valor compacto para os cards: R$ 100 mil, R$ 1,5 mi. Usa espaço que não
+// quebra (\u00a0), para a linha só quebrar no traço entre mínimo e máximo.
+function formatMoedaCurta(valor: number): string {
+  let texto: string;
+  if (valor >= 1_000_000) {
+    texto = `R$ ${(valor / 1_000_000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`;
+  } else if (valor >= 1_000) {
+    texto = `R$ ${(valor / 1_000).toLocaleString('pt-BR', { maximumFractionDigits: 0 })} mil`;
+  } else {
+    texto = `R$ ${valor}`;
+  }
+  return texto.replace(/ /g, '\u00a0');
+}
+
 // Formata valores monetários em reais.
 
 function formatMoeda(valor: number): string {
@@ -83,11 +110,11 @@ function renderCards(investidor: Investidor): void {
       : '—';
 
   investimentoInvestidorEl.textContent =
-    `${formatMoeda(investidor.investimentoMin)} – ` +
-    `${formatMoeda(investidor.investimentoMax)}`;
+    `${formatMoedaCurta(investidor.investimentoMin)} – ` +
+    `${formatMoedaCurta(investidor.investimentoMax)}`;
 
-  planoInvestidorEl.textContent =
-    investidor.planoAssinatura || '—';
+  planoInvestidorEl.innerHTML =
+    planoHtml(investidor.planoAssinatura);
 }
 
 
@@ -115,9 +142,7 @@ function renderResumo(investidor: Investidor): void {
       ${formatMoeda(investidor.investimentoMax)}
     </p>
 
-    <span class="badge">
-      Plano ${investidor.planoAssinatura}
-    </span>
+    ${planoHtml(investidor.planoAssinatura)}
   `;
 }
 

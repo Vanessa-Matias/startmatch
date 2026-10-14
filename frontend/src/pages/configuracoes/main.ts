@@ -1320,7 +1320,7 @@ function configurarPlano(): void {
         'investidor'
       ? `
         Quer ver ou trocar seu plano de assinatura?
-        <a href="../plano/index.html">
+        <a class="btn-link" href="../plano/index.html">
           Acesse Plano
         </a>.
       `

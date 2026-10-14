@@ -50,6 +50,20 @@ const ESTAGIO_LABEL: Record<string, string> = {
 };
 
 
+// Nome e badge de cada plano (mesmo visual da página de Planos e dos
+// dashboards de investidor e mentor).
+const PLANO_LABEL: Record<string, { nome: string; badge: string }> = {
+  basico: { nome: 'Básico', badge: 'badge-plan--gray' },
+  plus: { nome: 'Plus', badge: 'badge-plan--blue' },
+  premium: { nome: 'Premium', badge: 'badge-plan--green' },
+};
+
+function planoHtml(plano: string | undefined): string {
+  if (!plano) return '—';
+  const info = PLANO_LABEL[plano.toLowerCase()] ?? { nome: plano, badge: 'badge-plan--gray' };
+  return `<span class="badge-plan ${info.badge}">${info.nome}</span>`;
+}
+
 function formatMoeda(valor: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -63,7 +77,7 @@ function renderCards(startup: Startup): void {
   estagioStartupEl.textContent =
     ESTAGIO_LABEL[startup.estagio] ?? startup.estagio ?? '—';
   investimentoStartupEl.textContent = formatMoeda(startup.investimentoPretendido);
-  planoStartupEl.textContent = startup.planoAssinatura || '—';
+  planoStartupEl.innerHTML = planoHtml(startup.planoAssinatura);
 }
 
 function renderResumo(startup: Startup): void {
@@ -84,9 +98,7 @@ function renderResumo(startup: Startup): void {
       ${startup.descricao}
     </p>
 
-    <span class="badge">
-      Plano ${startup.planoAssinatura}
-    </span>
+    ${planoHtml(startup.planoAssinatura)}
 
   `;
 

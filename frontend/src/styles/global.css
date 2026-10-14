@@ -184,6 +184,19 @@ ul {
   animation: sm-fade-up 0.6s ease-out forwards;
 }
 
+/* Rolagem suave da página (âncoras, "voltar ao topo" etc.). */
+html {
+  scroll-behavior: smooth;
+  /* compensa o menu fixo ao pular para âncoras (#secao) */
+  scroll-padding-top: 88px;
+}
+
+/* Quando scripts/reveal.ts está ativo (classe js-reveal no <html>), os cards só
+   animam ao entrar na tela durante a rolagem, e não todos de uma vez no carregamento. */
+html.js-reveal .sm-reveal:not(.is-visible) {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sm-pulse-dot,
   .sm-node,
@@ -195,10 +208,33 @@ ul {
     animation: none !important;
     opacity: 1 !important;
   }
+
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Remove a faixa branca entre a navbar e o conteúdo em todas as telas */
 .navbar {
   margin-bottom: 0 !important;
   border-bottom: 0 !important;
+}
+
+/* Centraliza o texto do elemento (ex.: "Já tem conta? Entrar"). */
+.text-center {
+  text-align: center;
+}
+
+/* Espaço entre o menu fixo e o conteúdo das telas (título "Dashboard",
+   "Plano e assinatura" etc.). As telas públicas começam com um banner/hero
+   e não são afetadas. */
+.navbar + .container,
+.navbar + main {
+  padding-top: clamp(28px, 4vw, 48px);
+}
+
+/* O atributo hidden sempre esconde, mesmo em elementos com display próprio
+   (ex.: .btn é inline-flex e, sem isto, ignoraria o hidden). */
+[hidden] {
+  display: none !important;
 }

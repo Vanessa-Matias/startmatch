@@ -34,6 +34,10 @@ export const NAV_BY_ROLE: Record<
       label: 'Mentorias',
     },
     {
+      href: '../comprar-mentorias/index.html',
+      label: 'Mentorias extras',
+    },
+    {
       href: '../canvas/index.html',
       label: 'Canvas',
     },
@@ -82,6 +86,10 @@ export const NAV_BY_ROLE: Record<
   {
     href: '../dashboard-mentor/index.html',
     label: 'Dashboard',
+  },
+  {
+    href: '../perfil-mentor/index.html',
+    label: 'Perfil',
   },
   {
     href: '../agenda/index.html',
@@ -160,30 +168,76 @@ export function renderNav(
     CONFIGURACOES_LINK,
   ];
 
+  // marca o link da tela atual (ex.: ".../plano/index.html")
+  const paginaAtual = window.location.pathname.split('/').slice(-2).join('/');
+
   const linksHtml = links
-    .map(
-      (link) =>
-        `<a href="${link.href}">${link.label}</a>`,
-    )
+    .map((link) => {
+      const atual = link.href.endsWith(paginaAtual);
+      return `<a href="${link.href}"${atual ? ' aria-current="page"' : ''}>${link.label}</a>`;
+    })
     .join('');
 
+  // Menu hambúrguer: as seções ficam num painel que abre no botão de 3
+  // linhas, para o menu ocupar menos espaço. Estilo em components.css
+  // (.nav--hamburger).
+  navEl.classList.add('nav--hamburger');
   navEl.innerHTML = `
-    ${linksHtml}
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label="Abrir menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
 
-    ${
-      showLogout
-        ? `
-          <button
-            type="button"
-            class="nav-logout"
-            id="nav-logout"
-          >
-            Sair
-          </button>
-        `
-        : ''
-    }
+    <div class="nav-menu" id="nav-menu" hidden>
+      ${linksHtml}
+
+      ${
+        showLogout
+          ? `
+            <button
+              type="button"
+              class="nav-logout"
+              id="nav-logout"
+            >
+              Sair
+            </button>
+          `
+          : ''
+      }
+    </div>
   `;
+
+  const toggle = navEl.querySelector('.nav-toggle') as HTMLButtonElement;
+  const menu = navEl.querySelector('.nav-menu') as HTMLDivElement;
+
+  function setOpen(open: boolean): void {
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+
+  toggle.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setOpen(menu.hidden !== false);
+  });
+
+  // fecha ao clicar fora do menu ou apertar Esc
+  document.addEventListener('click', (event) => {
+    if (!menu.hidden && !navEl.contains(event.target as Node)) {
+      setOpen(false);
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !menu.hidden) {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
 
   if (showLogout) {
     document

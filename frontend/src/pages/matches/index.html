@@ -28,6 +28,79 @@
 
       .matches-header {
         margin: 28px 0 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+      }
+      .match-sim-tag {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        font-style: italic;
+      }
+      .match-card.match-card--novo {
+        animation: match-pop 0.5s ease;
+        border-color: #4ade80;
+        box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25);
+      }
+      @keyframes match-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .match-card.match-card--novo {
+          animation: none;
+        }
+      }
+
+      /* modal "É um match!" */
+      .modal-backdrop[hidden] {
+        display: none;
+      }
+      .match-modal {
+        text-align: center;
+      }
+      .match-modal-avatars {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin: 6px 0 14px;
+      }
+      .match-modal-avatars .match-avatar {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
+        font-size: 1.2rem;
+        box-shadow: 0 0 0 3px rgba(47, 111, 235, 0.25);
+      }
+      .match-modal-avatars .match-avatar--b {
+        background: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
+      }
+      .match-modal-heart {
+        font-size: 1.6rem;
+        color: #2f6feb;
+      }
+      .match-modal h2 {
+        margin: 0 0 6px;
+        background: linear-gradient(90deg, #2f6feb, #16a34a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .match-modal .modal-footer {
+        justify-content: center;
       }
 
       .matches-header h1 {
@@ -195,11 +268,17 @@
 
     <main class="container matches-page">
       <div class="matches-header">
-        <h1>Matches</h1>
-
-        <p class="text-muted">
+        <div>
+          <h1>Matches</h1>
+          <p class="text-muted">
           Seus matches confirmados e conexões dentro da rede StartMatch.
         </p>
+        </div>
+        <!-- Simulação: cria um match de exemplo (main.ts) -->
+        <button type="button" class="btn-pill" id="btn-simular-match">
+          Simular novo match
+          <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
       </div>
 
       <section class="matches-summary" aria-label="Resumo das conexões">

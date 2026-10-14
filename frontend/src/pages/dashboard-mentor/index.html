@@ -1,3 +1,10 @@
+<!--
+  Tela: Dashboard do Mentor
+  ==========================
+  Resumo do perfil (com foto, cargo e empresa vindos da tela Perfil), cards de
+  indicadores ligados às outras telas do mentor (Solicitações, Agenda, Histórico)
+  e atalhos. Dados extras e de demonstração: scripts/mentorDemo.ts.
+-->
 <!doctype html>
 <html lang="pt-BR">
   <head>
@@ -14,115 +21,97 @@
     <link rel="stylesheet" href="../../styles/components.css" />
 
     <style>
-      /* =========================
-         CABEÇALHO DO DASHBOARD
-         ========================= */
-
-      .dashboard-header {
-        margin-bottom: var(--spacing-xl);
+      /* Card de resumo do perfil */
+      .mentor-resumo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+        flex-wrap: wrap;
+        margin-bottom: var(--spacing-lg);
       }
-
-      .dashboard-header h1 {
-        font-size: 2rem;
-        margin: var(--spacing-sm) 0 var(--spacing-xs);
-        letter-spacing: -0.5px;
+      .mentor-resumo-foto {
+        flex-shrink: 0;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center top;
+        box-shadow: 0 0 0 3px rgba(47, 111, 235, 0.25);
       }
-
-      .dashboard-header p {
+      .mentor-resumo-iniciais {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #2f6feb, #16a34a);
+        color: #fff;
+        font-family: var(--font-family-display);
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .mentor-resumo-info {
+        flex: 1;
+        min-width: 220px;
+      }
+      .mentor-resumo-info h2 {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 1.3rem;
+      }
+      .mentor-resumo-cargo {
+        margin: 2px 0 10px;
+        color: var(--color-text-muted);
+      }
+      .mentor-resumo-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .mentor-resumo-aviso {
+        width: 100%;
+        margin: 0;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        font-size: 0.9rem;
       }
 
-      /* =========================
-         CARDS PRINCIPAIS
-         ========================= */
-
-      .dashboard-stats {
+      /* Atalhos com ícone */
+      .atalhos-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: var(--spacing-md);
-        margin-bottom: var(--spacing-xl);
       }
-
-      .dashboard-stat {
-        text-align: center;
-        min-height: 150px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .dashboard-stat-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .dashboard-stat-label {
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-        margin: 0;
-      }
-
-      .dashboard-stat-description {
-        color: var(--color-text-muted);
-        font-size: 0.8rem;
-        margin-top: var(--spacing-xs);
-        margin-bottom: 0;
-      }
-
-      /* =========================
-         ATALHOS
-         ========================= */
-
-      .atalhos-header {
-        margin-bottom: var(--spacing-md);
-      }
-
-      .atalhos-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: var(--spacing-md);
-      }
-
       .atalho-card {
         display: flex;
-        flex-direction: column;
-        min-height: 150px;
+        align-items: flex-start;
+        gap: 14px;
         text-decoration: none;
         color: inherit;
       }
-
       .atalho-card:hover {
         text-decoration: none;
+        border-color: var(--color-accent);
       }
-
       .atalho-card .card-title {
-        margin-bottom: var(--spacing-sm);
+        margin-bottom: 4px;
       }
-
       .atalho-card p {
-        margin-bottom: 0;
+        margin: 0;
+        font-size: 0.9rem;
       }
-
-      /* =========================
-         RESPONSIVIDADE
-         ========================= */
 
       @media (max-width: 900px) {
-        .dashboard-stats {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
         .atalhos-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
-
-      @media (max-width: 520px) {
-        .dashboard-stats,
+      @media (max-width: 560px) {
         .atalhos-grid {
           grid-template-columns: 1fr;
+        }
+        .mentor-resumo {
+          gap: var(--spacing-md);
         }
       }
     </style>
@@ -137,91 +126,121 @@
       </div>
     </header>
 
-    <div class="container">
-      <!-- =========================
-           CABEÇALHO DO DASHBOARD
-           ========================= -->
-
-      <div class="dashboard-header">
+    <main class="container">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Área do mentor</span>
         <h1>Dashboard</h1>
-
-        <p class="text-muted">
-          Acompanhe seu perfil, suas mentorias e suas atividades no StartMatch.
-        </p>
+        <p>Acompanhe seu perfil, suas mentorias e suas atividades no StartMatch.</p>
       </div>
 
-      <!-- =========================
-           CARDS PRINCIPAIS
-           ========================= -->
+      <!-- RESUMO DO PERFIL (preenchido por main.ts) -->
+      <section class="card mentor-resumo" id="mentor-resumo">
+        <p class="text-muted">Carregando perfil…</p>
+      </section>
 
-      <section class="dashboard-stats" id="dados-dashboard">
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-perfil-mentor">0</div>
-
-          <div class="dashboard-stat-label">Seu perfil</div>
-
-          <p class="dashboard-stat-description">
-            Áreas de Atuação e Especialidades.
-          </p>
+      <!-- INDICADORES -->
+      <section class="kpi-grid" id="dados-dashboard" aria-label="Resumo das suas mentorias">
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--amber" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7z"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Solicitações pendentes</p>
+            <div class="kpi-value" id="kpi-pendentes">—</div>
+          </div>
         </div>
-
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-mentorias-mentor">0</div>
-
-          <div class="dashboard-stat-label">Suas mentorias</div>
-
-          <p class="dashboard-stat-description">
-            Acompanhamento de Sessões e Solicitações.
-          </p>
+        <div class="card kpi-card">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Próximas sessões</p>
+            <div class="kpi-value" id="kpi-proximas">—</div>
+          </div>
         </div>
-
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-atividades-mentor">1</div>
-
-          <div class="dashboard-stat-label">Suas atividades</div>
-
-          <p class="dashboard-stat-description">
-            Agenda, histórico e certificados.
-          </p>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Horas de mentoria</p>
+            <div class="kpi-value" id="kpi-horas">—</div>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--violet" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17l-5.9 3 1.2-6.5L2.5 8.9 9.1 8z"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Plano atual</p>
+            <div class="kpi-value" id="kpi-plano">—</div>
+          </div>
         </div>
       </section>
 
-      <!-- =========================
-           ATALHOS
-           ========================= -->
-
-      <div class="atalhos-header">
-        <h2>Atalhos</h2>
-      </div>
+      <!-- ATALHOS -->
+      <h2>Atalhos</h2>
+      <div class="spacer-sm"></div>
 
       <div class="atalhos-grid">
+        <a class="card atalho-card" href="../perfil-mentor/index.html">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Perfil</div>
+            <p class="text-muted">Foto, empresa e experiência que as startups veem.</p>
+          </div>
+        </a>
         <a class="card atalho-card" href="../agenda/index.html">
-          <div class="card-title">Agenda</div>
-
-          <p class="text-muted">Sua disponibilidade e próximas sessões.</p>
+          <span class="kpi-icon kpi-icon--sky" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Agenda</div>
+            <p class="text-muted">Sua disponibilidade e próximas sessões.</p>
+          </div>
         </a>
-
         <a class="card atalho-card" href="../solicitacoes/index.html">
-          <div class="card-title">Solicitações</div>
-
-          <p class="text-muted">Pedidos de mentoria recebidos de startups.</p>
+          <span class="kpi-icon kpi-icon--amber" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7z"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Solicitações</div>
+            <p class="text-muted">Pedidos de mentoria recebidos de startups.</p>
+          </div>
         </a>
-
+        <a class="card atalho-card" href="../mensagens/index.html">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Mensagens</div>
+            <p class="text-muted">Converse com as startups que você mentora.</p>
+          </div>
+        </a>
         <a class="card atalho-card" href="../historico-mentorias/index.html">
-          <div class="card-title">Histórico</div>
-
-          <p class="text-muted">Sessões realizadas e horas de mentoria.</p>
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Histórico</div>
+            <p class="text-muted">Sessões realizadas e horas de mentoria.</p>
+          </div>
         </a>
-
         <a class="card atalho-card" href="../certificados/index.html">
-          <div class="card-title">Certificados</div>
-
-          <p class="text-muted">
-            Certificado de horas, exportável para LinkedIn.
-          </p>
+          <span class="kpi-icon kpi-icon--violet" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5 7 22l5-3 5 3-1.5-7.5"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Certificados</div>
+            <p class="text-muted">Certificado de horas, exportável para LinkedIn.</p>
+          </div>
         </a>
       </div>
-    </div>
+
+      <div class="spacer-xl"></div>
+    </main>
 
     <script type="module" src="./main.ts"></script>
   </body>

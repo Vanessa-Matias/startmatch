@@ -19,44 +19,50 @@
     <link rel="stylesheet" href="../../styles/components.css" />
 
     <style>
-      /* Dashboard simples */
-
+      /* Cards de indicadores: ícone, rótulo pequeno em cima e valor
+         em tamanho moderado, alinhados à esquerda */
       .dashboard-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: var(--spacing-md);
         margin-bottom: var(--spacing-xl);
       }
-
       .dashboard-stat {
-        text-align: center;
-        min-height: 90px;
-
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
         align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        min-width: 0;
       }
-
-      .dashboard-stat-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: var(--spacing-xs);
-
-        min-height: 58px;
-
-        display: flex;
+      .dashboard-stat-icon {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-
-        text-align: center;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(var(--stat-rgb), 0.1);
+        color: rgb(var(--stat-rgb));
       }
-
+      .dashboard-stat-body {
+        min-width: 0;
+      }
       .dashboard-stat-label {
         color: var(--color-text-muted);
-        font-size: 0.9rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
       }
-
+      .dashboard-stat-number {
+        font-family: var(--font-family-display);
+        font-size: 1.05rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--color-text);
+      }
       /* Cards de recursos bloqueados */
 
       .locked-card {
@@ -70,7 +76,7 @@
         text-decoration: none;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 1000px) {
         .dashboard-stats {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -106,31 +112,43 @@
 
       <section class="dashboard-stats" id="dados-conta">
         <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-tipo-investidor">—</div>
-
-          <div class="dashboard-stat-label">Tipo de investidor</div>
-        </div>
-
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-localizacao-investidor">
-            —
+          <span class="dashboard-stat-icon" style="--stat-rgb: 37, 99, 235" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          </span>
+          <div class="dashboard-stat-body">
+            <div class="dashboard-stat-label">Tipo de investidor</div>
+            <div class="dashboard-stat-number" id="card-tipo-investidor">—</div>
           </div>
-
-          <div class="dashboard-stat-label">Localização</div>
         </div>
 
         <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-investimento-investidor">
-            —
+          <span class="dashboard-stat-icon" style="--stat-rgb: 22, 163, 74" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          </span>
+          <div class="dashboard-stat-body">
+            <div class="dashboard-stat-label">Localização</div>
+            <div class="dashboard-stat-number" id="card-localizacao-investidor">—</div>
           </div>
-
-          <div class="dashboard-stat-label">Faixa de investimento</div>
         </div>
 
         <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-plano-investidor">—</div>
+          <span class="dashboard-stat-icon" style="--stat-rgb: 14, 165, 233" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+          </span>
+          <div class="dashboard-stat-body">
+            <div class="dashboard-stat-label">Faixa de investimento</div>
+            <div class="dashboard-stat-number" id="card-investimento-investidor">—</div>
+          </div>
+        </div>
 
-          <div class="dashboard-stat-label">Plano atual</div>
+        <div class="card dashboard-stat">
+          <span class="dashboard-stat-icon" style="--stat-rgb: 124, 58, 237" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17l-5.9 3 1.2-6.5L2.5 8.9 9.1 8z"/></svg>
+          </span>
+          <div class="dashboard-stat-body">
+            <div class="dashboard-stat-label">Plano atual</div>
+            <div class="dashboard-stat-number" id="card-plano-investidor">—</div>
+          </div>
         </div>
       </section>
 
@@ -178,7 +196,7 @@
             perfil de investimento.
           </p>
 
-          <span class="badge"> Ver planos → </span>
+          <span class="btn-pill btn-pill--sm">Ver planos <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
       </div>
 
@@ -222,7 +240,7 @@
             que combinam com o seu perfil.
           </p>
 
-          <span class="badge"> Ver planos → </span>
+          <span class="btn-pill btn-pill--sm">Ver planos <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </a>
       </div>
 

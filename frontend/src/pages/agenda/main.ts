@@ -1,5 +1,9 @@
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
+import {
+  iniciais,
+  proximasSessoes,
+} from '../../scripts/mentorDemo';
 import { renderNav } from '../../scripts/nav';
 import type { Mentor } from '../../scripts/types';
 
@@ -92,6 +96,106 @@ const salvarDisponibilidade =
 
 let disponibilidadeAtiva = true;
 
+// Dias, horários e status ficam salvos no navegador para a tela abrir como o
+// mentor deixou; o texto da disponibilidade também vai para o backend
+// (PATCH /mentors/me), aparecendo no Perfil e para as startups em Mentorias.
+interface AgendaSalva {
+  ativa: boolean;
+  dias: string[];
+  inicio: string;
+  fim: string;
+}
+const CHAVE_AGENDA = 'sm_mentor_agenda';
+
+function lerAgenda(): AgendaSalva | null {
+  try {
+    const valor = localStorage.getItem(CHAVE_AGENDA);
+    return valor ? (JSON.parse(valor) as AgendaSalva) : null;
+  } catch {
+    return null;
+  }
+}
+
+function gravarAgenda(): void {
+  const agenda: AgendaSalva = {
+    ativa: disponibilidadeAtiva,
+    dias: Array.from(
+      document.querySelectorAll<HTMLInputElement>('input[name="dia"]:checked'),
+    ).map((input) => input.value),
+    inicio: horarioInicio.value,
+    fim: horarioFim.value,
+  };
+  try {
+    localStorage.setItem(CHAVE_AGENDA, JSON.stringify(agenda));
+  } catch {
+    // sem armazenamento: só não é lembrado
+  }
+}
+
+function aplicarAgendaSalva(): void {
+  const agenda = lerAgenda();
+  if (!agenda) return;
+  disponibilidadeAtiva = agenda.ativa;
+  document.querySelectorAll<HTMLInputElement>('input[name="dia"]').forEach((input) => {
+    input.checked = agenda.dias.includes(input.value);
+  });
+  if (agenda.inicio) horarioInicio.value = agenda.inicio;
+  if (agenda.fim) horarioFim.value = agenda.fim;
+}
+
+/* =========================================================
+   PRÓXIMAS SESSÕES (solicitações aceitas)
+   ========================================================= */
+const proximasListEl = document.getElementById('proximas-list') as HTMLDivElement;
+const resumoSessoes = document.getElementById('resumo-sessoes') as HTMLElement;
+
+function renderProximasSessoes(): void {
+  const sessoes = proximasSessoes();
+  resumoSessoes.textContent = String(sessoes.length);
+
+  if (sessoes.length === 0) {
+    proximasListEl.innerHTML = `
+      <div class="lista-vazia">
+        Nenhuma sessão agendada ainda.
+        <a class="btn-link" href="../solicitacoes/index.html">Ver solicitações</a>
+      </div>
+    `;
+    return;
+  }
+
+  proximasListEl.innerHTML = sessoes
+    .map(
+      (s) => `
+        <article class="card item-card">
+          <div class="item-card-head">
+            <div class="item-card-title">
+              <span class="item-avatar" aria-hidden="true">${iniciais(s.startup)}</span>
+              <div>
+                <h3>${s.startup}</h3>
+                <p>${s.tema}</p>
+              </div>
+            </div>
+            <span class="badge-eyebrow badge-eyebrow--green">Confirmada</span>
+          </div>
+          <div class="item-details">
+            <div><span class="item-detail-label">Data</span><span class="item-detail-value">${s.data}</span></div>
+            <div><span class="item-detail-label">Horário</span><span class="item-detail-value">${s.horario}</span></div>
+            <div><span class="item-detail-label">Formato</span><span class="item-detail-value">${s.formato}</span></div>
+          </div>
+          <div class="item-actions">
+            <a class="btn btn-outline" href="../mensagens/index.html?simulado=${s.id}">Conversar com a startup</a>
+          </div>
+        </article>
+      `,
+    )
+    .join('');
+}
+
+/** Texto de disponibilidade enviado ao backend, ex.: "Segunda a sexta, 14:00 às 18:00". */
+function textoDisponibilidade(): string {
+  return `${diasSelecionados.textContent?.trim() ?? ''}, ${horarioInicio.value} às ${horarioFim.value}`;
+}
+
 /* =========================================================
    NOMES DOS DIAS
    ========================================================= */
@@ -155,10 +259,13 @@ function atualizarResumoDisponibilidade(): void {
     horariosSelecionados.textContent =
       `${horarioInicio.value} às ${horarioFim.value}`;
 
-  } else {
+    } else {
     horariosSelecionados.textContent =
       'Não informado';
   }
+
+  resumoDisponibilidade.textContent =
+    `${diasSelecionados.textContent?.trim()} · ${horariosSelecionados.textContent?.trim()}`;
 }
 
 /* =========================================================
@@ -201,11 +308,8 @@ function atualizarStatusDisponibilidade(): void {
        Resumo
        ------------------------------------------------------- */
 
-    resumoDisponibilidade.textContent =
-      'Ativa';
-
-    resumoStatus.textContent =
-      'Disponível';
+        resumoStatus.innerHTML =
+      '<span class="badge-eyebrow badge-eyebrow--green">Disponível</span>';
 
   } else {
     /* -------------------------------------------------------
@@ -242,11 +346,8 @@ function atualizarStatusDisponibilidade(): void {
        Resumo
        ------------------------------------------------------- */
 
-    resumoDisponibilidade.textContent =
-      'Inativa';
-
-    resumoStatus.textContent =
-      'Indisponível';
+        resumoStatus.innerHTML =
+      '<span class="badge-eyebrow badge-eyebrow--gray">Indisponível</span>';
   }
 }
 
@@ -257,10 +358,10 @@ function atualizarStatusDisponibilidade(): void {
 btnAlternarDisponibilidade.addEventListener(
   'click',
   () => {
-    disponibilidadeAtiva =
+        disponibilidadeAtiva =
       !disponibilidadeAtiva;
-
     atualizarStatusDisponibilidade();
+    gravarAgenda();
   },
 );
 
@@ -325,10 +426,18 @@ salvarDisponibilidade.addEventListener(
        Atualiza a interface
        ------------------------------------------------------- */
 
-    disponibilidadeAtiva = true;
-
+        disponibilidadeAtiva = true;
     atualizarResumoDisponibilidade();
     atualizarStatusDisponibilidade();
+    gravarAgenda();
+
+    // leva a disponibilidade para o perfil (e para as startups em Mentorias)
+    void api
+      .patch('/mentors/me', { disponibilidade: textoDisponibilidade() })
+      .catch(() => {
+        erroDisponibilidade.textContent =
+          'Disponibilidade salva aqui, mas não foi possível atualizar o seu perfil agora.';
+      });
 
     /* -------------------------------------------------------
        Feedback visual
@@ -376,10 +485,10 @@ async function init(): Promise<void> {
         'Você está disponível para realizar mentorias.';
     }
 
-    /* -------------------------------------------------------
+        /* -------------------------------------------------------
        Inicializa a interface
        ------------------------------------------------------- */
-
+    aplicarAgendaSalva();
     atualizarResumoDisponibilidade();
     atualizarStatusDisponibilidade();
 
@@ -389,13 +498,14 @@ async function init(): Promise<void> {
         ? error.message
         : 'Erro ao carregar agenda.';
 
-    resumoDisponibilidade.textContent =
+        resumoDisponibilidade.textContent =
       '—';
-
     resumoStatus.textContent =
       '—';
   }
 }
+
+renderProximasSessoes();
 
 /* =========================================================
    INICIALIZAÇÃO

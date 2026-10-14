@@ -164,7 +164,11 @@ async function init(): Promise<void> {
   );
 }
 
-init().catch((error) => {
+// Esta tela hoje é visual (a lista de investidores é estática no próprio HTML) e
+// não tem os blocos da lista real. Se eles não existirem, não tenta carregar a API.
+const temListaReal = Boolean(recebidosEl && enviadosEl && totalEl);
+
+if (temListaReal) init().catch((error) => {
   const mensagem =
     error instanceof ApiError
       ? error.message

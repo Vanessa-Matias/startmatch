@@ -59,7 +59,7 @@ Principais grupos de rotas expostas hoje:
 | `business-canvas` | `GET /business-canvas/me`, `PUT /business-canvas/me` | Business Model Canvas de cada startup |
 | `lgpd` | `POST /lgpd/consent`, `GET /lgpd/consent` | Registro e leitura de consentimentos LGPD do usuário |
 | `beta-evaluation` | `POST /beta-evaluation`, `GET /beta-evaluation` | Avaliação de usuários beta testers (usabilidade, utilidade) |
-| `admin` | `GET /admin/metrics` | Indicadores agregados da plataforma (só para o papel admin) |
+| `admin` | `GET /admin/metrics`, `GET /admin/audit-log`, `GET /admin/lgpd-summary` | Indicadores agregados, histórico de auditoria e resumo de consentimentos LGPD (só para o papel admin) |
 
 Todas as rotas autenticadas exigem o header `Authorization: Bearer <token>`;
 rotas restritas por papel usam um `RolesGuard` que lê o `TipoUsuario` do token
@@ -102,12 +102,13 @@ e um papel de **Administrador** para a gestão operacional da plataforma
 - O frontend guarda o token e os dados do usuário em `localStorage`
   (`sc_token`, `sc_user`) e cada página protegida chama `requireAuth([papéis
   permitidos])` antes de renderizar qualquer dado.
-- Hoje (fase de estilização, antes do banco de dados existir), o frontend
-  roda em **modo demonstração**: uma camada de interceptação
-  (`frontend/src/scripts/mock.ts`) substitui as chamadas de API por dados de
-  mentira, para permitir montar/estilizar todas as telas sem precisar de
-  backend nem banco reais. Isso é só uma facilidade de desenvolvimento — a
-  troca para a API real é uma linha só e não muda nenhuma tela.
+- O frontend tem um **modo demonstração** (`frontend/src/scripts/mock.ts`) que
+  substitui as chamadas de API por dados de mentira. Ele só liga se existir
+  `VITE_MOCK_MODE=true` no `.env`; por padrão fica desligado e o site fala
+  com a API real. Além disso, algumas telas (matches e mensagens de exemplo,
+  agenda do mentor, pagamento) mostram dados simulados só no navegador, para
+  a apresentação — ver a seção "Telas de demonstração" do
+  `docs/PLANO-DO-PROJETO.md`.
 
 ## 5. LGPD — dados pessoais tratados e requisitos
 
@@ -141,9 +142,11 @@ hoje um placeholder aguardando essa funcionalidade).
 - **Desenvolvimento local:** `docker-compose.yml` sobe PostgreSQL (+ Adminer
   para inspecionar o banco); backend e frontend rodam com `npm run dev` cada
   um na sua pasta.
-- **Produção (planejada para a 2ª entrega):** frontend em Vercel, banco de
-  dados PostgreSQL gerenciado no Supabase, backend hospedado separadamente
-  (a definir). Variáveis de ambiente (`DB_HOST`, `DB_PORT`, `DB_USER`,
-  `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `CORS_ORIGIN`) já são lidas de
-  configuração externa (`.env`), então a migração de ambiente não exige
-  mudança de código — só de variáveis.
+- **Produção (no ar):** frontend na Vercel (`startmatch.vercel.app`), API
+  NestJS no Render (`startmatch-api.onrender.com`, documentação Swagger em
+  `/docs`) e PostgreSQL gerenciado no Supabase, acessado pelo pooler de
+  sessão (IPv4) com SSL. O plano gratuito do Render "dorme" após um tempo
+  sem uso, então a primeira requisição pode levar cerca de 50 segundos.
+  Variáveis de ambiente (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`,
+  `DB_NAME`, `JWT_SECRET`, `CORS_ORIGIN`) ficam no painel do Render; alterar
+  uma delas exige um novo deploy manual.

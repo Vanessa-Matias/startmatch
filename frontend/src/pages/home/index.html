@@ -47,16 +47,14 @@
 
         overflow: hidden;
 
-        background: linear-gradient(
-          180deg,
-          #060e24 0%,
-          #0f2148 55%,
-          #16305f 100%
-        );
+        /* mesmo fundo dos banners: quase preto com brilho azul à direita */
+        background: var(--banner-gradient);
 
-        padding: 160px 0 180px;
+        background-color: var(--banner-dark);
 
-        min-height: 760px;
+        padding: 136px 0 152px;
+
+        min-height: 680px;
 
         display: flex;
         align-items: center;
@@ -247,44 +245,6 @@
       }
 
       /* =========================================================
-         SECTION EYEBROW
-         ========================================================= */
-
-      .section-eyebrow {
-        display: inline-flex;
-
-        width: fit-content;
-
-        font-size: 12px;
-
-        font-weight: 700;
-
-        letter-spacing: 0.6px;
-
-        padding: 6px 12px;
-
-        border-radius: 6px;
-
-        margin-bottom: var(--spacing-sm);
-      }
-
-      .section-eyebrow.blue {
-        background: #eff6ff;
-
-        border: 1px solid #bfdbfe;
-
-        color: #1d4ed8;
-      }
-
-      .section-eyebrow.green {
-        background: #ecfdf5;
-
-        border: 1px solid #a7f3d0;
-
-        color: #047857;
-      }
-
-      /* =========================================================
          PERSONAS
          ========================================================= */
 
@@ -292,10 +252,53 @@
         padding: var(--spacing-2xl) 0;
       }
 
+      /* espaço entre o hero e a seção "Como funciona" */
+      .hero-gap {
+        height: clamp(56px, 7vw, 104px);
+      }
+
+      /* cards de "Para quem é": compactos na altura, ocupando a largura
+         toda do conteúdo (3 colunas centralizadas) */
+      .personas-section .grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .personas-section .card-feature {
+        padding: var(--spacing-md);
+      }
+
+      .personas-section .icon-circle {
+        width: 40px;
+
+        height: 40px;
+
+        border-radius: 11px;
+
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .personas-section .icon-circle svg {
+        width: 20px;
+
+        height: 20px;
+      }
+
+      .personas-section .card-title {
+        font-size: 1rem;
+
+        margin-bottom: 4px;
+      }
+
+      .personas-section .card-feature > p {
+        font-size: 14.5px;
+
+        line-height: 1.5;
+      }
+
       .persona-benefits {
         list-style: none;
 
-        margin: var(--spacing-md) 0 0;
+        margin: var(--spacing-sm) 0 0;
 
         padding: 0;
 
@@ -313,7 +316,7 @@
 
         gap: 8px;
 
-        font-size: 14px;
+        font-size: 13px;
 
         color: var(--color-text-muted);
       }
@@ -328,22 +331,29 @@
          CTA FINAL
          ========================================================= */
 
+      /* Banner de rodapé (imagem banner_rodape, ~3:1): faixa escura de
+         ponta a ponta, com a mão/foguete ancorada à direita e o texto na
+         área escura da esquerda. A imagem é escalada pela ALTURA (nunca é
+         cortada nem esticada) e a borda esquerda some num degradê. */
       .cta-final {
         position: relative;
 
         overflow: hidden;
 
-        border-radius: var(--radius-xl);
+        width: 100%;
 
-        padding: var(--spacing-2xl) var(--spacing-xl);
+        min-height: clamp(420px, 38vw, 660px);
 
-        background-image:
-          radial-gradient(rgba(255, 255, 255, 0.1) 1.4px, transparent 1.4px),
-          linear-gradient(155deg, #0f2148 0%, #152a54 100%);
+        display: flex;
 
-        background-size:
-          26px 26px,
-          100% 100%;
+        align-items: center;
+
+        padding: clamp(40px, 4vw, 64px) 0;
+
+        background-color: #010614;
+
+        /* respiro maior antes da barra do rodapé */
+        margin-bottom: clamp(56px, 7vw, 112px);
       }
 
       .cta-final::before {
@@ -351,41 +361,17 @@
 
         position: absolute;
 
-        top: -140px;
-        right: -100px;
+        top: 0;
+        bottom: 0;
+        right: 0;
 
-        width: 340px;
-        height: 340px;
+        aspect-ratio: 2170 / 725;
 
-        border-radius: 50%;
+        background: url('/imagens/banner_rodape.png') right center / 100% 100%
+          no-repeat;
 
-        background: radial-gradient(
-          circle,
-          rgba(47, 111, 235, 0.35),
-          transparent 70%
-        );
-
-        pointer-events: none;
-      }
-
-      .cta-final::after {
-        content: '';
-
-        position: absolute;
-
-        bottom: -160px;
-        left: -80px;
-
-        width: 300px;
-        height: 300px;
-
-        border-radius: 50%;
-
-        background: radial-gradient(
-          circle,
-          rgba(34, 197, 94, 0.22),
-          transparent 70%
-        );
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 20%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 20%);
 
         pointer-events: none;
       }
@@ -397,31 +383,44 @@
 
         display: flex;
 
-        align-items: center;
+        flex-direction: column;
 
-        justify-content: space-between;
+        align-items: flex-start;
 
-        gap: var(--spacing-xl);
-
-        flex-wrap: wrap;
+        gap: var(--spacing-lg);
       }
 
       .cta-final-copy {
-        max-width: 480px;
+        max-width: 620px;
 
         text-align: left;
       }
 
       .cta-final h2 {
+        font-family: var(--font-family-display);
+
         color: #ffffff;
 
-        font-size: 30px;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
 
-        margin-bottom: var(--spacing-sm);
+        line-height: 1.12;
+
+        margin: 0 0 var(--spacing-sm);
+
+        text-wrap: balance;
+      }
+
+      .cta-final h2 .highlight {
+        background: linear-gradient(90deg, #5b9bff, #4ade80);
+
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        color: transparent;
       }
 
       .cta-final p {
-        color: #a9b4cc;
+        color: #e6ecf7;
 
         font-size: 16px;
 
@@ -449,9 +448,14 @@
          ========================================================= */
 
       footer.site-footer {
-        background: #0f2148;
+        background: var(--banner-gradient);
 
-        padding: var(--spacing-lg) 0;
+        background-color: var(--banner-dark);
+
+        /* barra fina com os cantos de cima arredondados */
+        border-radius: clamp(20px, 3vw, 36px) clamp(20px, 3vw, 36px) 0 0;
+
+        padding: var(--spacing-md) 0;
 
         text-align: center;
       }
@@ -461,7 +465,7 @@
       }
 
       footer.site-footer p {
-        color: #5c6a94;
+        color: #ffffff;
 
         font-size: 13px;
       }
@@ -531,14 +535,25 @@
            CTA
            ------------------------------------------------------- */
 
+        /* no celular o texto vem primeiro e a imagem ocupa a faixa de baixo */
         .cta-final {
-          padding: var(--spacing-xl) var(--spacing-lg);
+          display: block;
+
+          min-height: 0;
+
+          padding: var(--spacing-xl) 0 calc(33.4vw + var(--spacing-lg));
+        }
+
+        .cta-final::before {
+          top: auto;
+
+          height: 33.4vw;
         }
 
         .cta-final-inner {
           text-align: center;
 
-          justify-content: center;
+          align-items: center;
         }
 
         .cta-final-copy {
@@ -596,6 +611,9 @@
           <a href="../recursos/index.html"> Recursos </a>
 
           <a href="../planos/index.html"> Planos </a>
+
+
+          <a href="../mentorias-extras/index.html">Mentorias extras</a>
 
           <a href="../login/index.html"> Entrar </a>
 
@@ -656,7 +674,7 @@
 
     <main>
       <div class="container">
-        <div class="spacer-lg"></div>
+        <div class="hero-gap"></div>
 
         <!-- =====================================================
              COMO FUNCIONA
@@ -724,9 +742,7 @@
           <div class="spacer-md"></div>
 
           <p>
-            <a href="../como-funciona/index.html">
-              Ver como funciona em detalhes →
-            </a>
+            <a class="btn-pill" href="../como-funciona/index.html">Ver como funciona em detalhes <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </p>
         </section>
 
@@ -963,33 +979,65 @@
 
         <div class="spacer-lg"></div>
 
-        <!-- =====================================================
-             CTA FINAL
-             ===================================================== -->
-
-        <section class="cta-final sm-reveal">
-          <div class="cta-final-inner">
-            <div class="cta-final-copy">
-              <h2>Pronto para começar?</h2>
-
-              <p>
-                Leva menos de 5 minutos para criar sua conta e completar o
-                perfil — sem cartão, sem burocracia.
-              </p>
-            </div>
-
-            <div class="cta-final-actions">
-              <a class="btn btn-primary" href="../onboarding/index.html">
-                Criar conta grátis
-              </a>
-
-              <span class="form-hint"></span>
-            </div>
-          </div>
-        </section>
-
-        <div class="spacer-lg"></div>
       </div>
+
+      <!-- =====================================================
+           CTA FINAL (de ponta a ponta da tela, fora do .container)
+           ===================================================== -->
+
+      <!-- Faixa em carrossel acima do CTA final (estilo em components.css) -->
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <div class="marquee-group">
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          </div>
+          <div class="marquee-group">
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          <span>StartMatch</span>
+          <span>Tecnologia</span>
+          <span>Inovação</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="cta-final sm-reveal">
+        <div class="container cta-final-inner">
+          <div class="cta-final-copy">
+            <span class="section-eyebrow dark">Pronto para começar?</span>
+
+            <h2>
+              Um match perfeito
+              <span class="highlight">a um clique de distância</span>
+            </h2>
+
+            <p>
+              Leva menos de 5 minutos para criar sua conta e completar o
+              perfil — sem cartão, sem burocracia.
+            </p>
+          </div>
+
+          <div class="cta-final-actions">
+            <a class="btn btn-primary" href="../onboarding/index.html">
+              Criar conta grátis
+            </a>
+
+            <span class="form-hint"></span>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- =========================================================
@@ -998,38 +1046,12 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>
-          <a href="./index.html"> Home </a>
-
-          ·
-
-          <a href="../sobre/index.html"> Sobre </a>
-
-          ·
-
-          <a href="../como-funciona/index.html"> Como funciona </a>
-
-          ·
-
-          <a href="../recursos/index.html"> Recursos </a>
-
-          ·
-
-          <a href="../planos/index.html"> Planos </a>
-
-          ·
-
-          <a
-            href="https://startmatch-api.onrender.com/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentação da API
-          </a>
-        </p>
-
-        <p>
-          StartMatch — Projeto Integrador, ecossistema Porto Digital (Recife).
+        <p class="copy copy-rights">
+          © 2026 StartMatch. Todos os direitos reservados a
+          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
+          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+          e
+          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
         </p>
       </div>
     </footer>

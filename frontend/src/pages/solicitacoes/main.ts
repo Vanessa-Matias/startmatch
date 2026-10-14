@@ -1,224 +1,123 @@
 // Tela: Solicitações — lógica
 // ============================
 //
-// Nesta primeira entrega, a solicitação exibida é demonstrativa.
-// Ainda não existe endpoint/entidade de solicitação de mentoria
-// no backend. As ações funcionam somente no frontend.
+// Os pedidos são demonstrativos (scripts/mentorDemo.ts -> SOLICITACOES): ainda
+// não existe endpoint/entidade de solicitação de mentoria no backend. O status
+// de cada um (pendente / aceita / recusada) fica no navegador e é o mesmo que o
+// Dashboard e a Agenda leem — aceitar uma solicitação a coloca nas "Próximas
+// sessões" da Agenda.
 //
-// As opções Aceitar e Recusar permanecem sempre disponíveis,
-// permitindo que o mentor mude de ideia.
-
-// --------------------------------------------------
-// Imports
-// --------------------------------------------------
+// "Conversar com a startup" abre a conversa simulada em Mensagens, que já chega
+// com a mensagem do pedido (scripts/matchSimulado.ts).
 
 import { requireAuth } from '../../scripts/auth';
+import {
+  SOLICITACOES,
+  definirStatus,
+  iniciais,
+  statusDe,
+  type Solicitacao,
+  type StatusSolicitacao,
+} from '../../scripts/mentorDemo';
 import { renderNav } from '../../scripts/nav';
-
-// --------------------------------------------------
-// Autenticação e navegação
-// --------------------------------------------------
 
 const usuario = requireAuth(['mentor']);
 
-renderNav(
-  document.getElementById('nav-links') as HTMLElement,
-  usuario.tipo
-);
+renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
-// --------------------------------------------------
-// Elementos da tela
-// --------------------------------------------------
+const listaEl = document.getElementById('solicitacoes-list') as HTMLDivElement;
 
-const aceitarSolicitacao = document.getElementById(
-  'aceitar-solicitacao'
-) as HTMLButtonElement;
+const STATUS_BADGE: Record<StatusSolicitacao, string> = {
+  pendente: '<span class="badge-eyebrow badge-eyebrow--amber">Aguardando resposta</span>',
+  aceita: '<span class="badge-eyebrow badge-eyebrow--green">Mentoria aceita</span>',
+  recusada: '<span class="badge-eyebrow badge-eyebrow--gray">Solicitação recusada</span>',
+};
 
-const recusarSolicitacao = document.getElementById(
-  'recusar-solicitacao'
-) as HTMLButtonElement;
-
-const mensagensSolicitacao = document.getElementById(
-  'mensagens-solicitacao'
-) as HTMLAnchorElement;
-
-const statusSolicitacao = document.getElementById(
-  'status-solicitacao'
-) as HTMLElement;
-
-const resultadoSolicitacao = document.getElementById(
-  'resultado-solicitacao'
-) as HTMLElement;
-
-const pendentesSolicitacoes = document.getElementById(
-  'pendentes-solicitacoes'
-) as HTMLElement;
-
-const aceitasSolicitacoes = document.getElementById(
-  'aceitas-solicitacoes'
-) as HTMLElement;
-
-// --------------------------------------------------
-// Estado demonstrativo
-// --------------------------------------------------
-
-type StatusSolicitacao =
-  | 'pendente'
-  | 'aceita'
-  | 'recusada';
-
-const STORAGE_KEY = 'startmatch-solicitacao-mentor-status';
-
-function obterStatusSalvo(): StatusSolicitacao {
-  const status = localStorage.getItem(STORAGE_KEY);
-
-  if (
-    status === 'pendente' ||
-    status === 'aceita' ||
-    status === 'recusada'
-  ) {
-    return status;
-  }
-
-  return 'pendente';
-}
-
-let statusAtual: StatusSolicitacao = obterStatusSalvo();
-
-// --------------------------------------------------
-// Resultado
-// --------------------------------------------------
-
-function mostrarResultado(
-  mensagem: string,
-  tipo: 'success' | 'error'
-): void {
-  resultadoSolicitacao.textContent = mensagem;
-
-  resultadoSolicitacao.classList.add('is-visible');
-
-  resultadoSolicitacao.classList.remove(
-    'is-success',
-    'is-error'
+function renderResumo(): void {
+  const status = SOLICITACOES.map((s) => statusDe(s.id));
+  (document.getElementById('total-solicitacoes') as HTMLElement).textContent = String(SOLICITACOES.length);
+  (document.getElementById('pendentes-solicitacoes') as HTMLElement).textContent = String(
+    status.filter((s) => s === 'pendente').length,
   );
-
-  resultadoSolicitacao.classList.add(
-    tipo === 'success'
-      ? 'is-success'
-      : 'is-error'
+  (document.getElementById('aceitas-solicitacoes') as HTMLElement).textContent = String(
+    status.filter((s) => s === 'aceita').length,
   );
 }
 
-// --------------------------------------------------
-// Atualiza visual da solicitação
-// --------------------------------------------------
+function cardHtml(s: Solicitacao): string {
+  const status = statusDe(s.id);
+  return `
+    <article class="card item-card" data-id="${s.id}">
+      <div class="item-card-head">
+        <div class="item-card-title">
+          <span class="item-avatar" aria-hidden="true">${iniciais(s.startup)}</span>
+          <div>
+            <h3>${s.startup}</h3>
+            <p>${s.cidade} · ${s.tema}</p>
+          </div>
+        </div>
+        ${STATUS_BADGE[status]}
+      </div>
 
-function atualizarTela(): void {
-  statusSolicitacao.classList.remove(
-    'badge-accent',
-    'badge-success',
-    'badge'
-  );
+      <div class="item-details">
+        <div>
+          <span class="item-detail-label">Data solicitada</span>
+          <span class="item-detail-value">${s.data}</span>
+        </div>
+        <div>
+          <span class="item-detail-label">Horário</span>
+          <span class="item-detail-value">${s.horario}</span>
+        </div>
+        <div>
+          <span class="item-detail-label">Formato</span>
+          <span class="item-detail-value">${s.formato}</span>
+        </div>
+      </div>
 
-  if (statusAtual === 'aceita') {
-    statusSolicitacao.textContent = 'Mentoria aceita';
+      <p class="item-note">“${s.mensagem}”</p>
 
-    statusSolicitacao.classList.add(
-      'badge-success'
-    );
-
-    mensagensSolicitacao.classList.add(
-      'is-visible'
-    );
-
-    pendentesSolicitacoes.textContent = '0';
-    aceitasSolicitacoes.textContent = '1';
-
-    return;
-  }
-
-  if (statusAtual === 'recusada') {
-    statusSolicitacao.textContent =
-      'Solicitação recusada';
-
-    statusSolicitacao.classList.add('badge');
-
-    mensagensSolicitacao.classList.remove(
-      'is-visible'
-    );
-
-    pendentesSolicitacoes.textContent = '0';
-    aceitasSolicitacoes.textContent = '0';
-
-    return;
-  }
-
-  statusSolicitacao.textContent =
-    'Aguardando resposta';
-
-  statusSolicitacao.classList.add(
-    'badge-accent'
-  );
-
-  mensagensSolicitacao.classList.remove(
-    'is-visible'
-  );
-
-  pendentesSolicitacoes.textContent = '1';
-  aceitasSolicitacoes.textContent = '0';
+      <div class="item-actions">
+        <a class="btn btn-outline" href="../mensagens/index.html?simulado=${s.id}">Conversar com a startup</a>
+        ${
+          status === 'recusada'
+            ? ''
+            : '<button type="button" class="btn btn-outline" data-acao="recusada">Recusar</button>'
+        }
+        ${
+          status === 'aceita'
+            ? '<a class="btn btn-primary" href="../agenda/index.html">Ver na agenda</a>'
+            : '<button type="button" class="btn btn-primary" data-acao="aceita">Aceitar mentoria</button>'
+        }
+      </div>
+      <p class="solicitacao-resultado" aria-live="polite"></p>
+    </article>
+  `;
 }
 
-// --------------------------------------------------
-// Salva o estado
-// --------------------------------------------------
-
-function salvarStatus(
-  status: StatusSolicitacao
-): void {
-  statusAtual = status;
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    status
-  );
-
-  atualizarTela();
+function render(): void {
+  renderResumo();
+  listaEl.innerHTML = SOLICITACOES.map(cardHtml).join('');
 }
 
-// --------------------------------------------------
-// Aceitar
-// --------------------------------------------------
+listaEl.addEventListener('click', (event) => {
+  const botao = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-acao]');
+  if (!botao) return;
+  const card = botao.closest<HTMLElement>('[data-id]');
+  if (!card?.dataset.id) return;
 
-aceitarSolicitacao.addEventListener(
-  'click',
-  () => {
-    salvarStatus('aceita');
+  const id = card.dataset.id;
+  const acao = botao.dataset.acao as StatusSolicitacao;
+  definirStatus(id, acao);
+  render();
 
-    mostrarResultado(
-      'Mentoria aceita. Você pode conversar com a startup pelas mensagens.',
-      'success'
-    );
+  const resultado = listaEl.querySelector<HTMLElement>(`[data-id="${id}"] .solicitacao-resultado`);
+  if (resultado) {
+    resultado.textContent =
+      acao === 'aceita'
+        ? 'Mentoria aceita! A sessão já aparece nas próximas sessões da sua Agenda.'
+        : 'Solicitação recusada. Você ainda pode aceitar caso mude de ideia.';
+    resultado.classList.add(acao === 'aceita' ? 'is-success' : 'is-error');
   }
-);
+});
 
-// --------------------------------------------------
-// Recusar
-// --------------------------------------------------
-
-recusarSolicitacao.addEventListener(
-  'click',
-  () => {
-    salvarStatus('recusada');
-
-    mostrarResultado(
-      'Solicitação recusada. Você ainda pode aceitar novamente caso mude de ideia.',
-      'error'
-    );
-  }
-);
-
-// --------------------------------------------------
-// Inicialização
-// --------------------------------------------------
-
-atualizarTela();
+render();

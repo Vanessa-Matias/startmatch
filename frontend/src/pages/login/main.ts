@@ -20,7 +20,11 @@
 import { api, ApiError } from '../../scripts/api';
 import { login, dashboardPathForRole } from '../../scripts/auth';
 import { initParticleNetwork } from '../../scripts/particleNetwork';
+import { initPasswordToggles } from '../../scripts/passwordToggle';
 import type { TipoUsuario } from '../../scripts/types';
+
+// olhinho de mostrar/ocultar senha
+initPasswordToggles();
 
 const particleCanvas = document.getElementById('particle-bg');
 if (particleCanvas instanceof HTMLCanvasElement) {

@@ -8,11 +8,13 @@
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
+import { renderNav } from '../../scripts/nav';
 import { MOCK_MODE } from '../../scripts/mock';
 import { populateUfSelect } from '../../scripts/ufs';
 import type { Investidor, Segmento } from '../../scripts/types';
 
-requireAuth(['investidor']);
+const usuario = requireAuth(['investidor']);
+renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
 const form = document.getElementById('form-investidor') as HTMLFormElement;
 const errorEl = document.getElementById('form-error') as HTMLParagraphElement;
@@ -45,15 +47,16 @@ async function init(): Promise<void> {
   segmentosListEl.innerHTML = segmentos
     .map(
       (segmento, index) => `
-        <div class="checkbox-row">
+        <div class="checkbox-row seg-chip">
           <input type="checkbox" class="segmento-check" value="${segmento.id}" id="seg-${segmento.id}" />
           <label for="seg-${segmento.id}">${segmento.nome}</label>
           <input
             type="number"
             class="input segmento-prioridade"
-            style="width: 70px"
             min="1"
             value="${index + 1}"
+            aria-label="Prioridade de ${segmento.nome}"
+            title="Prioridade (1 = mais prioritário)"
             disabled
           />
         </div>
