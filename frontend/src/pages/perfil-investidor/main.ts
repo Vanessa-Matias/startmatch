@@ -1,7 +1,8 @@
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
-import type { Investidor } from '../../scripts/types';
+import { abrirModalMatch, iniciais } from '../../scripts/matchModal';
+import type { Investidor, Match } from '../../scripts/types';
 
 const usuario = requireAuth(['startup', 'investidor']);
 
@@ -24,6 +25,8 @@ const btnInteresse = document.getElementById(
 const errorEl = document.getElementById(
   'form-error'
 ) as HTMLParagraphElement;
+
+let investidorAtual: Investidor | null = null;
 
 if (!id) {
   detalheEl.innerHTML = `
@@ -118,6 +121,7 @@ async function carregarPerfil(): Promise<void> {
         `/investors/${id}`
       );
 
+    investidorAtual = investidor;
     renderInvestidor(investidor);
 
     /*
@@ -142,6 +146,33 @@ async function carregarPerfil(): Promise<void> {
   }
 }
 
+/*
+ * Depois do interesse, confere se o outro lado já tinha demonstrado
+ * interesse: nesse caso a API criou o match e mostramos o "É um match!".
+ */
+async function avisarSeDeuMatch(): Promise<void> {
+  try {
+    const matches = await api.get<Match[]>('/matches');
+    const match = matches.find(
+      (m) => m.investidorId === Number(id)
+    );
+    if (!match) return;
+
+    abrirModalMatch({
+      iniciaisVoce: iniciais(usuario.nome),
+      iniciaisOutro: 'IN',
+      nomeOutro: investidorAtual
+        ? `Investidor (${investidorAtual.cidade}/${investidorAtual.uf})`
+        : 'o investidor',
+      score: match.scoreCompatibilidade,
+      hrefMatches: '../matches/index.html',
+    });
+  } catch {
+    // O interesse já foi salvo; se a checagem falhar, o match continua
+    // disponível na aba Matches.
+  }
+}
+
 btnInteresse.addEventListener(
   'click',
   async () => {
@@ -153,6 +184,7 @@ btnInteresse.addEventListener(
       });
 
       marcarInteresseRegistrado();
+      await avisarSeDeuMatch();
     } catch (error) {
       if (
         error instanceof ApiError &&

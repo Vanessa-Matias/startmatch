@@ -4,10 +4,10 @@
 // Busca os matches confirmados e preenche o layout da tela.
 // O HTML já exibe a estrutura visual enquanto a API está carregando.
 //
-// SIMULAÇÃO DE MATCH (demonstração): além dos matches reais, a tela mostra
-// matches de exemplo no mesmo formato de card, e o botão "Simular novo match"
-// cria mais um, com o aviso "É um match!". "Enviar mensagem" abre a conversa
-// simulada na tela de Mensagens. Tudo fica só no navegador (sessionStorage),
+// Além dos matches reais, a tela mostra matches de exemplo (marcados como
+// "simulação") no mesmo formato de card. O aviso "É um match!" agora aparece nas
+// telas de perfil, quando o interesse vira match de verdade — ver
+// scripts/matchModal.ts. Os exemplos ficam só no navegador (sessionStorage),
 // nada vai para o banco — ver scripts/matchSimulado.ts.
 
 import { api, ApiError } from '../../scripts/api';
@@ -15,8 +15,6 @@ import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import {
   matchesSimulados,
-  simularNovoMatch,
-  temMaisParaSimular,
   type MatchExemplo,
 } from '../../scripts/matchSimulado';
 import type { Match } from '../../scripts/types';
@@ -33,10 +31,6 @@ const listEl = document.getElementById('matches-list') as HTMLDivElement;
 const totalEl = document.getElementById(
   'matches-total'
 ) as HTMLElement;
-
-const btnSimular = document.getElementById(
-  'btn-simular-match'
-) as HTMLButtonElement;
 
 let totalReais = 0;
 
@@ -155,91 +149,17 @@ function renderCard(match: Match): string {
   });
 }
 
-function renderExemplo(exemplo: MatchExemplo, novo = false): string {
+function renderExemplo(exemplo: MatchExemplo): string {
   return cardHtml({
     ...exemplo,
     href: `../mensagens/index.html?simulado=${exemplo.id}`,
     simulado: true,
-    novo,
   });
 }
 
 function atualizarTotal(): void {
   totalEl.textContent = String(totalReais + matchesSimulados(usuario.tipo).length);
 }
-
-/*
- * ================================
- * MODAL "É UM MATCH!"
- * ================================
- */
-
-const modalEl = document.createElement('div');
-modalEl.className = 'modal-backdrop';
-modalEl.hidden = true;
-document.body.appendChild(modalEl);
-
-function fecharModal(): void {
-  modalEl.hidden = true;
-  modalEl.innerHTML = '';
-}
-
-function abrirModalMatch(exemplo: MatchExemplo): void {
-  modalEl.innerHTML = `
-    <div class="modal match-modal" role="dialog" aria-modal="true" aria-labelledby="match-modal-titulo">
-      <div class="match-modal-avatars" aria-hidden="true">
-        <span class="match-avatar">${getInitials(usuario.tipo === 'startup' ? 'Sua Startup' : 'Você')}</span>
-        <span class="match-modal-heart">♥</span>
-        <span class="match-avatar match-avatar--b">${getInitials(exemplo.nome)}</span>
-      </div>
-      <h2 id="match-modal-titulo">É um match!</h2>
-      <p class="text-muted">
-        Você e <strong>${exemplo.nome}</strong> demonstraram interesse um no
-        outro. Compatibilidade de <strong>${exemplo.score} pts</strong>.
-      </p>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline" data-fechar>Continuar explorando</button>
-        <a class="btn btn-primary" href="../mensagens/index.html?simulado=${exemplo.id}">Enviar mensagem</a>
-      </div>
-    </div>
-  `;
-  modalEl.hidden = false;
-  (modalEl.querySelector('[data-fechar]') as HTMLButtonElement).focus();
-}
-
-modalEl.addEventListener('click', (event) => {
-  const alvo = event.target as HTMLElement;
-  if (alvo === modalEl || alvo.closest('[data-fechar]')) fecharModal();
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && !modalEl.hidden) fecharModal();
-});
-
-/*
- * ================================
- * SIMULAR NOVO MATCH
- * ================================
- */
-
-function atualizarBotao(): void {
-  if (!temMaisParaSimular(usuario.tipo)) {
-    btnSimular.disabled = true;
-    btnSimular.title = 'Todos os matches de exemplo já foram simulados';
-  }
-}
-
-btnSimular.addEventListener('click', () => {
-  const exemplo = simularNovoMatch(usuario.tipo);
-  if (!exemplo) return;
-
-  // remove o aviso de "nenhum match" se ele estiver na lista
-  listEl.querySelector('.matches-vazio')?.remove();
-  listEl.insertAdjacentHTML('afterbegin', renderExemplo(exemplo, true));
-
-  atualizarTotal();
-  atualizarBotao();
-  abrirModalMatch(exemplo);
-});
 
 /*
  * ================================
@@ -286,4 +206,3 @@ init().catch((error) => {
   atualizarTotal();
 });
 
-atualizarBotao();
