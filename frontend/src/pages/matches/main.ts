@@ -41,7 +41,7 @@ let totalReais = 0;
  */
 
 function getNome(match: Match): string {
-  if (usuario.tipo === 'startup') return 'Investidor';
+  if (usuario.tipo === 'startup') return match.investidor?.nome ?? 'Investidor';
 
   return match.startup?.nomeFantasia ?? 'Startup';
 }

@@ -1,10 +1,17 @@
 // Tela: Interesses para Investidores
 // ==================================
-// O investidor seleciona segmentos e visualiza STARTUPS compatíveis.
+// Mostra as STARTUPS que demonstraram interesse no perfil do investidor
+// (GET /interests/received). "Aceitar" devolve o interesse (POST /interests):
+// como o interesse passa a ser mútuo, a API cria o match e a tela mostra o
+// "É um match!". Os segmentos servem de filtro sobre a lista.
 // O layout segue o mesmo padrão visual da tela interesses-startup.
 
+import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
+import { abrirModalMatch, iniciais } from '../../scripts/matchModal';
+import { escapeHtml } from '../../scripts/investidor';
+import type { Interesse, Match, Startup } from '../../scripts/types';
 
 const usuario = requireAuth(['investidor']);
 
@@ -69,42 +76,26 @@ const listaSegmentos = [
   'Economia Criativa',
 ];
 
+const ESTAGIO_LABEL: Record<string, string> = {
+  ideacao: 'Ideação',
+  mvp: 'MVP',
+  operacao: 'Operação',
+  scale_up: 'Scale-up',
+};
+
 interface StartupInteresse {
   id: string;
+  startupId: number;
   nome: string;
   empresa: string;
   segmentos: string[];
+  /** true quando já existe match com esta startup. */
+  jaMatch: boolean;
 }
 
-let startupsData: StartupInteresse[] = [
-  {
-    id: 'card-1',
-    nome: 'Startup #1',
-    empresa: 'Sawa • Diverno Startups',
-    segmentos: ['Fintech', 'Healthtech'],
-  },
-
-  {
-    id: 'card-2',
-    nome: 'Startup #2',
-    empresa: 'Sawa • Diverno Startups',
-    segmentos: ['Fintech', 'Edtech'],
-  },
-
-  {
-    id: 'card-3',
-    nome: 'Startup #3',
-    empresa: 'Sawa • Diverno Startups',
-    segmentos: ['Healthtech', 'Agtech'],
-  },
-
-  {
-    id: 'card-4',
-    nome: 'Startup #4',
-    empresa: 'Venture Tech',
-    segmentos: ['SaaS B2B', 'Cybersecurity'],
-  },
-];
+let startupsData: StartupInteresse[] = [];
+let carregando = true;
+let erroCarga = '';
 
 let selecoes: string[] = [];
 
@@ -237,10 +228,28 @@ function renderizarStartups(
 ): void {
   startupsGrid.innerHTML = '';
 
+  if (carregando) {
+    startupsGrid.innerHTML = `
+      <div class="empty-state">Carregando interesses…</div>
+    `;
+    return;
+  }
+
+  if (erroCarga) {
+    startupsGrid.innerHTML = `
+      <div class="empty-state">${escapeHtml(erroCarga)}</div>
+    `;
+    return;
+  }
+
   if (startups.length === 0) {
     startupsGrid.innerHTML = `
       <div class="empty-state">
-        Nenhuma startup encontrada para os filtros selecionados.
+        ${
+          startupsData.length === 0
+            ? 'Nenhuma startup demonstrou interesse em você ainda.'
+            : 'Nenhuma startup encontrada para os filtros selecionados.'
+        }
       </div>
     `;
 
@@ -256,40 +265,26 @@ function renderizarStartups(
     card.innerHTML = `
       <div class="investor-card-header">
         <div class="investor-info">
-          <h3>${startup.nome}</h3>
+          <h3>${escapeHtml(startup.nome)}</h3>
 
-          <p>${startup.empresa}</p>
+          <p>${escapeHtml(startup.empresa)}</p>
         </div>
       </div>
 
       <div class="investor-card-body">
         <strong>Atua em:</strong>
-        ${startup.segmentos.join(', ')}
+        ${escapeHtml(startup.segmentos.join(', '))}
       </div>
 
       <div class="investor-card-actions">
-
-        <button
-          class="btn-ver"
-          type="button"
-        >
-          Ver Perfil
-        </button>
-
-        <button
-          class="btn-aceitar"
-          type="button"
-        >
-          Aceitar
-        </button>
-
-        <button
-          class="btn-recusar"
-          type="button"
-        >
-          Recusar
-        </button>
-
+        ${
+          startup.jaMatch
+            ? `<span style="color:#15803d;font-weight:600;font-size:0.85rem">Match aceito!</span>
+               <a class="btn-ver" href="../matches/index.html" style="text-decoration:none">Ver matches</a>`
+            : `<button class="btn-ver" type="button">Ver Perfil</button>
+               <button class="btn-aceitar" type="button">Aceitar</button>
+               <button class="btn-recusar" type="button">Recusar</button>`
+        }
       </div>
     `;
 
@@ -304,7 +299,7 @@ function renderizarStartups(
       .querySelector('.btn-aceitar')
       ?.addEventListener(
         'click',
-        () => aceitarPerfil(startup.id),
+        () => void aceitarPerfil(startup),
       );
 
     card
@@ -378,52 +373,62 @@ function recusarPerfil(
 }
 
 /**
- * Aceita uma startup.
+ * Aceita uma startup: devolve o interesse. Como a startup já tinha
+ * demonstrado interesse, a API cria o match e mostramos o "É um match!".
  */
-function aceitarPerfil(
-  startupId: string,
-): void {
-  const card =
-    document.getElementById(startupId);
+async function aceitarPerfil(
+  startup: StartupInteresse,
+): Promise<void> {
+  const card = document.getElementById(startup.id);
+  const actions = card?.querySelector('.investor-card-actions');
 
-  if (!card) {
+  if (!card || !actions) {
     return;
   }
 
-  const actions =
-    card.querySelector(
-      '.investor-card-actions',
+  actions.querySelectorAll('button').forEach((botao) => {
+    (botao as HTMLButtonElement).disabled = true;
+  });
+
+  try {
+    try {
+      await api.post('/interests', {
+        contraparteId: startup.startupId,
+      });
+    } catch (error) {
+      // 409 = interesse já registrado antes; segue para checar o match.
+      if (!(error instanceof ApiError && error.status === 409)) {
+        throw error;
+      }
+    }
+
+    const matches = await api.get<Match[]>('/matches');
+    const match = matches.find(
+      (m) => m.startupId === startup.startupId,
     );
 
-  if (!actions) {
-    return;
+    startup.jaMatch = Boolean(match);
+    salvarEFiltrar();
+
+    if (match) {
+      abrirModalMatch({
+        iniciaisVoce: iniciais(usuario.nome),
+        iniciaisOutro: iniciais(startup.nome),
+        nomeOutro: startup.nome,
+        score: match.scoreCompatibilidade,
+        hrefMatches: '../matches/index.html',
+      });
+    }
+  } catch (error) {
+    actions.querySelectorAll('button').forEach((botao) => {
+      (botao as HTMLButtonElement).disabled = false;
+    });
+    alert(
+      error instanceof ApiError
+        ? error.message
+        : 'Não foi possível aceitar agora. Tente novamente.',
+    );
   }
-
-  actions.innerHTML = `
-    <span
-      style="
-        color: #15803d;
-        font-weight: 600;
-        font-size: 0.85rem;
-      "
-    >
-      Match Aceito!
-    </span>
-  `;
-
-  setTimeout(() => {
-    card.classList.add('fade-out');
-
-    setTimeout(() => {
-      startupsData =
-        startupsData.filter(
-          (startup) =>
-            startup.id !== startupId,
-        );
-
-      salvarEFiltrar();
-    }, 300);
-  }, 1000);
 }
 
 /**
@@ -470,6 +475,47 @@ modal.addEventListener(
 );
 
 /**
+ * Carrega os interesses recebidos e os detalhes de cada startup.
+ */
+async function carregarInteresses(): Promise<void> {
+  try {
+    const [recebidos, matches] = await Promise.all([
+      api.get<Interesse[]>('/interests/received'),
+      api.get<Match[]>('/matches'),
+    ]);
+
+    const comMatch = new Set(matches.map((m) => m.startupId));
+
+    const startups = await Promise.all(
+      recebidos.map((interesse) =>
+        api
+          .get<Startup>(`/startups/${interesse.startupId}`)
+          .catch(() => null),
+      ),
+    );
+
+    startupsData = startups
+      .filter((st): st is Startup => st !== null)
+      .map((st) => ({
+        id: `startup-${st.id}`,
+        startupId: st.id,
+        nome: st.nomeFantasia,
+        empresa: `${ESTAGIO_LABEL[st.estagio] ?? st.estagio} · ${st.cidade}/${st.uf}`,
+        segmentos: (st.segmentos ?? []).map((seg) => seg.nome),
+        jaMatch: comMatch.has(st.id),
+      }));
+  } catch (error) {
+    erroCarga =
+      error instanceof ApiError
+        ? error.message
+        : 'Erro ao carregar os interesses.';
+  } finally {
+    carregando = false;
+    salvarEFiltrar();
+  }
+}
+
+/**
  * Inicialização da tela.
  */
 renderizarSegmentos();
@@ -477,3 +523,5 @@ renderizarSegmentos();
 renderizarStartups(
   startupsData,
 );
+
+void carregarInteresses();

@@ -18,6 +18,7 @@ import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import { UFS } from '../../scripts/ufs';
+import { TIPO_INVESTIDOR_LABEL, escapeHtml } from '../../scripts/investidor';
 import type { Investidor, PaginatedResponse, Segmento, Startup } from '../../scripts/types';
 
 const usuario = requireAuth(['startup', 'investidor']);
@@ -68,8 +69,10 @@ function renderStartupCard(startup: Startup): string {
 function renderInvestorCard(investidor: Investidor): string {
   return `
     <a class="card" href="../perfil-investidor/index.html?id=${investidor.id}" style="text-decoration:none;color:inherit">
-      <div class="card-title">${investidor.tipo.toUpperCase()} · ${investidor.cidade}/${investidor.uf}</div>
-      <p>${investidor.teseInvestimento}</p>
+      <div class="card-title">${escapeHtml(investidor.nome ?? 'Investidor')}</div>
+      <p class="text-muted">${TIPO_INVESTIDOR_LABEL[investidor.tipo]} · ${investidor.cidade}/${investidor.uf}</p>
+      <p>${escapeHtml(investidor.teseInvestimento)}</p>
+      <div>${(investidor.segmentos ?? []).map((seg) => `<span class="badge">${escapeHtml(seg.nome)}</span>`).join(' ')}</div>
     </a>
   `;
 }

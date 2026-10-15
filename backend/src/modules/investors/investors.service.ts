@@ -87,6 +87,7 @@ export class InvestorsService {
       .createQueryBuilder('investidor')
       .leftJoinAndSelect('investidor.segmentos', 'investidorSegmento')
       .leftJoinAndSelect('investidorSegmento.segmento', 'segmento')
+      .leftJoinAndSelect('investidor.usuario', 'usuario')
       .andWhere('investidor.perfilPublico = true');
 
     if (query.uf) {
@@ -108,9 +109,10 @@ export class InvestorsService {
       });
     }
     if (query.texto) {
-      qb.andWhere('investidor.teseInvestimento ILIKE :texto', {
-        texto: `%${query.texto}%`,
-      });
+      qb.andWhere(
+        '(investidor.teseInvestimento ILIKE :texto OR usuario.nome ILIKE :texto)',
+        { texto: `%${query.texto}%` },
+      );
     }
 
     const page = query.page ?? 1;
@@ -128,7 +130,7 @@ export class InvestorsService {
   async findById(id: number, requesterId?: number): Promise<Investidor> {
     const investidor = await this.investidorRepository.findOne({
       where: { id },
-      relations: ['segmentos'],
+      relations: ['segmentos', 'usuario'],
     });
     if (!investidor) {
       throw new NotFoundException('Investidor não encontrado.');

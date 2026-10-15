@@ -2,6 +2,7 @@ import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import { abrirModalMatch, iniciais } from '../../scripts/matchModal';
+import { TIPO_INVESTIDOR_LABEL, escapeHtml } from '../../scripts/investidor';
 import type { Investidor, Match } from '../../scripts/types';
 
 const usuario = requireAuth(['startup', 'investidor']);
@@ -52,10 +53,11 @@ function renderInvestidor(
 
         <div>
           <h1>
-            ${investidor.tipo.toUpperCase()}
+            ${escapeHtml(investidor.nome ?? TIPO_INVESTIDOR_LABEL[investidor.tipo])}
           </h1>
 
           <p class="text-muted">
+            ${TIPO_INVESTIDOR_LABEL[investidor.tipo]} ·
             ${investidor.cidade}/${investidor.uf}
           </p>
         </div>
@@ -160,10 +162,14 @@ async function avisarSeDeuMatch(): Promise<void> {
 
     abrirModalMatch({
       iniciaisVoce: iniciais(usuario.nome),
-      iniciaisOutro: 'IN',
-      nomeOutro: investidorAtual
-        ? `Investidor (${investidorAtual.cidade}/${investidorAtual.uf})`
-        : 'o investidor',
+      iniciaisOutro: investidorAtual?.nome
+        ? iniciais(investidorAtual.nome)
+        : 'IN',
+      nomeOutro:
+        investidorAtual?.nome ??
+        (investidorAtual
+          ? `Investidor (${investidorAtual.cidade}/${investidorAtual.uf})`
+          : 'o investidor'),
       score: match.scoreCompatibilidade,
       hrefMatches: '../matches/index.html',
     });

@@ -21,6 +21,11 @@ export class InvestorResponseDto {
   @Expose()
   id: number;
 
+  // Nome do usuário dono do perfil (vem da relação "usuario").
+  @Expose()
+  @Transform(({ obj }: { obj: { usuario?: { nome?: string } } }) => obj.usuario?.nome)
+  nome?: string;
+
   @Expose()
   tipo: TipoInvestidor;
 

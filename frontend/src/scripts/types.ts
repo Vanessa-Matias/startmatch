@@ -66,6 +66,8 @@ export interface Startup {
 // Perfil completo de um Investidor.
 export interface Investidor {
   id: number;
+  /** Nome do investidor (vem do usuário dono do perfil). */
+  nome?: string;
   tipo: TipoInvestidor;
   teseInvestimento: string;
   investimentoMin: number;

@@ -103,7 +103,7 @@ export class MatchesService {
       if (!startup) return [];
       return this.matchRepository.find({
         where: { startupId: startup.id },
-        relations: { investidor: { segmentos: true } },
+        relations: { investidor: { segmentos: true, usuario: true } },
         order: { criadoEm: 'DESC' },
       });
     }
