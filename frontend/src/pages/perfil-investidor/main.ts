@@ -74,10 +74,10 @@ function renderInvestidor(
 
           <p>
             R$
-            ${investidor.investimentoMin.toLocaleString('pt-BR')}
+            ${Number(investidor.investimentoMin).toLocaleString('pt-BR')}
             –
             R$
-            ${investidor.investimentoMax.toLocaleString('pt-BR')}
+            ${Number(investidor.investimentoMax).toLocaleString('pt-BR')}
           </p>
         </section>
 

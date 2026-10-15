@@ -115,7 +115,10 @@ export class StartupsService {
   }
 
   async findById(id: number): Promise<Startup> {
-    const startup = await this.startupRepository.findOne({ where: { id } });
+    const startup = await this.startupRepository.findOne({
+      where: { id },
+      relations: ['segmentos'],
+    });
     if (!startup) {
       throw new NotFoundException('Startup não encontrada.');
     }

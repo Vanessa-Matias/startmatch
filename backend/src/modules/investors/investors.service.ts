@@ -128,6 +128,7 @@ export class InvestorsService {
   async findById(id: number, requesterId?: number): Promise<Investidor> {
     const investidor = await this.investidorRepository.findOne({
       where: { id },
+      relations: ['segmentos'],
     });
     if (!investidor) {
       throw new NotFoundException('Investidor não encontrado.');

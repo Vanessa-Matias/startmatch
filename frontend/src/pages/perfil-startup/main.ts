@@ -73,7 +73,7 @@ function renderStartup(startup: Startup): void {
           <h2>Investimento pretendido</h2>
 
           <p>
-            R$ ${startup.investimentoPretendido.toLocaleString('pt-BR')}
+            R$ ${Number(startup.investimentoPretendido).toLocaleString('pt-BR')}
           </p>
         </section>
 
