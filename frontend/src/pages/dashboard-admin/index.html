@@ -3,6 +3,7 @@
   =================================
   Dashboard geral da plataforma.
   Exibe indicadores gerais e atalhos para as áreas administrativas.
+  Mesmo padrão visual dos outros dashboards (.page-head + .kpi-card).
 -->
 
 <!doctype html>
@@ -14,392 +15,133 @@
     <title>StartMatch — Dashboard Admin</title>
 
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#152a54" />
+    <meta name="theme-color" content="#0f2148" />
 
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
 
     <style>
-      /* =====================================================
-       DASHBOARD ADMIN
-       ===================================================== */
-
-      * {
-        box-sizing: border-box;
+      /* Frase de apoio abaixo do valor do indicador */
+      .kpi-desc {
+        margin: 2px 0 0;
+        color: var(--color-text-muted);
+        font-size: 0.82rem;
       }
 
-      body {
-        margin: 0;
-        background: #f4f6f9;
-        color: #152a54;
-        min-width: 0;
-      }
-      /* Navbar centralizada em src/styles/components.css */
-
-      /* =====================================================
-       ÁREA PRINCIPAL
-       ===================================================== */
-
-      .admin-page {
-        width: min(1100px, calc(100% - 48px));
-        margin: 0 auto;
-        padding: 32px 0 48px;
-      }
-
-      /* =====================================================
-       CABEÇALHO
-       ===================================================== */
-
-      .admin-dashboard-header {
-        margin-bottom: 24px;
-      }
-
-      .admin-dashboard-header h1 {
-        margin: 0 0 8px;
-        color: #152a54;
-        font-size: 28px;
-        line-height: 1.2;
-        font-weight: 700;
-      }
-
-      .admin-dashboard-header p {
-        margin: 0;
-        color: #7b8799;
-        font-size: 14px;
-        line-height: 1.5;
-      }
-
-      /* =====================================================
-       INDICADORES
-       ===================================================== */
-
-      .admin-indicators {
+      /* Atalhos com ícone */
+      .atalhos-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
+        gap: var(--spacing-md);
       }
-
-      .admin-stat {
-        min-height: 145px;
-        padding: 24px;
-
-        background: #ffffff;
-        border: 1px solid #e1e6ed;
-        border-radius: 12px;
-
-        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.06);
-
+      .atalho-card {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      .admin-stat:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.09);
-      }
-
-      .admin-stat-number {
-        color: #152a54;
-        font-size: 32px;
-        line-height: 1;
-        font-weight: 700;
-        margin-bottom: 10px;
-      }
-
-      .admin-stat-title {
-        color: #26344b;
-        font-size: 16px;
-        line-height: 1.3;
-        font-weight: 600;
-        margin-bottom: 7px;
-      }
-
-      .admin-stat-description {
-        color: #8a94a5;
-        font-size: 13px;
-        line-height: 1.4;
-        margin: 0;
-      }
-
-      /* =====================================================
-       ATALHOS
-       ===================================================== */
-
-      .admin-section {
-        margin-top: 40px;
-      }
-
-      .admin-section-title {
-        margin: 0 0 16px;
-        color: #152a54;
-        font-size: 21px;
-        line-height: 1.3;
-        font-weight: 700;
-      }
-
-      .admin-section-description {
-        display: none;
-      }
-
-      .admin-shortcuts {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
-      }
-
-      .admin-shortcut {
-        display: block;
-        min-height: 115px;
-        padding: 22px;
-
-        background: #ffffff;
-        border: 1px solid #e1e6ed;
-        border-radius: 12px;
-
-        color: inherit;
+        align-items: flex-start;
+        gap: 14px;
         text-decoration: none;
-
-        box-shadow: 0 2px 8px rgba(15, 33, 72, 0.05);
-
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          border-color 0.2s ease;
-      }
-
-      .admin-shortcut:hover {
         color: inherit;
+      }
+      .atalho-card:hover {
         text-decoration: none;
-        transform: translateY(-2px);
-        border-color: #c8d4e5;
-        box-shadow: 0 5px 14px rgba(15, 33, 72, 0.08);
+        border-color: var(--color-accent);
       }
-
-      .admin-shortcut .card-title {
-        color: #26344b;
-        font-size: 16px;
-        line-height: 1.3;
-        font-weight: 600;
-        margin-bottom: 8px;
+      .atalho-card .card-title {
+        margin-bottom: 4px;
       }
-
-      .admin-shortcut p {
+      .atalho-card p {
         margin: 0;
-        color: #8a94a5;
-        font-size: 13px;
-        line-height: 1.4;
+        font-size: 0.9rem;
       }
-
-      /* =====================================================
-       TABLET
-       ===================================================== */
 
       @media (max-width: 900px) {
-        .admin-page {
-          width: min(100% - 40px, 760px);
-        }
-
-        .admin-indicators,
-        .admin-shortcuts {
+        .atalhos-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
-
-      /* =====================================================
-       CELULAR / PWA
-       ===================================================== */
-
-      @media (max-width: 700px) {
-        /* A faixa azul NÃO desaparece */
-        .admin-page {
-          width: calc(100% - 28px);
-          padding: 26px 0 36px;
-        }
-
-        .admin-dashboard-header {
-          margin-bottom: 20px;
-        }
-
-        .admin-dashboard-header h1 {
-          font-size: 25px;
-        }
-
-        .admin-dashboard-header p {
-          font-size: 14px;
-        }
-
-        .admin-indicators,
-        .admin-shortcuts {
-          gap: 14px;
-        }
-
-        .admin-stat {
-          min-height: 135px;
-          padding: 20px;
-        }
-
-        .admin-stat-number {
-          font-size: 30px;
-        }
-
-        .admin-stat-title {
-          font-size: 15px;
-        }
-
-        .admin-stat-description {
-          font-size: 12px;
-        }
-
-        .admin-section {
-          margin-top: 32px;
-        }
-
-        .admin-section-title {
-          font-size: 20px;
-        }
-
-        .admin-shortcut {
-          min-height: 110px;
-          padding: 20px;
-        }
-      }
-
-      /* =====================================================
-       CELULAR PEQUENO
-       ===================================================== */
-
-      @media (max-width: 520px) {
-        .admin-page {
-          width: calc(100% - 24px);
-          padding-top: 22px;
-          padding-bottom: 30px;
-        }
-
-        /*
-        No celular os cards ficam em uma coluna,
-        mantendo um tamanho confortável para toque.
-      */
-
-        .admin-indicators,
-        .admin-shortcuts {
+      @media (max-width: 560px) {
+        .atalhos-grid {
           grid-template-columns: 1fr;
-        }
-
-        .admin-stat {
-          min-height: 125px;
-          padding: 20px;
-        }
-
-        .admin-shortcut {
-          min-height: 105px;
-        }
-      }
-
-      /* =====================================================
-       CELULAR MUITO PEQUENO
-       ===================================================== */
-
-      @media (max-width: 360px) {
-        .admin-page {
-          width: calc(100% - 20px);
-        }
-
-        .admin-dashboard-header h1 {
-          font-size: 22px;
-        }
-
-        .admin-dashboard-header p {
-          font-size: 13px;
         }
       }
     </style>
   </head>
 
   <body>
-    <!-- =====================================================
-       NAVBAR
-       ===================================================== -->
-
-    <header class="navbar admin-navbar">
+    <header class="navbar">
       <div class="container">
-        <a class="admin-brand" href="../home/index.html"> StartMatch </a>
+        <a href="../home/index.html">StartMatch</a>
 
-        <!--
-        Preenchido dinamicamente pelo main.ts.
-        No celular continua visível e pode rolar
-        horizontalmente.
-      -->
+        <!-- Preenchido dinamicamente pelo main.ts -->
         <nav id="nav-links"></nav>
       </div>
     </header>
 
-    <!-- =====================================================
-       CONTEÚDO PRINCIPAL
-       ===================================================== -->
-
-    <main class="admin-page">
-      <!-- Cabeçalho -->
-
-      <section class="admin-dashboard-header">
+    <main class="container">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Administração</span>
         <h1>Dashboard geral</h1>
-
         <p>Visão consolidada da plataforma.</p>
-      </section>
+      </div>
 
-      <!-- =====================================================
-         INDICADORES
-         O conteúdo é preenchido pelo main.ts
-         ===================================================== -->
-
-      <section id="indicadores" class="admin-indicators">
+      <!-- INDICADORES (preenchidos pelo main.ts) -->
+      <section class="kpi-grid" id="indicadores" aria-label="Indicadores da plataforma">
         <p class="text-muted">Carregando indicadores…</p>
       </section>
 
-      <!-- =====================================================
-         ATALHOS
-         ===================================================== -->
+      <!-- ATALHOS -->
+      <h2>Atalhos</h2>
+      <div class="spacer-sm"></div>
 
-      <section class="admin-section">
-        <h2 class="admin-section-title">Atalhos</h2>
-
-        <div class="admin-shortcuts">
-          <a class="card admin-shortcut" href="../admin-usuarios/index.html">
+      <div class="atalhos-grid">
+        <a class="card atalho-card" href="../admin-usuarios/index.html">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.8-5.6-4.5-6.6"/></svg>
+          </span>
+          <div>
             <div class="card-title">Usuários</div>
-
-            <p>Gestão de contas da plataforma.</p>
-          </a>
-
-          <a class="card admin-shortcut" href="../admin-planos/index.html">
+            <p class="text-muted">Gestão de contas da plataforma.</p>
+          </div>
+        </a>
+        <a class="card atalho-card" href="../admin-planos/index.html">
+          <span class="kpi-icon kpi-icon--violet" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17l-5.9 3 1.2-6.5L2.5 8.9 9.1 8z"/></svg>
+          </span>
+          <div>
             <div class="card-title">Planos</div>
-
-            <p>Distribuição de assinaturas.</p>
-          </a>
-
-          <a class="card admin-shortcut" href="../admin-relatorios/index.html">
+            <p class="text-muted">Distribuição de assinaturas.</p>
+          </div>
+        </a>
+        <a class="card atalho-card" href="../admin-relatorios/index.html">
+          <span class="kpi-icon kpi-icon--sky" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-8"/></svg>
+          </span>
+          <div>
             <div class="card-title">Relatórios</div>
-
-            <p>Indicadores detalhados.</p>
-          </a>
-
-          <a class="card admin-shortcut" href="../admin-lgpd/index.html">
+            <p class="text-muted">Indicadores detalhados.</p>
+          </div>
+        </a>
+        <a class="card atalho-card" href="../admin-lgpd/index.html">
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <div>
             <div class="card-title">Governança e LGPD</div>
-
-            <p>Dados pessoais tratados e base legal.</p>
-          </a>
-
-          <a class="card admin-shortcut" href="../admin-auditoria/index.html">
+            <p class="text-muted">Dados pessoais tratados e base legal.</p>
+          </div>
+        </a>
+        <a class="card atalho-card" href="../admin-auditoria/index.html">
+          <span class="kpi-icon kpi-icon--amber" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+          </span>
+          <div>
             <div class="card-title">Auditoria</div>
+            <p class="text-muted">Registro de eventos da plataforma.</p>
+          </div>
+        </a>
+      </div>
 
-            <p>Registro de eventos da plataforma.</p>
-          </a>
-        </div>
-      </section>
+      <div class="spacer-xl"></div>
     </main>
 
     <script type="module" src="./main.ts"></script>

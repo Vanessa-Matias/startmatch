@@ -18,6 +18,10 @@ export const NAV_BY_ROLE: Record<
       label: 'Dashboard',
     },
     {
+      href: '../busca/index.html',
+      label: 'Buscar investidores',
+    },
+    {
       href: '../interesses-startup/index.html',
       label: 'Interesses',
     },
@@ -55,6 +59,10 @@ export const NAV_BY_ROLE: Record<
     {
       href: '../dashboard-investidor/index.html',
       label: 'Dashboard',
+    },
+    {
+      href: '../busca/index.html',
+      label: 'Buscar startups',
     },
     {
       href: '../interesses-investidor/index.html',

@@ -5,7 +5,7 @@
 
   Alterações:
     - Removido o badge "SEU PAINEL"
-    - Adicionado dashboard simples com dados gerais
+    - Indicadores no padrão .kpi-card (ícone + rótulo + valor)
     - Sugestões e interesses agora mostram recursos bloqueados
       para usuários que ainda não possuem plano
     - Os cards de recursos levam para a área de Planos
@@ -29,32 +29,7 @@
     <link rel="stylesheet" href="../../styles/components.css" />
 
     <style>
-      /* Dashboard simples */
-
-      .dashboard-stats {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: var(--spacing-md);
-        margin-bottom: var(--spacing-xl);
-      }
-
-      .dashboard-stat {
-        text-align: center;
-      }
-
-      .dashboard-stat-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .dashboard-stat-label {
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-      }
-
-      /* Card de recurso bloqueado */
-
+      /* Cards de recursos bloqueados (indicadores usam .kpi-* de components.css) */
       .locked-card {
         display: block;
         text-decoration: none;
@@ -64,18 +39,6 @@
 
       .locked-card:hover {
         text-decoration: none;
-      }
-
-      @media (max-width: 720px) {
-        .dashboard-stats {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-
-      @media (max-width: 480px) {
-        .dashboard-stats {
-          grid-template-columns: 1fr;
-        }
       }
     </style>
   </head>
@@ -91,35 +54,55 @@
     </header>
 
     <div class="container">
-      <h1 style="font-size: 1.7rem; margin-bottom: var(--spacing-lg)">
-        Dashboard
-      </h1>
+      <div class="page-head">
+        <span class="section-eyebrow green">Área da startup</span>
+        <h1>Dashboard</h1>
+        <p>Acompanhe seu perfil, seus interesses e as oportunidades no StartMatch.</p>
+      </div>
 
       <!-- =========================
            DADOS GERAIS DO SITE
            ========================= -->
 
-      <section class="dashboard-stats" id="dados-conta">
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-nome-startup">—</div>
-          <div class="dashboard-stat-label">Sua startup</div>
-        </div>
-
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-estagio-startup">—</div>
-          <div class="dashboard-stat-label">Estágio atual</div>
-        </div>
-
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-investimento-startup">
-            —
+      <section class="kpi-grid" id="dados-conta" aria-label="Resumo da sua conta">
+        <div class="card kpi-card">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0"/><path d="M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Sua startup</p>
+            <div class="kpi-value" id="card-nome-startup">—</div>
           </div>
-          <div class="dashboard-stat-label">Investimento pretendido</div>
         </div>
 
-        <div class="card dashboard-stat">
-          <div class="dashboard-stat-number" id="card-plano-startup">—</div>
-          <div class="dashboard-stat-label">Plano atual</div>
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--green" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Estágio atual</p>
+            <div class="kpi-value" id="card-estagio-startup">—</div>
+          </div>
+        </div>
+
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--sky" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Investimento pretendido</p>
+            <div class="kpi-value" id="card-investimento-startup">—</div>
+          </div>
+        </div>
+
+        <div class="card kpi-card">
+          <span class="kpi-icon kpi-icon--violet" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17l-5.9 3 1.2-6.5L2.5 8.9 9.1 8z"/></svg>
+          </span>
+          <div class="kpi-body">
+            <p class="kpi-label">Plano atual</p>
+            <div class="kpi-value" id="card-plano-startup">—</div>
+          </div>
         </div>
       </section>
 
