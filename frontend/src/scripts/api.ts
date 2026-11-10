@@ -20,6 +20,7 @@ import { MOCK_MODE, mockRequest } from './mock';
 // Em desenvolvimento, VITE_API_URL não é definida e cai no padrão '/api', que o Vite
 // redireciona para o backend local (ver proxy em vite.config.ts).
 const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api';
+// >> Endereço da API (back-end). Em produção vem de VITE_API_URL.
 
 // Chaves usadas no localStorage do navegador para guardar a sessão.
 const TOKEN_KEY = 'sc_token';
@@ -56,11 +57,13 @@ function handleUnauthorized(): void {
 // converte qualquer erro HTTP em ApiError. `<T>` é o tipo de dado esperado na
 // resposta (ex.: request<Startup[]>(...)).
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  // >> Toda chamada do site ao back-end passa por esta função.
   if (MOCK_MODE) {
     return mockRequest<T>(path, options.method ?? 'GET', options.body as BodyInit | null | undefined);
   }
 
   const token = getStoredToken();
+  // >> Pega o token guardado no navegador quando a pessoa fez login.
 
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
@@ -70,6 +73,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
+  // >> O fetch acima é a chamada real ao back-end. O token vai junto.
 
   // Nas rotas de autenticação (/auth/login, /auth/register) o 401 significa
   // "senha ou e-mail incorretos", não "sessão expirada" — então deixamos passar
@@ -97,6 +101,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 // Objeto exportado e usado em todas as telas: api.get(...), api.post(...), etc.
 // Exemplo de uso numa tela: `const startup = await api.get<Startup>('/startups/me')`
 export const api = {
+// >> As telas usam api.get e api.post para falar com a API.
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'POST', body: body !== undefined ? JSON.stringify(body) : undefined }),

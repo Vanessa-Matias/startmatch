@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PlanoAssinatura } from '../../../common/enums';
+import { ModalidadeMentoria } from '../../../common/enums';
 import { Usuario } from '../../users/entities/usuario.entity';
 
 @Entity('mentor')
@@ -34,15 +34,27 @@ export class Mentor {
   @Column({ default: false })
   vinculoPortoDigital: boolean;
 
+  // Dias e horários em texto livre (ex.: "Seg e qua, 14h às 18h").
   @Column({ type: 'text' })
   disponibilidade: string;
 
+  // Duração de cada mentoria, em minutos (30 ou 60).
+  @Column({ type: 'int', default: 60 })
+  duracaoMinutos: number;
+
+  // Quantas mentorias o mentor aceita por mês (limite de agenda dele).
+  @Column({ type: 'int', default: 4 })
+  mentoriasPorMes: number;
+
   @Column({
     type: 'enum',
-    enum: PlanoAssinatura,
-    default: PlanoAssinatura.BASICO,
+    enum: ModalidadeMentoria,
+    default: ModalidadeMentoria.REMOTO,
   })
-  planoAssinatura: PlanoAssinatura;
+  modalidade: ModalidadeMentoria;
+
+  // O mentor é voluntário e NÃO paga assinatura (modelo de negócio novo): a
+  // coluna antiga plano_assinatura deixou de existir.
 
   @CreateDateColumn()
   criadoEm: Date;

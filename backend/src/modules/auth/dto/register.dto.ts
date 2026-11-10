@@ -1,6 +1,6 @@
 import {
   IsEmail,
-  IsEnum,
+  IsIn,
   IsNotEmpty,
   MaxLength,
   MinLength,
@@ -22,7 +22,13 @@ export class RegisterDto {
   @MaxLength(8)
   senha: string;
 
-  @ApiProperty({ enum: TipoUsuario })
-  @IsEnum(TipoUsuario)
+  // >> O cadastro público só aceita estes 3 perfis. Perfil "admin" NÃO pode ser
+  // >> criado por aqui (antes qualquer pessoa conseguia se cadastrar como admin).
+  @ApiProperty({
+    enum: [TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR, TipoUsuario.MENTOR],
+  })
+  @IsIn([TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR, TipoUsuario.MENTOR], {
+    message: 'Tipo de usuário inválido. Escolha startup, investidor ou mentor.',
+  })
   tipoUsuario: TipoUsuario;
 }

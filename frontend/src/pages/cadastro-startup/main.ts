@@ -83,6 +83,7 @@ init().catch((error) => {
 });
 
 form.addEventListener('submit', async (event) => {
+  // >> Roda quando a pessoa clica em Salvar no formulário.
   event.preventDefault();
   errorEl.textContent = '';
 
@@ -110,6 +111,7 @@ form.addEventListener('submit', async (event) => {
   }));
 
   const formData = new FormData(form);
+  // >> Pega o que foi digitado no formulário.
   const payload = {
     nomeFantasia: String(formData.get('nomeFantasia') ?? ''),
     cnpj: String(formData.get('cnpj') ?? '') || undefined,
@@ -123,6 +125,7 @@ form.addEventListener('submit', async (event) => {
 
   try {
     await api.post('/startups', payload);
+    // >> Envia para a API (rota POST /api/startups). A API grava no banco.
     window.location.href = '../dashboard-startup/index.html';
   } catch (error) {
     errorEl.textContent = error instanceof ApiError ? error.message : 'Erro ao salvar perfil.';

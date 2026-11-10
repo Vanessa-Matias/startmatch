@@ -20,6 +20,7 @@ import type { RequestUser } from '../../common/interfaces';
 import { TipoUsuario } from '../../common/enums';
 import { ConversationsService } from './conversations.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { CreateDirectConversationDto } from './dto/create-direct-conversation.dto';
 import { ConversationResponseDto } from './dto/conversation-response.dto';
 import { MessageResponseDto } from './dto/message-response.dto';
 
@@ -32,17 +33,34 @@ export class ConversationsController {
 
   @ApiOperation({ summary: 'Lista as conversas do usuário logado' })
   @Get()
-  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
+  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR, TipoUsuario.MENTOR)
   async findAll(
     @CurrentUser() user: RequestUser,
   ): Promise<ConversationResponseDto[]> {
-    const conversas = await this.conversationsService.findAllForUser(user.id);
-    return plainToInstance(ConversationResponseDto, conversas);
+    return this.conversationsService.findAllForUser(user.id);
+  }
+
+  @ApiOperation({
+    summary: 'Mentor inicia conversa direta com uma startup ou investidor',
+  })
+  @Post('direct')
+  // >> ROTA: POST /api/conversations/direct. Networking do mentor (sem match).
+  @Roles(TipoUsuario.MENTOR)
+  async createDirect(
+    @CurrentUser() user: RequestUser,
+    @Body() dto: CreateDirectConversationDto,
+  ): Promise<ConversationResponseDto> {
+    return this.conversationsService.createDirect(
+      user.id,
+      user.tipo,
+      dto.tipo,
+      dto.perfilId,
+    );
   }
 
   @ApiOperation({ summary: 'Lista as mensagens de uma conversa' })
   @Get(':id/messages')
-  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
+  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR, TipoUsuario.MENTOR)
   async findMessages(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: RequestUser,
@@ -53,7 +71,7 @@ export class ConversationsController {
 
   @ApiOperation({ summary: 'Envia uma mensagem em uma conversa' })
   @Post(':id/messages')
-  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
+  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR, TipoUsuario.MENTOR)
   async postMessage(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: RequestUser,

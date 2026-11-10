@@ -38,10 +38,6 @@ export const NAV_BY_ROLE: Record<
       label: 'Mentorias',
     },
     {
-      href: '../comprar-mentorias/index.html',
-      label: 'Mentorias extras',
-    },
-    {
       href: '../canvas/index.html',
       label: 'Canvas',
     },
@@ -122,10 +118,6 @@ export const NAV_BY_ROLE: Record<
   {
     href: '../certificados/index.html',
     label: 'Certificados',
-  },
-  {
-    href: '../plano/index.html',
-    label: 'Plano',
   },
 ],
 

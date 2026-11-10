@@ -15,7 +15,11 @@ import { Mentor } from './entities/mentor.entity';
 import { CreateMentorProfileDto } from './dto/create-mentor-profile.dto';
 import { UpdateMentorProfileDto } from './dto/update-mentor-profile.dto';
 import { AuditService } from '../audit/audit.service';
-import { TipoEventoAuditoria, ResultadoAuditoria } from '../../common/enums';
+import {
+  ModalidadeMentoria,
+  TipoEventoAuditoria,
+  ResultadoAuditoria,
+} from '../../common/enums';
 
 @Injectable()
 export class MentorsService {
@@ -45,6 +49,9 @@ export class MentorsService {
       especialidades: dto.especialidades,
       vinculoPortoDigital: dto.vinculoPortoDigital ?? false,
       disponibilidade: dto.disponibilidade,
+      duracaoMinutos: dto.duracaoMinutos ?? 60,
+      mentoriasPorMes: dto.mentoriasPorMes ?? 4,
+      modalidade: dto.modalidade ?? ModalidadeMentoria.REMOTO,
     });
 
     const salvo = await this.mentorRepository.save(mentor);
@@ -61,11 +68,14 @@ export class MentorsService {
   }
 
   async findAll(): Promise<Mentor[]> {
-    return this.mentorRepository.find();
+    return this.mentorRepository.find({ relations: { usuario: true } });
   }
 
   async findById(id: number): Promise<Mentor> {
-    const mentor = await this.mentorRepository.findOne({ where: { id } });
+    const mentor = await this.mentorRepository.findOne({
+      where: { id },
+      relations: { usuario: true },
+    });
     if (!mentor) {
       throw new NotFoundException('Mentor não encontrado.');
     }
@@ -75,6 +85,7 @@ export class MentorsService {
   async findByUserId(usuarioId: number): Promise<Mentor> {
     const mentor = await this.mentorRepository.findOne({
       where: { usuarioId },
+      relations: { usuario: true },
     });
     if (!mentor) {
       throw new NotFoundException('Perfil de mentor ainda não cadastrado.');

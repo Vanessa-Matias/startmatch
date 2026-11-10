@@ -168,6 +168,22 @@
 
     <div class="container">
       <h1>Mensagens</h1>
+
+      <!-- Só para mentores: networking direto com startups e investidores (sem precisar de match) -->
+      <div id="nova-conversa" class="card" hidden style="margin-bottom: var(--spacing-md)">
+        <label for="nova-destino"><strong>Iniciar conversa direta</strong></label>
+        <p class="text-muted">
+          Como mentor, você pode falar com qualquer startup ou investidor, a qualquer momento.
+        </p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <select class="select" id="nova-destino" style="flex: 1; min-width: 220px">
+            <option value="">Carregando…</option>
+          </select>
+          <button type="button" class="btn btn-primary" id="nova-iniciar">Iniciar conversa</button>
+        </div>
+        <p id="nova-erro" class="form-error" aria-live="polite"></p>
+      </div>
+
       <div class="mensagens-layout">
         <!-- Preenchido dinamicamente por main.ts com um botão por conversa -->
         <div id="conversas-list" class="conversas-list">

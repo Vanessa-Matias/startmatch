@@ -1,17 +1,16 @@
 // Tela: Certificado de Mentoria — lógica
 // ======================================
 //
-// Nesta primeira entrega, os dados são demonstrativos e ficam
-// somente no frontend.
-//
-// Cada certificado representa um período específico de atuação
-// do mentor. Futuramente, esses dados deverão ser carregados
-// a partir do histórico real de sessões de mentoria.
+// Cada mentoria marcada como "realizada" gera um certificado com código único
+// (GET /mentorias). A tela monta um certificado para cada sessão realizada, e o
+// botão "Exportar" imprime / salva em PDF só o documento do certificado.
 //
 // ======================================
 
+import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
+import type { Mentoria } from '../../scripts/types';
 
 const usuario = requireAuth(['mentor']);
 
@@ -21,7 +20,7 @@ renderNav(
 );
 
 // --------------------------------------------------
-// Dados demonstrativos
+// Dados (vêm da API: mentorias realizadas)
 // --------------------------------------------------
 
 interface SessaoMentoria {
@@ -44,123 +43,38 @@ interface CertificadoMentoria {
   registro: string;
 }
 
-const certificados: CertificadoMentoria[] = [
-  {
-    id: 'cert-001',
-    titulo: 'Certificado de Mentoria — Setembro de 2026',
-    periodo: 'Setembro de 2026',
-    dataInicio: '01/09/2026',
-    dataFim: '30/09/2026',
-    status: 'Ativo',
-    registro: 'SM-MENTOR-001',
-    sessoes: [
-      {
-        startup: 'Startup #1',
-        data: '02/09/2026',
-        horario: '14:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Estratégia e crescimento da startup'
-      },
-      {
-        startup: 'Startup #2',
-        data: '05/09/2026',
-        horario: '15:00',
-        duracao: '2h',
-        formato: 'Online',
-        tema: 'Modelo de negócio e validação'
-      },
-      {
-        startup: 'Startup #3',
-        data: '10/09/2026',
-        horario: '14:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Planejamento estratégico'
-      },
-      {
-        startup: 'Startup #1',
-        data: '15/09/2026',
-        horario: '14:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Estratégia e crescimento da startup'
-      },
-      {
-        startup: 'Startup #2',
-        data: '20/09/2026',
-        horario: '16:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Posicionamento e mercado'
-      }
-    ]
-  },
+const FORMATO_LABEL: Record<string, string> = {
+  presencial: 'Presencial',
+  hibrido: 'Híbrido',
+  remoto: 'Remoto',
+};
 
-  {
-    id: 'cert-002',
-    titulo: 'Certificado de Mentoria — Agosto de 2026',
-    periodo: 'Agosto de 2026',
-    dataInicio: '01/08/2026',
-    dataFim: '31/08/2026',
-    status: 'Ativo',
-    registro: 'SM-MENTOR-002',
-    sessoes: [
-      {
-        startup: 'Startup #4',
-        data: '03/08/2026',
-        horario: '14:00',
-        duracao: '2h',
-        formato: 'Online',
-        tema: 'Planejamento financeiro'
-      },
-      {
-        startup: 'Startup #5',
-        data: '08/08/2026',
-        horario: '15:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Estratégia comercial'
-      },
-      {
-        startup: 'Startup #4',
-        data: '15/08/2026',
-        horario: '14:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Indicadores e crescimento'
-      }
-    ]
-  },
+let certificados: CertificadoMentoria[] = [];
 
-  {
-    id: 'cert-003',
-    titulo: 'Certificado de Mentoria — Julho de 2026',
-    periodo: 'Julho de 2026',
-    dataInicio: '01/07/2026',
-    dataFim: '31/07/2026',
+function paraCertificado(m: Mentoria): CertificadoMentoria {
+  const data = new Date(m.dataHora);
+  const dia = data.toLocaleDateString('pt-BR');
+  const horas = m.duracaoMinutos / 60;
+  return {
+    id: `cert-${m.id}`,
+    titulo: `${m.startupNome} — ${dia}`,
+    periodo: data.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+    dataInicio: dia,
+    dataFim: dia,
     status: 'Ativo',
-    registro: 'SM-MENTOR-003',
+    registro: m.codigoCertificado ?? '—',
     sessoes: [
       {
-        startup: 'Startup #6',
-        data: '05/07/2026',
-        horario: '14:00',
-        duracao: '1h',
-        formato: 'Online',
-        tema: 'Validação de mercado'
+        startup: m.startupNome,
+        data: dia,
+        horario: data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        duracao: `${String(horas).replace('.', ',')}h`,
+        formato: FORMATO_LABEL[m.modalidade] ?? m.modalidade,
+        tema: m.tema,
       },
-      {
-        startup: 'Startup #7',
-        data: '12/07/2026',
-        horario: '15:00',
-        duracao: '2h',
-        formato: 'Online',
-        tema: 'Modelo de negócio'
-      }
-    ]
-  }
-];
+    ],
+  };
+}
 
 // --------------------------------------------------
 // Elementos
@@ -449,11 +363,12 @@ function atualizarCertificado(): void {
   // Exportação
   // -----------------------------------------------
 
-  btnExportar.disabled = true;
+  btnExportar.disabled = false;
 
-  btnExportar.title =
-    'A exportação será disponibilizada quando o histórico real estiver integrado';
+  btnExportar.title = 'Imprimir ou salvar o certificado em PDF';
 }
+
+btnExportar.addEventListener('click', () => window.print());
 
 // --------------------------------------------------
 // Evento de troca do certificado
@@ -468,5 +383,27 @@ seletorCertificado.addEventListener(
 // Inicialização
 // --------------------------------------------------
 
-preencherSeletor();
-atualizarCertificado();
+async function init(): Promise<void> {
+  const lista = await api.get<Mentoria[]>('/mentorias');
+  certificados = lista
+    .filter((m) => m.status === 'realizada' && m.codigoCertificado)
+    .map(paraCertificado);
+
+  if (certificados.length === 0) {
+    seletorCertificado.innerHTML = '<option value="">Nenhum certificado ainda</option>';
+    btnExportar.disabled = true;
+    btnExportar.title = 'Você ainda não tem mentorias realizadas.';
+    certificadoNome.textContent = 'Nenhuma mentoria realizada ainda';
+    certificadoRegistro.textContent = '—';
+    return;
+  }
+
+  preencherSeletor();
+  atualizarCertificado();
+}
+
+init().catch((error) => {
+  seletorCertificado.innerHTML = `<option value="">${
+    error instanceof ApiError ? error.message : 'Erro ao carregar certificados.'
+  }</option>`;
+});

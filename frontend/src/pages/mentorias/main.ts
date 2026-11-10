@@ -1,26 +1,23 @@
 // Tela: Mentorias — lógica
 // ==========================
-// Mostra os mentores para a startup escolher com quem quer mentoria.
+// A startup vê os mentores voluntários (GET /mentors) e agenda uma mentoria
+// (POST /mentorias): escolhe dia e horário, tema e uma mensagem. O mentor aceita
+// ou recusa; depois da sessão ele marca como realizada e o certificado é gerado.
 //
-// Antes dos mentores reais (GET /mentors) aparecem 3 PERFIS DE EXEMPLO
-// (MENTORES_EXEMPLO), com foto, empresa e tempo de carreira, montados a partir
-// das regras de Mentores e Mentorias extras da página de Planos. Servem para
-// demonstrar a tela; para tirar, basta esvaziar a lista.
+// Regras do plano (validadas no backend):
+//   - Básico: sem mentoria (o botão leva para a página de planos);
+//   - Plus: 1 mentoria por mês; Premium: 2 por mês;
+//   - cada mentor tem um limite de mentorias por mês e não aceita dois horários iguais.
 //
-// Os mentores reais usam o MESMO card: área, bio, especialidades e
-// disponibilidade vêm do backend, e foto, cargo, empresa, tempo de experiência e
-// modalidade vêm do que o mentor salvou na tela Perfil (scripts/mentorDemo.ts).
-//
-// - "Ver perfil" abre um modal com o perfil completo do mentor.
-// - "Solicitar mentoria" funciona em modo DEMONSTRAÇÃO: ainda não existe
-//   agendamento no backend, então o modal sempre avisa que a startup não tem
-//   mais mentorias disponíveis e oferece a compra de mentorias extras.
+// Foto, cargo, empresa e tempo de carreira do mentor ainda vêm do que ele salvou
+// na tela Perfil, no navegador (scripts/mentorDemo.ts). Modalidade, duração, dias e
+// horários e mentorias por mês vêm do banco.
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { MODALIDADE_LABEL, iniciais, lerPerfilExtra } from '../../scripts/mentorDemo';
 import { renderNav } from '../../scripts/nav';
-import type { Mentor } from '../../scripts/types';
+import type { CotaMensal, Mentor, Mentoria } from '../../scripts/types';
 
 const usuario = requireAuth(['startup']);
 renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
@@ -40,62 +37,18 @@ interface MentorExemplo {
   especialidades: string[];
   disponibilidade: string;
   modalidade: string;
-  pacotes: string;
+  /** "30 minutos" ou "1 hora". */
+  duracao: string;
+  mentoriasPorMes: number;
+  /** Id do mentor no banco (usado para agendar). */
+  mentorId: number;
   redeParceira: boolean;
   /** Selo azul de verificado. */
   verificado: boolean;
 }
 
-const MENTORES_EXEMPLO: MentorExemplo[] = [
-  {
-    id: 'mariana',
-    nome: 'Mariana Albuquerque',
-    foto: '/imagens/mentores/mariana-albuquerque.png',
-    cargo: 'CEO',
-    empresa: 'Pitang',
-    anosCarreira: 18,
-    areaAtuacao: 'Estratégia e captação de investimento',
-    bio: 'Lidera a Pitang e já acompanhou dezenas de startups do Porto Digital. Ajuda a estruturar o pitch, definir valuation e se preparar para rodadas com investidores-anjo.',
-    especialidades: ['Pitch para investidores', 'Valuation', 'Rodada anjo'],
-    disponibilidade: 'Segunda a sexta, 9h às 12h',
-    modalidade: 'Online ou presencial (Recife)',
-    pacotes: 'Básico, Start e Premium',
-    redeParceira: true,
-    verificado: true,
-  },
-  {
-    id: 'rafael',
-    nome: 'Rafael Cavalcanti',
-    foto: '/imagens/mentores/rafael-cavalcanti.png',
-    cargo: 'Desenvolvedor de Software',
-    empresa: 'Capgemini',
-    anosCarreira: 9,
-    areaAtuacao: 'Produto e tecnologia',
-    bio: 'Desenvolvedor na Capgemini, com experiência em produtos digitais de grande escala. Orienta a construção do MVP, a escolha da arquitetura e as boas práticas de código.',
-    especialidades: ['MVP', 'Arquitetura de software', 'Boas práticas de código'],
-    disponibilidade: 'Terças e quintas, 14h às 18h',
-    modalidade: 'Online',
-    pacotes: 'Básico e Start',
-    redeParceira: false,
-    verificado: true,
-  },
-  {
-    id: 'juliana',
-    nome: 'Juliana Freitas',
-    foto: '/imagens/mentores/juliana-freitas.png',
-    cargo: 'Engenheira de Dados Sênior',
-    empresa: 'Hub de Inovação Bradesco',
-    anosCarreira: 7,
-    areaAtuacao: 'Dados e métricas de crescimento',
-    bio: 'Engenheira de dados sênior no Hub de Inovação Bradesco. Ajuda startups a organizar seus dados, definir as métricas certas e tomar decisões de crescimento com base nelas.',
-    especialidades: ['Engenharia de dados', 'Métricas de produto', 'Analytics'],
-    disponibilidade: 'Segunda, quarta e sexta, 18h às 21h',
-    modalidade: 'Online ou presencial (Recife)',
-    pacotes: 'Start e Premium',
-    redeParceira: true,
-    verificado: true,
-  },
-];
+// Sem perfis de exemplo: só mentores reais podem receber agendamento.
+const MENTORES_EXEMPLO: MentorExemplo[] = [];
 
 // Perfis cadastrados na base que não devem aparecer nesta tela
 // (área de atuação contendo um destes trechos).
@@ -107,6 +60,10 @@ function oculto(mentor: Mentor): boolean {
   if (extra.nome || extra.cargo || extra.empresa) return false;
   const area = mentor.areaAtuacao.trim().toLowerCase();
   return AREAS_OCULTAS.some((trecho) => area.includes(trecho));
+}
+
+function textoDuracao(minutos: number): string {
+  return minutos === 30 ? '30 minutos' : '1 hora';
 }
 
 function badgeTipo(redeParceira: boolean): string {
@@ -145,7 +102,8 @@ function deMentorReal(mentor: Mentor): MentorExemplo {
   const extra = lerPerfilExtra(mentor.id);
   return {
     id: `real-${mentor.id}`,
-    nome: extra.nome || 'Mentor StartMatch',
+    mentorId: mentor.id,
+    nome: extra.nome || mentor.nome || 'Mentor StartMatch',
     foto: extra.foto,
     cargo: escapeHtml(extra.cargo),
     empresa: escapeHtml(extra.empresa),
@@ -154,8 +112,9 @@ function deMentorReal(mentor: Mentor): MentorExemplo {
     bio: escapeHtml(mentor.bio),
     especialidades: mentor.especialidades.map(escapeHtml),
     disponibilidade: escapeHtml(mentor.disponibilidade),
-    modalidade: MODALIDADE_LABEL[extra.modalidade],
-    pacotes: 'Básico, Start e Premium',
+    modalidade: MODALIDADE_LABEL[mentor.modalidade] ?? mentor.modalidade,
+    duracao: textoDuracao(mentor.duracaoMinutos),
+    mentoriasPorMes: mentor.mentoriasPorMes,
     redeParceira: mentor.vinculoPortoDigital,
     verificado: Boolean(extra.foto && extra.empresa),
   };
@@ -168,11 +127,13 @@ function tags(especialidades: string[]): string {
   return especialidades.map((e) => `<span class="badge">${e}</span>`).join(' ');
 }
 
-const BOTAO_SOLICITAR = `
-  <button class="btn btn-primary btn-block" type="button" data-solicitar>
-    Solicitar mentoria
-  </button>
-`;
+function botaoSolicitar(id: string): string {
+  return `
+    <button class="btn btn-primary btn-block" type="button" data-solicitar="${id}">
+      Agendar mentoria
+    </button>
+  `;
+}
 
 function renderExemplo(mentor: MentorExemplo): string {
   return `
@@ -191,7 +152,7 @@ function renderExemplo(mentor: MentorExemplo): string {
         <button class="btn btn-outline btn-block" type="button" data-ver-perfil="${mentor.id}">
           Ver perfil
         </button>
-        ${BOTAO_SOLICITAR}
+        ${botaoSolicitar(mentor.id)}
       </div>
     </div>
   `;
@@ -251,29 +212,112 @@ function abrirPerfil(mentor: MentorExemplo): void {
       <li><strong>Área:</strong> ${mentor.areaAtuacao}</li>
       <li><strong>Disponibilidade:</strong> ${mentor.disponibilidade}</li>
       <li><strong>Modalidade:</strong> ${mentor.modalidade}</li>
-      <li><strong>Pacotes de mentorias extras:</strong> ${mentor.pacotes}</li>
+      <li><strong>Duração:</strong> ${mentor.duracao}</li>
+      <li><strong>Mentorias por mês:</strong> ${mentor.mentoriasPorMes}</li>
     </ul>
     <p class="mentor-bio">${mentor.bio}</p>
     <p class="mentor-tags">${tags(mentor.especialidades)}</p>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline" data-fechar>Fechar</button>
-      <button type="button" class="btn btn-primary" data-solicitar>Solicitar mentoria</button>
+      <button type="button" class="btn btn-primary" data-solicitar="${mentor.id}">Agendar mentoria</button>
     </div>
   `);
 }
 
-function abrirSemSaldo(): void {
+// ---------------------------------------------------------------------------
+// Agendamento
+// ---------------------------------------------------------------------------
+
+let cota: CotaMensal | null = null;
+
+function abrirSemPlano(): void {
   abrirModal(`
-    <div class="modal-header"><h3>Solicitar mentoria</h3></div>
+    <div class="modal-header"><h3>Agendar mentoria</h3></div>
     <p class="modal-body">
-      Você não tem mais mentorias disponíveis. Aguarde o próximo mês ou
-      assine mais pacotes.
+      Agendar mentorias é um recurso dos planos <strong>Plus</strong> (1 mentoria por mês)
+      e <strong>Premium</strong> (2 por mês). Faça upgrade do seu plano para agendar.
     </p>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline" data-fechar>Fechar</button>
-      <a class="btn btn-primary" href="../comprar-mentorias/index.html">Comprar mentorias extras</a>
+      <a class="btn btn-primary" href="../plano/index.html">Ver planos</a>
     </div>
   `);
+}
+
+// Valor mínimo do campo de data: daqui a 1 hora, no formato do input datetime-local.
+function minimoDataHora(): string {
+  const d = new Date(Date.now() + 60 * 60_000);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function abrirAgendamento(mentor: MentorExemplo): void {
+  if (cota && cota.limite === 0) {
+    abrirSemPlano();
+    return;
+  }
+  abrirModal(`
+    <div class="modal-header"><h3>Agendar mentoria com ${escapeHtml(mentor.nome)}</h3></div>
+    <form id="form-agendar" class="modal-body">
+      <p class="text-muted">
+        ${mentor.duracao} · ${mentor.modalidade}<br />
+        Dias e horários do mentor: ${mentor.disponibilidade}
+      </p>
+      <div class="field">
+        <label for="ag-data">Dia e horário</label>
+        <input class="input" id="ag-data" type="datetime-local" min="${minimoDataHora()}" required />
+      </div>
+      <div class="field">
+        <label for="ag-tema">Tema da mentoria</label>
+        <input class="input" id="ag-tema" type="text" maxlength="120" placeholder="Ex.: Preparar o pitch para investidores" required />
+      </div>
+      <div class="field">
+        <label for="ag-msg">Mensagem para o mentor (opcional)</label>
+        <textarea class="input" id="ag-msg" rows="3" maxlength="500"></textarea>
+      </div>
+      <p id="ag-erro" class="form-error" aria-live="polite"></p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="ag-enviar">Enviar pedido</button>
+      </div>
+    </form>
+  `);
+
+  const form = modalEl.querySelector('#form-agendar') as HTMLFormElement;
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const erroEl = modalEl.querySelector('#ag-erro') as HTMLElement;
+    const botao = modalEl.querySelector('#ag-enviar') as HTMLButtonElement;
+    const data = (modalEl.querySelector('#ag-data') as HTMLInputElement).value;
+    const tema = (modalEl.querySelector('#ag-tema') as HTMLInputElement).value.trim();
+    const mensagem = (modalEl.querySelector('#ag-msg') as HTMLTextAreaElement).value.trim();
+    erroEl.textContent = '';
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+    try {
+      await api.post('/mentorias', {
+        mentorId: mentor.mentorId,
+        dataHora: new Date(data).toISOString(),
+        tema,
+        mensagem,
+      });
+      abrirModal(`
+        <div class="modal-header"><h3>Pedido enviado!</h3></div>
+        <p class="modal-body">
+          O mentor vai aceitar ou recusar. Acompanhe o status em "Minhas mentorias" abaixo.
+        </p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-fechar>Ok</button>
+        </div>
+      `);
+      await atualizarCotaEMinhas();
+    } catch (error) {
+      erroEl.textContent =
+        error instanceof ApiError ? error.message : 'Não foi possível agendar agora.';
+      botao.disabled = false;
+      botao.textContent = 'Enviar pedido';
+    }
+  });
 }
 
 // um único listener para os botões da lista e do modal
@@ -287,10 +331,107 @@ document.addEventListener('click', (event) => {
     return;
   }
 
-  if (alvo.closest('[data-solicitar]')) {
-    abrirSemSaldo();
+  const solicitarBtn = alvo.closest<HTMLElement>('[data-solicitar]');
+  if (solicitarBtn) {
+    const mentor = perfis.get(solicitarBtn.dataset.solicitar ?? '');
+    if (mentor) abrirAgendamento(mentor);
+    return;
+  }
+
+  const cancelarBtn = alvo.closest<HTMLElement>('[data-cancelar]');
+  if (cancelarBtn) {
+    void cancelarMentoria(Number(cancelarBtn.dataset.cancelar), cancelarBtn as HTMLButtonElement);
   }
 });
+
+// ---------------------------------------------------------------------------
+// Cota do plano e "Minhas mentorias"
+// ---------------------------------------------------------------------------
+
+const cotaEl = document.getElementById('cota-mentorias') as HTMLElement;
+const minhasEl = document.getElementById('minhas-mentorias') as HTMLElement;
+
+const PLANO_NOME: Record<string, string> = { basico: 'Básico', plus: 'Plus', premium: 'Premium' };
+
+function renderCota(): void {
+  if (!cota) return;
+  const plano = PLANO_NOME[cota.plano] ?? cota.plano;
+  if (!cota.limite) {
+    cotaEl.innerHTML = `
+      <strong>Plano ${plano}:</strong> o plano Básico não inclui mentorias.
+      <a class="btn-link" href="../plano/index.html">Faça upgrade para Plus (1 por mês) ou Premium (2 por mês)</a>.
+    `;
+    return;
+  }
+  cotaEl.innerHTML = `
+    <strong>Plano ${plano}:</strong> você usou <strong>${cota.usados} de ${cota.limite}</strong>
+    mentoria(s) neste mês.
+  `;
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  pendente: '<span class="badge-eyebrow badge-eyebrow--amber">Aguardando o mentor</span>',
+  aceita: '<span class="badge-eyebrow badge-eyebrow--green">Confirmada</span>',
+  recusada: '<span class="badge-eyebrow badge-eyebrow--gray">Recusada</span>',
+  realizada: '<span class="badge-eyebrow badge-eyebrow--green">Realizada</span>',
+  cancelada: '<span class="badge-eyebrow badge-eyebrow--gray">Cancelada</span>',
+};
+
+function renderMinhas(lista: Mentoria[]): void {
+  if (lista.length === 0) {
+    minhasEl.innerHTML =
+      '<p class="text-muted">Você ainda não pediu nenhuma mentoria. Escolha um mentor acima.</p>';
+    return;
+  }
+  minhasEl.innerHTML = lista
+    .map((m) => {
+      const quando = new Date(m.dataHora).toLocaleString('pt-BR', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+      });
+      const podeCancelar = m.status === 'pendente' || m.status === 'aceita';
+      return `
+        <div class="card" style="margin-bottom: var(--spacing-sm)">
+          <div class="card-title">${escapeHtml(m.tema)} ${STATUS_LABEL[m.status] ?? ''}</div>
+          <p class="text-muted">
+            Mentor: ${escapeHtml(m.mentorNome)} · ${quando} · ${textoDuracao(m.duracaoMinutos)}
+          </p>
+          ${
+            m.codigoCertificado
+              ? `<p class="text-muted">Código do certificado: <strong>${m.codigoCertificado}</strong></p>`
+              : ''
+          }
+          ${
+            podeCancelar
+              ? `<button type="button" class="btn btn-outline" data-cancelar="${m.id}">Cancelar mentoria</button>`
+              : ''
+          }
+        </div>
+      `;
+    })
+    .join('');
+}
+
+async function atualizarCotaEMinhas(): Promise<void> {
+  const [novaCota, minhas] = await Promise.all([
+    api.get<CotaMensal>('/mentorias/quota'),
+    api.get<Mentoria[]>('/mentorias'),
+  ]);
+  cota = novaCota;
+  renderCota();
+  renderMinhas(minhas.slice().reverse());
+}
+
+async function cancelarMentoria(id: number, botao: HTMLButtonElement): Promise<void> {
+  botao.disabled = true;
+  try {
+    await api.patch(`/mentorias/${id}/status`, { status: 'cancelada' });
+    await atualizarCotaEMinhas();
+  } catch (error) {
+    botao.disabled = false;
+    alert(error instanceof ApiError ? error.message : 'Não foi possível cancelar agora.');
+  }
+}
 
 /*
  * ================================
@@ -305,7 +446,12 @@ async function init(): Promise<void> {
   const mentores = await api.get<Mentor[]>('/mentors');
   const reais = mentores.filter((m) => !oculto(m)).map(deMentorReal);
   reais.forEach((m) => perfis.set(m.id, m));
-  listEl.innerHTML = exemplosHtml + reais.map(renderExemplo).join('');
+  listEl.innerHTML =
+    exemplosHtml +
+    (reais.length
+      ? reais.map(renderExemplo).join('')
+      : '<p class="text-muted">Nenhum mentor cadastrado ainda.</p>');
+  await atualizarCotaEMinhas();
 }
 
 init().catch((error) => {

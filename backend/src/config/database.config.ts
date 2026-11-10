@@ -1,3 +1,4 @@
+//Aqui está a o arquivo responsável pela conexão com o banco de dados.
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -6,6 +7,7 @@ import { AppConfig } from './configuration';
 export const buildDatabaseConfig = (
   configService: ConfigService<AppConfig, true>,
 ): TypeOrmModuleOptions => {
+  // >> Aqui monta a conexão da API com o banco de dados.
   const database = configService.get('database', { infer: true });
   const nodeEnv = configService.get('app', { infer: true }).nodeEnv;
 
@@ -13,17 +15,16 @@ export const buildDatabaseConfig = (
 
   return {
     type: 'postgres',
+    // >> Banco usado: PostgreSQL 
     host: database.host,
     port: database.port,
     username: database.username,
     password: database.password,
     database: database.name,
     autoLoadEntities: true,
-    // TODO: trocar por migrations (`npm run migration:run`) antes de qualquer deploy real.
-    // synchronize=true só é seguro em desenvolvimento local.
     synchronize: nodeEnv === 'development',
     namingStrategy: new SnakeNamingStrategy(),
-    // Conexões diretas do Supabase (e provedores gerenciados em geral) exigem SSL.
+    // Conexões diretas do Supabase
     ssl: isLocalHost ? undefined : { rejectUnauthorized: false },
   };
 };

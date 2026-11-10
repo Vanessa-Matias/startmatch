@@ -8,7 +8,7 @@
 //
 // Startups  -> GET /startups
 // Investidores -> GET /investors
-// Mentores -> GET /mentors
+// (Mentores não têm plano: são voluntários e gratuitos.)
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
@@ -17,7 +17,6 @@ import { renderNav } from '../../scripts/nav';
 import type {
   Startup,
   Investidor,
-  Mentor,
   PaginatedResponse,
 } from '../../scripts/types';
 
@@ -81,40 +80,12 @@ const investidoresLista =
 
 
 // ============================================================
-// ELEMENTOS — MENTORES
-// ============================================================
-
-const mentoresEl =
-  document.getElementById('mentores-planos') as HTMLDivElement;
-
-const mentoresFiltro =
-  document.getElementById('mentores-filtro') as HTMLDivElement;
-
-const mentoresFiltroTitulo =
-  document.getElementById(
-    'mentores-filtro-titulo',
-  ) as HTMLHeadingElement;
-
-const mentoresPesquisa =
-  document.getElementById(
-    'mentores-pesquisa',
-  ) as HTMLInputElement;
-
-const mentoresLista =
-  document.getElementById(
-    'mentores-lista',
-  ) as HTMLDivElement;
-
-
-// ============================================================
 // DADOS CARREGADOS
 // ============================================================
 
 let startups: Startup[] = [];
 
 let investidores: Investidor[] = [];
-
-let mentores: Mentor[] = [];
 
 
 // ============================================================
@@ -135,8 +106,6 @@ const planos = [
 let startupPlanoSelecionado: string | null = null;
 
 let investidorPlanoSelecionado: string | null = null;
-
-let mentorPlanoSelecionado: string | null = null;
 
 
 // ============================================================
@@ -174,7 +143,7 @@ function normalizarTexto(valor: unknown): string {
 function renderCardsPlanos(
   container: HTMLDivElement,
   contagens: Record<string, number>,
-  tipo: 'startup' | 'investidor' | 'mentor',
+  tipo: 'startup' | 'investidor',
 ): void {
 
   container.innerHTML = planos
@@ -190,11 +159,6 @@ function renderCardsPlanos(
       if (tipo === 'investidor') {
         selecionado =
           investidorPlanoSelecionado === plano;
-      }
-
-      if (tipo === 'mentor') {
-        selecionado =
-          mentorPlanoSelecionado === plano;
       }
 
       const total =
@@ -293,28 +257,6 @@ function renderCardsPlanos(
         }
 
 
-        // ------------------------------------------------------
-        // MENTOR
-        // ------------------------------------------------------
-
-        if (tipo === 'mentor') {
-
-          mentorPlanoSelecionado =
-            mentorPlanoSelecionado === plano
-              ? null
-              : plano;
-
-          mentoresPesquisa.value = '';
-
-          renderCardsPlanos(
-            mentoresEl,
-            contarPlanosMentores(),
-            'mentor',
-          );
-
-          renderFiltroMentores();
-        }
-
       });
 
 
@@ -404,37 +346,6 @@ function contarPlanosInvestidores(): Record<string, number> {
 
 
 // ============================================================
-// CONTAGEM DE MENTORES POR PLANO
-// ============================================================
-
-function contarPlanosMentores(): Record<string, number> {
-
-  const resultado: Record<string, number> = {
-    basico: 0,
-    plus: 0,
-    premium: 0,
-  };
-
-  mentores.forEach((mentor) => {
-
-    const plano =
-      mentor.planoAssinatura;
-
-    if (
-      plano &&
-      plano in resultado
-    ) {
-
-      resultado[plano]++;
-    }
-
-  });
-
-  return resultado;
-}
-
-
-// ============================================================
 // CARD DE STARTUP
 // ============================================================
 
@@ -504,43 +415,6 @@ function renderInvestidor(
 
       <span class="user-card-plan">
         Plano ${nomePlano(investidor.planoAssinatura)}
-      </span>
-
-    </div>
-  `;
-}
-
-
-// ============================================================
-// CARD DE MENTOR
-// ============================================================
-
-function renderMentor(
-  mentor: Mentor,
-): string {
-
-  const nome =
-    (mentor as any).nome ??
-    (mentor as any).nomeCompleto ??
-    `Mentor #${mentor.id}`;
-
-  return `
-    <div class="user-card">
-
-      <h4 class="user-card-name">
-        ${nome}
-      </h4>
-
-      <p class="user-card-info">
-        ${mentor.areaAtuacao ?? 'Área de atuação não informada.'}
-      </p>
-
-      <p class="user-card-info">
-        ${mentor.bio ?? 'Sem descrição cadastrada.'}
-      </p>
-
-      <span class="user-card-plan">
-        Plano ${nomePlano(mentor.planoAssinatura)}
       </span>
 
     </div>
@@ -702,85 +576,6 @@ function renderFiltroInvestidores(): void {
 
 
 // ============================================================
-// FILTRO DE MENTORES
-// ============================================================
-
-function renderFiltroMentores(): void {
-
-  if (!mentorPlanoSelecionado) {
-
-    mentoresFiltro.classList.remove(
-      'visible',
-    );
-
-    return;
-  }
-
-
-  mentoresFiltro.classList.add(
-    'visible',
-  );
-
-  mentoresFiltroTitulo.textContent =
-    `Mentores — Plano ${nomePlano(
-      mentorPlanoSelecionado,
-    )}`;
-
-
-  const pesquisa =
-    normalizarTexto(
-      mentoresPesquisa.value,
-    );
-
-
-  const filtrados =
-    mentores.filter((mentor) => {
-
-      const mesmoPlano =
-        mentor.planoAssinatura ===
-        mentorPlanoSelecionado;
-
-
-      /*
-       * PESQUISA SOMENTE PELO NOME.
-       */
-
-      const nome =
-        normalizarTexto(
-          (mentor as any).nome ??
-          (mentor as any).nomeCompleto ??
-          '',
-        );
-
-
-      return (
-        mesmoPlano &&
-        nome.includes(pesquisa)
-      );
-
-    });
-
-
-  if (filtrados.length === 0) {
-
-    mentoresLista.innerHTML = `
-      <p class="empty-message">
-        Nenhum mentor encontrado para este plano.
-      </p>
-    `;
-
-    return;
-  }
-
-
-  mentoresLista.innerHTML =
-    filtrados
-      .map(renderMentor)
-      .join('');
-}
-
-
-// ============================================================
 // PESQUISA EM TEMPO REAL
 // ============================================================
 
@@ -794,12 +589,6 @@ investidoresPesquisa.addEventListener(
   renderFiltroInvestidores,
 );
 
-mentoresPesquisa.addEventListener(
-  'input',
-  renderFiltroMentores,
-);
-
-
 // ============================================================
 // INICIALIZAÇÃO
 // ============================================================
@@ -809,7 +598,6 @@ async function init(): Promise<void> {
   const [
     startupsResponse,
     investidoresResponse,
-    mentoresResponse,
   ] = await Promise.all([
 
     api.get<PaginatedResponse<Startup>>(
@@ -820,10 +608,6 @@ async function init(): Promise<void> {
       '/investors',
     ),
 
-    api.get<Mentor[]>(
-      '/mentors',
-    ),
-
   ]);
 
 
@@ -832,10 +616,6 @@ async function init(): Promise<void> {
 
   investidores =
     investidoresResponse.items ?? [];
-
-  mentores =
-    mentoresResponse ?? [];
-
 
   // ==========================================================
   // RENDERIZA OS CARDS
@@ -851,12 +631,6 @@ async function init(): Promise<void> {
     investidoresEl,
     contarPlanosInvestidores(),
     'investidor',
-  );
-
-  renderCardsPlanos(
-    mentoresEl,
-    contarPlanosMentores(),
-    'mentor',
   );
 
 }
@@ -878,7 +652,5 @@ init().catch((error) => {
     `<p class="form-error">${mensagem}</p>`;
 
   investidoresEl.innerHTML = '';
-
-  mentoresEl.innerHTML = '';
 
 });

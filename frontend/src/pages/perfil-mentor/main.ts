@@ -4,9 +4,10 @@
 // e mostra ao lado uma prévia ao vivo do card que a startup vê em Mentorias.
 //
 // Ao salvar:
-//   - PATCH /mentors/me com os campos que o backend já tem
-//   - salvarPerfilExtra() com foto, nome, cargo, empresa, experiência,
-//     modalidade e LinkedIn (scripts/mentorDemo.ts)
+//   - PATCH /mentors/me com área, bio, especialidades, dias e horários, duração,
+//     mentorias por mês e modalidade (tudo isso fica no banco)
+//   - salvarPerfilExtra() com foto, nome, cargo, empresa, experiência e
+//     LinkedIn (ficam só no navegador, scripts/mentorDemo.ts)
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
@@ -40,6 +41,8 @@ const cargoEl = campo<HTMLInputElement>('cargo');
 const empresaEl = campo<HTMLInputElement>('empresa');
 const anosEl = campo<HTMLInputElement>('anos');
 const modalidadeEl = campo<HTMLSelectElement>('modalidade');
+const duracaoEl = campo<HTMLSelectElement>('duracao');
+const mentoriasMesEl = campo<HTMLInputElement>('mentoriasPorMes');
 const areaEl = campo<HTMLInputElement>('areaAtuacao');
 const bioEl = campo<HTMLTextAreaElement>('bio');
 const especialidadesEl = campo<HTMLInputElement>('especialidades');
@@ -106,6 +109,7 @@ function renderPrevia(): void {
     <ul class="previa-info">
       <li><strong>Experiência:</strong> ${anos > 0 ? `${anos} anos` : '—'}</li>
       <li><strong>Modalidade:</strong> ${MODALIDADE_LABEL[modalidadeEl.value as Modalidade]}</li>
+      <li><strong>Duração:</strong> ${duracaoEl.value === '30' ? '30 minutos' : '1 hora'} · ${escapeHtml(mentoriasMesEl.value || '—')} por mês</li>
       <li><strong>Disponibilidade:</strong> ${escapeHtml(disponibilidadeEl.value.trim() || '—')}</li>
     </ul>
   `;
@@ -117,7 +121,9 @@ function preencher(mentor: Mentor, extra: PerfilExtraMentor): void {
   cargoEl.value = extra.cargo;
   empresaEl.value = extra.empresa;
   anosEl.value = extra.anosExperiencia ? String(extra.anosExperiencia) : '';
-  modalidadeEl.value = extra.modalidade;
+  modalidadeEl.value = mentor.modalidade ?? 'remoto';
+  duracaoEl.value = String(mentor.duracaoMinutos ?? 60);
+  mentoriasMesEl.value = String(mentor.mentoriasPorMes ?? 4);
   areaEl.value = mentor.areaAtuacao ?? '';
   bioEl.value = mentor.bio ?? '';
   especialidadesEl.value = (mentor.especialidades ?? []).join(', ');
@@ -186,6 +192,9 @@ form.addEventListener('submit', async (event) => {
       especialidades,
       disponibilidade: disponibilidadeEl.value.trim(),
       vinculoPortoDigital: vinculoEl.checked,
+      duracaoMinutos: Number(duracaoEl.value),
+      mentoriasPorMes: Number(mentoriasMesEl.value) || 4,
+      modalidade: modalidadeEl.value,
     });
 
     const anos = Number(anosEl.value);
@@ -194,7 +203,6 @@ form.addEventListener('submit', async (event) => {
       cargo: cargoEl.value.trim(),
       empresa: empresaEl.value.trim(),
       anosExperiencia: anos > 0 ? anos : null,
-      modalidade: modalidadeEl.value as Modalidade,
       linkedin: linkedinEl.value.trim(),
       foto: fotoAtual,
     });

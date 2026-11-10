@@ -79,16 +79,76 @@ export interface Investidor {
   segmentos: SegmentoPrioridade[];
 }
 
-// Perfil completo de um Mentor. vinculoPortoDigital é a flag que dá direito ao
-// desconto de assinatura.
+// Como a mentoria acontece (o mentor escolhe no perfil).
+export type ModalidadeMentor = 'presencial' | 'hibrido' | 'remoto';
+
+// Perfil completo de um Mentor. O mentor é voluntário e NÃO paga assinatura.
+// vinculoPortoDigital mostra o selo "Parceiro Porto Digital".
 export interface Mentor {
   id: number;
+  /** Id do USUÁRIO dono do perfil (usado para iniciar conversa direta). */
+  usuarioId: number;
+  nome?: string;
   areaAtuacao: string;
   bio: string;
   especialidades: string[];
   vinculoPortoDigital: boolean;
+  /** Dias e horários em texto livre. */
   disponibilidade: string;
-  planoAssinatura: PlanoAssinatura;
+  /** 30 ou 60. */
+  duracaoMinutos: number;
+  mentoriasPorMes: number;
+  modalidade: ModalidadeMentor;
+}
+
+export type StatusMentoria =
+  | 'pendente'
+  | 'aceita'
+  | 'recusada'
+  | 'realizada'
+  | 'cancelada';
+
+// Mentoria agendada por uma startup com um mentor (GET /mentorias).
+export interface Mentoria {
+  id: number;
+  mentorId: number;
+  mentorNome: string;
+  mentorUsuarioId: number;
+  startupId: number;
+  startupNome: string;
+  startupUsuarioId: number;
+  startupCidade: string;
+  startupUf: string;
+  dataHora: string;
+  tema: string;
+  mensagem: string;
+  status: StatusMentoria;
+  duracaoMinutos: number;
+  modalidade: ModalidadeMentor;
+  codigoCertificado: string | null;
+  realizadaEm: string | null;
+  criadoEm: string;
+}
+
+// Certificado de uma mentoria realizada (GET /mentorias/:id/certificado).
+export interface CertificadoMentoria {
+  codigo: string;
+  mentorNome: string;
+  startupNome: string;
+  dataHora: string;
+  duracaoMinutos: number;
+  modalidade: ModalidadeMentor;
+  tema: string;
+  emitidoEm: string | null;
+}
+
+// Cota mensal do plano (GET /interests/quota e GET /mentorias/quota).
+export interface CotaMensal {
+  plano: PlanoAssinatura;
+  /** null = sem limite. */
+  limite: number | null;
+  usados: number;
+  restantes: number | null;
 }
 
 // Registro de "tenho interesse" de uma startup/investidor em outro perfil.
@@ -119,10 +179,14 @@ export interface Suggestion {
   investidor?: Investidor;
 }
 
-// Conversa de chat, criada automaticamente quando dá match.
+// Conversa de chat. De match: criada automaticamente quando dá match. Direta: o
+// mentor conversa com uma startup ou investidor sem precisar de match.
 export interface Conversa {
   id: number;
-  matchId: number;
+  matchId: number | null;
+  tipo: 'match' | 'direta';
+  /** Nome de com quem a pessoa está falando. */
+  titulo: string;
   criadaEm: string;
 }
 

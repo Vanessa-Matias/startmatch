@@ -9,6 +9,7 @@
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import {
+  carregarMentoriasDoMentor,
   formatarHoras,
   iniciais,
   lerPerfilExtra,
@@ -25,25 +26,13 @@ renderNav(document.getElementById('nav-links') as HTMLElement, usuario.tipo);
 
 const resumoEl = document.getElementById('mentor-resumo') as HTMLElement;
 
-const PLANO_LABEL: Record<string, { nome: string; badge: string }> = {
-  basico: { nome: 'Básico', badge: 'badge-plan--gray' },
-  plus: { nome: 'Plus', badge: 'badge-plan--blue' },
-  premium: { nome: 'Premium', badge: 'badge-plan--green' },
-};
-
-function planoHtml(plano: string | undefined): string {
-  if (!plano) return '—';
-  const info = PLANO_LABEL[plano.toLowerCase()] ?? { nome: plano, badge: 'badge-plan--gray' };
-  return `<span class="badge-plan ${info.badge}">${info.nome}</span>`;
-}
-
 function escapeHtml(texto: string): string {
   const div = document.createElement('div');
   div.textContent = texto;
   return div.innerHTML;
 }
 
-// Indicadores que não dependem da API (vêm das outras telas do mentor)
+// Indicadores das mentorias (pendentes, próximas e horas realizadas)
 function renderIndicadoresLocais(): void {
   const pendentes = solicitacoesPendentes().length;
   const proximas = proximasSessoes().length;
@@ -92,14 +81,17 @@ function renderResumo(mentor: Mentor): void {
     }
   `;
 
-  (document.getElementById('kpi-plano') as HTMLElement).innerHTML = planoHtml(mentor.planoAssinatura);
+  // Mentor é voluntário: não existe plano. O KPI mostra a participação e a agenda.
+  (document.getElementById('kpi-plano') as HTMLElement).textContent =
+    `Voluntário · ${mentor.mentoriasPorMes} por mês`;
 }
-
-renderIndicadoresLocais();
 
 async function init(): Promise<void> {
   const mentor = await api.get<Mentor>('/mentors/me');
   renderResumo(mentor);
+  // pendentes, próximas sessões e horas realizadas vêm de GET /mentorias
+  await carregarMentoriasDoMentor();
+  renderIndicadoresLocais();
 }
 
 init().catch((error) => {

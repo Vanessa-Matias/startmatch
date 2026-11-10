@@ -22,6 +22,7 @@ export function calculateCompatibilityScore(
   startup: StartupCompatibilityInput,
   investidor: InvestidorCompatibilityInput,
 ): number {
+  // >> Calcula a nota de compatibilidade (0 a 100) entre startup e investidor.
   const shared = startup.segmentos.filter((s) =>
     investidor.segmentos.some((i) => i.segmentoId === s.segmentoId),
   );
@@ -30,6 +31,7 @@ export function calculateCompatibilityScore(
     50,
     shared.length * 15 + (principalShared ? 10 : 0),
   );
+  // >> Segmentos em comum: até 50 pontos.
 
   const valor = startup.investimentoPretendido;
   const inRange =
@@ -42,11 +44,14 @@ export function calculateCompatibilityScore(
     ) <=
       valor * 0.2;
   const investmentScore = inRange ? 30 : nearRange ? 15 : 0;
+  // >> Valor dentro da faixa do investidor: até 30 pontos.
 
   const sameUf = startup.uf === investidor.uf;
   const sameCidade =
     sameUf && startup.cidade.toLowerCase() === investidor.cidade.toLowerCase();
   const locationScore = sameCidade ? 20 : sameUf ? 10 : 0;
+  // >> Mesma cidade e estado: até 20 pontos.
 
   return segmentScore + investmentScore + locationScore;
+  // >> Soma tudo: esta é a nota do match.
 }

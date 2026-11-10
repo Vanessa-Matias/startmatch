@@ -1,10 +1,4 @@
-// app.module.ts
-// ===============
-// Módulo raiz da API: liga a configuração de ambiente (.env, validada por
-// validation.schema.ts), a conexão com o PostgreSQL via TypeORM, e registra
-// todos os módulos de domínio — um por recurso do negócio (auth, users,
-// startups, investors, mentors, segments, interests, matches, conversations,
-// business-canvas, lgpd, beta-evaluation, admin).
+//Este é o módulo principal. Ele lê as configurações do .env e conecta no banco.
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,6 +12,7 @@ import { SegmentsModule } from './modules/segments/segments.module';
 import { StartupsModule } from './modules/startups/startups.module';
 import { InvestorsModule } from './modules/investors/investors.module';
 import { MentorsModule } from './modules/mentors/mentors.module';
+import { MentoriasModule } from './modules/mentorias/mentorias.module';
 import { InterestsModule } from './modules/interests/interests.module';
 import { MatchesModule } from './modules/matches/matches.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
@@ -34,18 +29,22 @@ import { AuditModule } from './modules/audit/audit.module';
       load: [configuration],
       validationSchema,
     }),
+    // >> Lê as configurações do .env 
+    // >> AQUI a API se conecta ao banco. Detalhes: config/database.config.ts.
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService<AppConfig, true>) =>
         buildDatabaseConfig(configService),
     }),
+    // >> Abaixo: os módulos do sistema (login, startups, investidores, matches...).
     AuthModule,
     UsersModule,
     SegmentsModule,
     StartupsModule,
     InvestorsModule,
     MentorsModule,
+    MentoriasModule,
     InterestsModule,
     MatchesModule,
     ConversationsModule,

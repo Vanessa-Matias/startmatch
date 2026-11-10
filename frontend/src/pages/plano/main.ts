@@ -18,11 +18,16 @@ import type {
   Startup,
 } from '../../scripts/types';
 
+// Mentores são voluntários e não têm plano: quem chegar aqui volta ao painel.
 const usuario = requireAuth([
   'startup',
   'investidor',
   'mentor',
 ]);
+
+if (usuario.tipo === 'mentor') {
+  window.location.replace('../dashboard-mentor/index.html');
+}
 
 renderNav(
   document.getElementById('nav-links') as HTMLElement,
@@ -65,21 +70,21 @@ const PLANOS_STARTUP: Plano[] = [
     preco: 'Grátis',
     badge: 'badge-plan badge-plan--gray',
     detalhe:
-      'Perfil completo, aparece na busca dos investidores, interesses limitados por mês, Canvas simples.',
+      'Perfil da startup, até 3 interesses por mês e conversa com o investidor depois do match.',
   },
   {
     nome: 'Plus',
-    preco: 'R$ 350/mês',
+    preco: 'R$ 550/mês',
     badge: 'badge-plan badge-plan--blue',
     detalhe:
-      'Perfil em destaque, interesses ilimitados, métricas de visualização e 1 mentoria por mês incluída. Precisa de mais? Compre pacotes de mentorias extras.',
+      'Interesses ilimitados e 1 mentoria por mês com mentores da rede.',
   },
   {
     nome: 'Premium',
-    preco: 'R$ 500/mês',
+    preco: 'R$ 800/mês',
     badge: 'badge-plan badge-plan--green',
     detalhe:
-      'Tudo do Plus + prioridade no algoritmo de match, relatório de compatibilidade, selo "verificado" e 3 mentorias por mês incluídas.',
+      'Tudo do Plus + prioridade no match, destaque na seção Premium dos investidores, relatório de compatibilidade, selo "verificado" e 2 mentorias por mês.',
   },
 ];
 
@@ -89,38 +94,21 @@ const PLANOS_INVESTIDOR: Plano[] = [
     preco: 'Grátis',
     badge: 'badge-plan badge-plan--gray',
     detalhe:
-      'Busca com filtros simples (segmento, estágio), interesses limitados por mês.',
+      'Dashboard simples, até 3 interesses por mês e filtros básicos de busca.',
   },
   {
     nome: 'Plus',
-    preco: 'R$ 400/mês',
+    preco: 'R$ 700/mês',
     badge: 'badge-plan badge-plan--blue',
     detalhe:
-      'Filtros avançados (faixa de investimento, tração, localização), sugestões automáticas, interesses ilimitados.',
+      'Dashboard completo, filtros avançados e interesses ilimitados.',
   },
   {
     nome: 'Premium',
-    preco: 'R$ 600/mês',
+    preco: 'R$ 1.200/mês',
     badge: 'badge-plan badge-plan--green',
     detalhe:
-      'Tese estruturada, acesso antecipado a startups do seu perfil, relatórios agregados do ecossistema, matchmaking assistido por mentor.',
-  },
-];
-
-const PLANOS_MENTOR: Plano[] = [
-  {
-    nome: 'Mentor da Rede Parceira',
-    preco: '20% de desconto · R$ 160/mês',
-    badge: 'badge-neon badge-neon--green',
-    detalhe:
-      'Plano do mentor independente com 20% de desconto, badge exclusivo, certificado de horas exportável, acesso à vitrine de startups e destaque de perfil nas mentorias extras.',
-  },
-  {
-    nome: 'Mentor independente',
-    preco: 'R$ 200/mês',
-    badge: 'badge-neon badge-neon--sky',
-    detalhe:
-      'Acesso à vitrine de startups, certificados que comprovam suas mentorias e destaque de perfil nas indicações de mentorias extras.',
+      'Tudo do Plus + seção Premium com aviso de novas startups compatíveis, relatórios e exportação de listas.',
   },
 ];
 
@@ -157,10 +145,8 @@ function renderComparacao(planoAtual: PlanoAssinatura): void {
 
   if (usuario.tipo === 'startup') {
     planos = PLANOS_STARTUP;
-  } else if (usuario.tipo === 'investidor') {
-    planos = PLANOS_INVESTIDOR;
   } else {
-    planos = PLANOS_MENTOR;
+    planos = PLANOS_INVESTIDOR;
   }
 
   const nomeAtualNormalizado = planoAtual.toLowerCase();
@@ -231,21 +217,11 @@ function renderComparacao(planoAtual: PlanoAssinatura): void {
  */
 
 async function init(): Promise<void> {
-  let path: string;
+  if (usuario.tipo === 'mentor') return;
 
-  if (usuario.tipo === 'startup') {
-    path = '/startups/me';
-  } else if (usuario.tipo === 'investidor') {
-    path = '/investors/me';
-  } else {
-    path = '/mentors/me';
-  }
+  const path = usuario.tipo === 'startup' ? '/startups/me' : '/investors/me';
 
-  const perfil = await api.get<
-    Startup |
-    Investidor |
-    { planoAssinatura: PlanoAssinatura }
-  >(path);
+  const perfil = await api.get<Startup | Investidor>(path);
 
   const planoAtual = perfil.planoAssinatura;
 

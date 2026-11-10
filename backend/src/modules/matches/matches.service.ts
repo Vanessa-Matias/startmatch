@@ -39,6 +39,7 @@ export class MatchesService {
     startupId: number,
     investidorId: number,
   ): Promise<Match> {
+    // >> Cria o match (se ainda não existir) com a nota de compatibilidade.
     const existente = await this.matchRepository.findOne({
       where: { startupId, investidorId },
     });
@@ -76,6 +77,7 @@ export class MatchesService {
         })),
       },
     );
+    // >> Calcula a nota do match (arquivo compatibility-score.ts).
 
     const match = await this.matchRepository.save(
       this.matchRepository.create({
@@ -84,10 +86,12 @@ export class MatchesService {
         scoreCompatibilidade: score,
       }),
     );
+    // >> Salva o match no banco.
 
     await this.conversaRepository.save(
       this.conversaRepository.create({ matchId: match.id }),
     );
+    // >> Cria também a conversa (chat) desse match.
 
     return match;
   }

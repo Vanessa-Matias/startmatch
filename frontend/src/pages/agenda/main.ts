@@ -1,6 +1,7 @@
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import {
+  carregarMentoriasDoMentor,
   iniciais,
   proximasSessoes,
 } from '../../scripts/mentorDemo';
@@ -183,7 +184,7 @@ function renderProximasSessoes(): void {
             <div><span class="item-detail-label">Formato</span><span class="item-detail-value">${s.formato}</span></div>
           </div>
           <div class="item-actions">
-            <a class="btn btn-outline" href="../mensagens/index.html?simulado=${s.id}">Conversar com a startup</a>
+            <a class="btn btn-outline" href="../mensagens/index.html?conversarCom=startup-${s.startupId}">Conversar com a startup</a>
           </div>
         </article>
       `,
@@ -491,6 +492,10 @@ async function init(): Promise<void> {
     aplicarAgendaSalva();
     atualizarResumoDisponibilidade();
     atualizarStatusDisponibilidade();
+
+    // próximas sessões = mentorias aceitas (GET /mentorias)
+    await carregarMentoriasDoMentor();
+    renderProximasSessoes();
 
   } catch (error) {
     disponibilidadeEl.textContent =

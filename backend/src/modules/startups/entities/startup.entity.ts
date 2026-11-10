@@ -16,9 +16,11 @@ import { Match } from '../../matches/entities/match.entity';
 import { PlanoNegocio } from '../../business-canvas/entities/plano-negocio.entity';
 
 @Entity('startup')
+// >> Esta classe é a TABELA startup do banco. Cada @Column é uma coluna.
 export class Startup {
   @PrimaryGeneratedColumn()
   id: number;
+  // >> Número único da startup (gerado sozinho).
 
   @OneToOne(() => Usuario, { onDelete: 'CASCADE' })
   @JoinColumn()
@@ -26,6 +28,7 @@ export class Startup {
 
   @Column({ unique: true })
   usuarioId: number;
+  // >> Liga a startup ao usuário que a criou.
 
   @Column()
   nomeFantasia: string;
@@ -41,6 +44,7 @@ export class Startup {
 
   @Column({ type: 'decimal', precision: 14, scale: 2 })
   investimentoPretendido: number;
+  // >> Valor que a startup quer captar (entra na nota do match).
 
   @Column()
   cidade: string;

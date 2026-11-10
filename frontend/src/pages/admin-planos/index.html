@@ -5,7 +5,7 @@
   - Visualizar a quantidade de usuários em cada plano;
   - Clicar em um card para filtrar os usuários daquele plano;
   - Pesquisar exclusivamente por nome;
-  - Visualizar Startups, Investidores e Mentores;
+  - Visualizar Startups e Investidores por plano (mentores não têm plano);
   - Manter os cards sempre visíveis.
 -->
 
@@ -392,34 +392,6 @@
           </div>
 
           <div id="investidores-lista" class="users-list"></div>
-        </div>
-      </section>
-
-      <!-- =====================================================
-           MENTORES
-           ===================================================== -->
-
-      <section class="plan-section">
-        <h2 class="plan-section-title">Mentores por plano</h2>
-
-        <div id="mentores-planos" class="plans-grid">
-          <p class="text-muted">Carregando…</p>
-        </div>
-
-        <div id="mentores-filtro" class="plan-filter-area">
-          <div class="filter-header">
-            <h3 id="mentores-filtro-titulo" class="filter-title">Mentores</h3>
-
-            <input
-              id="mentores-pesquisa"
-              class="filter-input"
-              type="search"
-              placeholder="Pesquisar mentor por nome..."
-              autocomplete="off"
-            />
-          </div>
-
-          <div id="mentores-lista" class="users-list"></div>
         </div>
       </section>
 

@@ -1,13 +1,15 @@
 // Tela: Histórico de mentorias — lógica
 // =======================================
 //
-// Ainda não existe endpoint de sessões de mentoria no backend. As sessões
-// realizadas são demonstrativas e vêm de scripts/mentorDemo.ts — as mesmas que
-// o Dashboard usa para somar as "Horas de mentoria".
+// As sessões realizadas vêm da API (GET /mentorias, status "realizada") por
+// scripts/mentorDemo.ts — as mesmas que o Dashboard usa para somar as "Horas de
+// mentoria". Cada sessão mostra o código do certificado.
 
 import { requireAuth } from '../../scripts/auth';
+import { ApiError } from '../../scripts/api';
 import {
   SESSOES_REALIZADAS,
+  carregarMentoriasDoMentor,
   formatarHoras,
   iniciais,
   totalHoras,
@@ -24,7 +26,7 @@ const texto = (id: string, valor: string) => {
   (document.getElementById(id) as HTMLElement).textContent = valor;
 };
 
-// Meta demonstrativa de sessões por mês
+// Meta de sessões por mês (referência visual da tela)
 const META_MENSAL = 5;
 
 function atualizarResumo(): void {
@@ -67,11 +69,21 @@ function renderSessoes(): void {
           <div><span class="item-detail-label">Horário</span><span class="item-detail-value">${sessao.horario}</span></div>
           <div><span class="item-detail-label">Duração</span><span class="item-detail-value">${formatarHoras(sessao.horas)}</span></div>
           <div><span class="item-detail-label">Formato</span><span class="item-detail-value">${sessao.formato}</span></div>
+          <div><span class="item-detail-label">Certificado</span><span class="item-detail-value">${sessao.codigo ?? '—'}</span></div>
         </div>
       </article>
     `,
   ).join('');
 }
 
-atualizarResumo();
-renderSessoes();
+async function init(): Promise<void> {
+  await carregarMentoriasDoMentor();
+  atualizarResumo();
+  renderSessoes();
+}
+
+init().catch((error) => {
+  historicoList.innerHTML = `<div class="lista-vazia">${
+    error instanceof ApiError ? error.message : 'Erro ao carregar o histórico.'
+  }</div>`;
+});

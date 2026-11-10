@@ -12,7 +12,8 @@
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
-import type { Investidor } from '../../scripts/types';
+import { escapeHtml } from '../../scripts/investidor';
+import type { Interesse, Investidor, Match, Startup } from '../../scripts/types';
 
 const usuario = requireAuth(['investidor']);
 
@@ -147,6 +148,85 @@ function renderResumo(investidor: Investidor): void {
 }
 
 
+// ---------------------------------------------------------------------------
+// Painel de atividade (pedido do professor): ao entrar, o investidor vê quantas
+// startups estão disponíveis, quantos matches já tem, quantos interesses
+// recebeu e quais são as startups mais novas da plataforma.
+// ---------------------------------------------------------------------------
+
+const ESTAGIO_LABEL: Record<string, string> = {
+  ideacao: 'Ideação',
+  mvp: 'MVP',
+  operacao: 'Operação',
+  scale_up: 'Scale-up',
+};
+
+interface StartupsPagina {
+  items: Startup[];
+  total: number;
+}
+
+interface Sugestao {
+  score: number;
+  startup?: Startup;
+}
+
+function cardStartup(st: Startup, score?: number): string {
+  const segmentos = (st.segmentos ?? []).map((s) => s.nome).join(', ');
+  return `
+    <a class="card card-feature" href="../perfil-startup/index.html?id=${st.id}"
+       style="display:block;text-decoration:none;color:inherit;margin-bottom:12px">
+      <div class="card-title">
+        ${escapeHtml(st.nomeFantasia)}
+        ${score !== undefined ? `<span class="badge-plan badge-plan--green" style="margin-left:8px">${score}/100</span>` : ''}
+      </div>
+      <p class="text-muted">
+        ${escapeHtml(ESTAGIO_LABEL[st.estagio] ?? st.estagio)} · ${escapeHtml(st.cidade)}/${escapeHtml(st.uf)}
+        ${segmentos ? ` · ${escapeHtml(segmentos)}` : ''}
+      </p>
+    </a>
+  `;
+}
+
+async function carregarPainel(): Promise<void> {
+  const novasEl = document.getElementById('novas-startups') as HTMLElement;
+  const sugestoesEl = document.getElementById('sugestoes') as HTMLElement;
+  const kpiDisponiveisEl = document.getElementById('kpi-disponiveis') as HTMLElement;
+  const kpiMatchesEl = document.getElementById('kpi-matches') as HTMLElement;
+  const kpiInteressesEl = document.getElementById('kpi-interesses') as HTMLElement;
+
+  try {
+    const [pagina, matches, recebidos, sugestoes] = await Promise.all([
+      api.get<StartupsPagina>('/startups?limit=3'),
+      api.get<Match[]>('/matches'),
+      api.get<Interesse[]>('/interests/received'),
+      api.get<Sugestao[]>('/matches/suggestions').catch(() => [] as Sugestao[]),
+    ]);
+
+    const comMatch = new Set(matches.map((m) => m.startupId));
+    const pendentes = recebidos.filter((i) => !comMatch.has(i.startupId));
+
+    kpiDisponiveisEl.textContent = String(pagina.total);
+    kpiMatchesEl.textContent = String(matches.length);
+    kpiInteressesEl.textContent = String(pendentes.length);
+
+    novasEl.innerHTML = pagina.items.length
+      ? pagina.items.map((st) => cardStartup(st)).join('')
+      : '<p class="text-muted">Ainda não há startups cadastradas.</p>';
+
+    const top = sugestoes.filter((s) => s.startup).slice(0, 3);
+    sugestoesEl.innerHTML = top.length
+      ? top.map((s) => cardStartup(s.startup as Startup, s.score)).join('')
+      : '<p class="text-muted">Sem sugestões por enquanto. Complete seu perfil para melhorar o ranking.</p>';
+  } catch (error) {
+    const msg =
+      error instanceof ApiError ? error.message : 'Erro ao carregar o painel.';
+    novasEl.innerHTML = `<p class="form-error">${escapeHtml(msg)}</p>`;
+    sugestoesEl.innerHTML = '';
+  }
+}
+
+
 async function init(): Promise<void> {
   // Busca os dados reais do investidor
   // logado, seguindo a mesma lógica usada
@@ -157,6 +237,8 @@ async function init(): Promise<void> {
 
   renderCards(investidor);
   renderResumo(investidor);
+
+  await carregarPainel();
 }
 
 

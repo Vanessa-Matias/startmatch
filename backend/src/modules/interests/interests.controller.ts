@@ -19,12 +19,14 @@ import { InterestResponseDto } from './dto/interest-response.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('interests')
 export class InterestsController {
+  // >> Controller de interesses: recebe os pedidos de interesse do site.
   constructor(private readonly interestsService: InterestsService) {}
 
   @ApiOperation({
     summary: 'Demonstra interesse em outro perfil (pode gerar match)',
   })
   @Post()
+  // >> ROTA: POST /api/interests. É o botão 'Tenho interesse'.
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async create(
     @CurrentUser() user: RequestUser,
@@ -38,8 +40,19 @@ export class InterestsController {
     return plainToInstance(InterestResponseDto, interesse);
   }
 
+  @ApiOperation({
+    summary: 'Mostra quanto da cota mensal de interesses já foi usada',
+  })
+  @Get('quota')
+  // >> ROTA: GET /api/interests/quota. Plano Básico: 3 interesses por mês.
+  @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
+  async quota(@CurrentUser() user: RequestUser) {
+    return this.interestsService.getQuota(user.id, user.tipo);
+  }
+
   @ApiOperation({ summary: 'Lista os interesses enviados' })
   @Get('sent')
+  // >> ROTA: GET /api/interests/sent. Interesses que a pessoa enviou.
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async sent(@CurrentUser() user: RequestUser): Promise<InterestResponseDto[]> {
     const interesses = await this.interestsService.findSent(user.id, user.tipo);
@@ -48,6 +61,7 @@ export class InterestsController {
 
   @ApiOperation({ summary: 'Lista os interesses recebidos' })
   @Get('received')
+  // >> ROTA: GET /api/interests/received. Interesses que a pessoa recebeu.
   @Roles(TipoUsuario.STARTUP, TipoUsuario.INVESTIDOR)
   async received(
     @CurrentUser() user: RequestUser,

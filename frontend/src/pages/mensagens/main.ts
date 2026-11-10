@@ -42,8 +42,8 @@ let conversaAtivaId: number | null = null;
 let simuladaAtiva: MatchExemplo | null = null;
 let pollTimer: ReturnType<typeof setInterval> | undefined;
 
-// Startup e investidor: matches simulados. Mentor: startups que pediram mentoria.
-const simulados = matchesSimulados(usuario.tipo);
+// Startup e investidor: matches simulados (demonstração). Mentor: só conversas reais.
+const simulados = usuario.tipo === 'mentor' ? [] : matchesSimulados(usuario.tipo);
 
 // Marca visualmente (classe .ativa) qual botão da lista corresponde à conversa aberta.
 function selecionarConversaNaLista(chave: string): void {
@@ -126,14 +126,14 @@ function renderConversas(conversas: Conversa[]): void {
   const simuladasHtml = simulados
     .map(
       (m) =>
-        `<button type="button" data-chave="sim-${m.id}" data-simulado="${m.id}">${m.nome}<span class="conversa-sim-tag">${usuario.tipo === 'mentor' ? 'solicitação de mentoria' : 'simulação'}</span></button>`,
+        `<button type="button" data-chave="sim-${m.id}" data-simulado="${m.id}">${m.nome}<span class="conversa-sim-tag">simulação</span></button>`,
     )
     .join('');
 
   const reaisHtml = conversas
     .map(
       (c) =>
-        `<button type="button" data-chave="real-${c.id}" data-conversa-id="${c.id}" data-match-id="${c.matchId}">Conversa · Match #${c.matchId}</button>`,
+        `<button type="button" data-chave="real-${c.id}" data-conversa-id="${c.id}" data-match-id="${c.matchId ?? ''}">${escapeHtml(c.titulo)}<span class="conversa-sim-tag">${c.tipo === 'direta' ? 'conversa direta' : 'match'}</span></button>`,
     )
     .join('');
 
@@ -191,17 +191,76 @@ formEl.addEventListener('submit', async (event) => {
   }
 });
 
-async function init(): Promise<void> {
-  // Mentor não tem conversas reais: a API (/conversations) é só de startup e
-  // investidor. Para ele, a tela mostra apenas as conversas de demonstração.
-  if (usuario.tipo === 'mentor') {
-    renderConversas([]);
-    abrirSimuladaDaUrl();
-    return;
-  }
+// ---------------------------------------------------------------------------
+// Conversa direta do mentor (networking com startups e investidores)
+// ---------------------------------------------------------------------------
 
+const novaConversaEl = document.getElementById('nova-conversa') as HTMLElement;
+const novaDestinoEl = document.getElementById('nova-destino') as HTMLSelectElement;
+const novaIniciarEl = document.getElementById('nova-iniciar') as HTMLButtonElement;
+const novaErroEl = document.getElementById('nova-erro') as HTMLElement;
+
+interface PaginaNomes {
+  items: { id: number; nomeFantasia?: string; nome?: string }[];
+}
+
+async function iniciarDireta(tipo: 'startup' | 'investidor', perfilId: number): Promise<void> {
+  const conversa = await api.post<Conversa>('/conversations/direct', { tipo, perfilId });
   const conversas = await api.get<Conversa[]>('/conversations');
   renderConversas(conversas);
+  abrirConversa(conversa.id);
+}
+
+async function prepararNovaConversa(): Promise<void> {
+  novaConversaEl.hidden = false;
+  const [startups, investidores] = await Promise.all([
+    api.get<PaginaNomes>('/startups?limit=50').catch(() => ({ items: [] }) as PaginaNomes),
+    api.get<PaginaNomes>('/investors?limit=50').catch(() => ({ items: [] }) as PaginaNomes),
+  ]);
+  const opcoes = [
+    ...startups.items.map(
+      (s) => `<option value="startup:${s.id}">Startup · ${escapeHtml(s.nomeFantasia ?? `#${s.id}`)}</option>`,
+    ),
+    ...investidores.items.map(
+      (i) => `<option value="investidor:${i.id}">Investidor · ${escapeHtml(i.nome ?? `#${i.id}`)}</option>`,
+    ),
+  ];
+  novaDestinoEl.innerHTML = opcoes.length
+    ? '<option value="">Escolha com quem falar…</option>' + opcoes.join('')
+    : '<option value="">Nenhuma startup ou investidor cadastrado ainda</option>';
+}
+
+novaIniciarEl.addEventListener('click', async () => {
+  novaErroEl.textContent = '';
+  const [tipo, id] = novaDestinoEl.value.split(':');
+  if (!tipo || !id) {
+    novaErroEl.textContent = 'Escolha uma startup ou um investidor.';
+    return;
+  }
+  try {
+    await iniciarDireta(tipo as 'startup' | 'investidor', Number(id));
+  } catch (error) {
+    novaErroEl.textContent =
+      error instanceof ApiError ? error.message : 'Não foi possível iniciar a conversa.';
+  }
+});
+
+async function init(): Promise<void> {
+  const conversas = await api.get<Conversa[]>('/conversations');
+  renderConversas(conversas);
+
+  if (usuario.tipo === 'mentor') {
+    await prepararNovaConversa();
+    // Veio de Solicitações/Agenda com ?conversarCom=startup-12: abre (ou cria) a conversa direta.
+    const alvo = new URLSearchParams(window.location.search).get('conversarCom');
+    if (alvo) {
+      const [tipo, id] = alvo.split('-');
+      if ((tipo === 'startup' || tipo === 'investidor') && Number(id)) {
+        await iniciarDireta(tipo, Number(id));
+      }
+    }
+    return;
+  }
 
   // Se veio de um link "Matches -> Mensagens" com ?matchId=123, abre essa conversa
   // automaticamente em vez de deixar a tela em branco esperando um clique.

@@ -1,22 +1,20 @@
 // src/scripts/mentorDemo.ts
 // ==========================
-// Dados da área do MENTOR que ainda não existem no backend, num lugar só, para
-// as telas se conectarem entre si:
+// Camada de dados da área do MENTOR.
 //
-//   perfil-mentor/  -> grava o PERFIL EXTRA (foto, cargo, empresa, tempo de
-//                      experiência, modalidade, LinkedIn)
-//   mentorias/      -> a startup vê esse perfil extra no card e no "Ver perfil"
-//   dashboard-mentor/ , agenda/ , solicitacoes/ , historico-mentorias/
-//                   -> usam as SOLICITAÇÕES e SESSÕES abaixo
-//   mensagens/      -> cada solicitação vira uma conversa simulada com a startup
-//                      (ver scripts/matchSimulado.ts)
-//
-// Os campos que o backend JÁ tem (área de atuação, bio, especialidades,
-// disponibilidade, vínculo com a rede parceira) são salvos de verdade via
-// PATCH /mentors/me. Os campos extras ficam no localStorage do navegador, ligados
-// ao id do mentor — por isso aparecem para a startup só quando as duas contas
-// são usadas no MESMO navegador (caso da apresentação). Para valer entre
-// computadores diferentes, o backend precisa ganhar essas colunas (com migration).
+//   - PERFIL EXTRA (foto, cargo, empresa, tempo de experiência, LinkedIn): ainda
+//     fica só no navegador (localStorage), ligado ao id do mentor. Por isso a
+//     startup só vê esses extras quando as duas contas usam o MESMO navegador
+//     (caso da apresentação). O que o mentor define de verdade no backend:
+//     área, bio, especialidades, dias e horários, duração, mentorias por mês e
+//     modalidade (PATCH /mentors/me).
+//   - SOLICITAÇÕES e SESSÕES: agora vêm da API (GET /mentorias). As telas
+//     Dashboard, Solicitações, Agenda e Histórico chamam
+//     carregarMentoriasDoMentor() antes de desenhar e depois leem as listas
+//     abaixo. Aceitar/recusar/realizar chama PATCH /mentorias/:id/status.
+
+import { api } from './api';
+import type { Mentoria, ModalidadeMentor } from './types';
 
 // ---------------------------------------------------------------------------
 // Armazenamento
@@ -44,23 +42,22 @@ function gravar(chave: string, valor: unknown): boolean {
 // Perfil extra do mentor
 // ---------------------------------------------------------------------------
 
-export type Modalidade = 'online' | 'presencial' | 'ambos';
+export type Modalidade = ModalidadeMentor;
 
 export interface PerfilExtraMentor {
   nome: string;
   cargo: string;
   empresa: string;
   anosExperiencia: number | null;
-  modalidade: Modalidade;
   linkedin: string;
   /** Foto já reduzida para ~320px, em data URL (JPEG). */
   foto: string;
 }
 
 export const MODALIDADE_LABEL: Record<Modalidade, string> = {
-  online: 'Online',
-  presencial: 'Presencial (Recife)',
-  ambos: 'Online ou presencial (Recife)',
+  presencial: 'Presencial',
+  hibrido: 'Híbrido (presencial ou remoto)',
+  remoto: 'Remoto',
 };
 
 const PERFIL_VAZIO: PerfilExtraMentor = {
@@ -68,7 +65,6 @@ const PERFIL_VAZIO: PerfilExtraMentor = {
   cargo: '',
   empresa: '',
   anosExperiencia: null,
-  modalidade: 'online',
   linkedin: '',
   foto: '',
 };
@@ -119,60 +115,116 @@ export function iniciais(nome: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Solicitações de mentoria (recebidas pelo mentor)
+// Solicitações de mentoria e sessões (vêm da API)
 // ---------------------------------------------------------------------------
 
 export type StatusSolicitacao = 'pendente' | 'aceita' | 'recusada';
 
 export interface Solicitacao {
-  /** Também é o id da conversa simulada em Mensagens (?simulado=<id>). */
+  /** Id da mentoria (em texto, para usar em data-id). */
   id: string;
+  mentoriaId: number;
   startup: string;
+  /** Id da startup (para iniciar conversa direta). */
+  startupId: number;
   cidade: string;
   tema: string;
   data: string;
   horario: string;
   formato: string;
   mensagem: string;
+  /** true quando a sessão aceita já passou do horário e pode ser marcada como realizada. */
+  podeConcluir: boolean;
 }
 
-export const SOLICITACOES: Solicitacao[] = [
-  {
-    id: 'sol-agrosense',
-    startup: 'AgroSense',
-    cidade: 'Petrolina/PE',
-    tema: 'Captação de investimento e pitch',
-    data: '20 de outubro',
-    horario: '14:00 às 15:00',
-    formato: 'Online',
-    mensagem:
-      'Estamos abrindo nossa primeira rodada anjo e queremos ajuda para estruturar o pitch e definir o valuation antes de falar com investidores.',
-  },
-  {
-    id: 'sol-edulab',
-    startup: 'EduLab',
-    cidade: 'Caruaru/PE',
-    tema: 'Métricas de produto e tração',
-    data: '23 de outubro',
-    horario: '16:00 às 17:00',
-    formato: 'Online',
-    mensagem:
-      'Temos 1.200 alunos ativos, mas não sabemos quais métricas mostrar para provar tração. Gostaríamos de uma sessão para organizar isso.',
-  },
-];
+export interface SessaoRealizada {
+  mentoriaId: number;
+  startup: string;
+  data: string;
+  horario: string;
+  /** Duração em horas. */
+  horas: number;
+  formato: string;
+  tema: string;
+  codigo: string | null;
+}
 
-const CHAVE_STATUS = 'sm_mentor_solicitacoes_status';
+// Listas preenchidas por carregarMentoriasDoMentor() (export let: quem importa
+// sempre enxerga o valor mais recente).
+export let SOLICITACOES: Solicitacao[] = [];
+export let SESSOES_REALIZADAS: SessaoRealizada[] = [];
+let STATUS: Record<string, StatusSolicitacao> = {};
 
-export function statusSolicitacoes(): Record<string, StatusSolicitacao> {
-  return ler<Record<string, StatusSolicitacao>>(CHAVE_STATUS, {});
+function dataBonita(iso: string): string {
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+  });
+}
+
+function hora(data: Date): string {
+  return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function paraSolicitacao(m: Mentoria): Solicitacao {
+  const inicio = new Date(m.dataHora);
+  const fim = new Date(inicio.getTime() + m.duracaoMinutos * 60_000);
+  return {
+    id: String(m.id),
+    mentoriaId: m.id,
+    startup: m.startupNome,
+    startupId: m.startupId,
+    cidade: m.startupCidade ? `${m.startupCidade}/${m.startupUf}` : '—',
+    tema: m.tema,
+    data: dataBonita(m.dataHora),
+    horario: `${hora(inicio)} às ${hora(fim)}`,
+    formato: MODALIDADE_LABEL[m.modalidade],
+    mensagem: m.mensagem || 'Sem mensagem.',
+    podeConcluir: m.status === 'aceita' && inicio.getTime() <= Date.now(),
+  };
+}
+
+function paraSessao(m: Mentoria): SessaoRealizada {
+  const inicio = new Date(m.dataHora);
+  return {
+    mentoriaId: m.id,
+    startup: m.startupNome,
+    data: inicio.toLocaleDateString('pt-BR'),
+    horario: hora(inicio),
+    horas: m.duracaoMinutos / 60,
+    formato: MODALIDADE_LABEL[m.modalidade],
+    tema: m.tema,
+    codigo: m.codigoCertificado,
+  };
+}
+
+/** Busca as mentorias do mentor logado (GET /mentorias) e atualiza as listas. */
+export async function carregarMentoriasDoMentor(): Promise<void> {
+  const lista = await api.get<Mentoria[]>('/mentorias');
+  const recebidas = lista.filter(
+    (m) => m.status === 'pendente' || m.status === 'aceita' || m.status === 'recusada',
+  );
+  SOLICITACOES = recebidas.map(paraSolicitacao);
+  STATUS = Object.fromEntries(
+    recebidas.map((m) => [String(m.id), m.status as StatusSolicitacao]),
+  );
+  SESSOES_REALIZADAS = lista.filter((m) => m.status === 'realizada').map(paraSessao);
 }
 
 export function statusDe(id: string): StatusSolicitacao {
-  return statusSolicitacoes()[id] ?? 'pendente';
+  return STATUS[id] ?? 'pendente';
 }
 
-export function definirStatus(id: string, status: StatusSolicitacao): void {
-  gravar(CHAVE_STATUS, { ...statusSolicitacoes(), [id]: status });
+/** Aceita ou recusa uma solicitação (PATCH /mentorias/:id/status) e recarrega. */
+export async function definirStatus(id: string, status: StatusSolicitacao): Promise<void> {
+  await api.patch(`/mentorias/${id}/status`, { status });
+  await carregarMentoriasDoMentor();
+}
+
+/** Marca uma sessão aceita como realizada (gera o certificado) e recarrega. */
+export async function marcarRealizada(id: string): Promise<void> {
+  await api.patch(`/mentorias/${id}/status`, { status: 'realizada' });
+  await carregarMentoriasDoMentor();
 }
 
 export function solicitacoesPendentes(): Solicitacao[] {
@@ -183,47 +235,6 @@ export function solicitacoesPendentes(): Solicitacao[] {
 export function proximasSessoes(): Solicitacao[] {
   return SOLICITACOES.filter((s) => statusDe(s.id) === 'aceita');
 }
-
-// ---------------------------------------------------------------------------
-// Sessões já realizadas (histórico)
-// ---------------------------------------------------------------------------
-
-export interface SessaoRealizada {
-  startup: string;
-  data: string;
-  horario: string;
-  /** Duração em horas. */
-  horas: number;
-  formato: string;
-  tema: string;
-}
-
-export const SESSOES_REALIZADAS: SessaoRealizada[] = [
-  {
-    startup: 'Clínica Fácil',
-    data: '02/09/2026',
-    horario: '14:00',
-    horas: 1,
-    formato: 'Online',
-    tema: 'Estratégia e crescimento da startup',
-  },
-  {
-    startup: 'Rota Verde',
-    data: '16/09/2026',
-    horario: '10:00',
-    horas: 1,
-    formato: 'Presencial',
-    tema: 'Modelo de receita recorrente',
-  },
-  {
-    startup: 'Clínica Fácil',
-    data: '30/09/2026',
-    horario: '14:00',
-    horas: 0.5,
-    formato: 'Online',
-    tema: 'Revisão do pitch para investidores',
-  },
-];
 
 export function totalHoras(): number {
   return SESSOES_REALIZADAS.reduce((total, s) => total + s.horas, 0);

@@ -110,6 +110,23 @@
        Documento
        ========================================== */
 
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .certificado-documento,
+        .certificado-documento * {
+          visibility: visible;
+        }
+        .certificado-documento {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          box-shadow: none;
+        }
+      }
+
       .certificado-documento {
         position: relative;
         overflow: hidden;
@@ -567,9 +584,9 @@
         <h2 class="card-title">Exportar certificado</h2>
 
         <p class="text-muted">
-          A exportação permitirá gerar uma versão digital do certificado
-          selecionado para uso profissional e compartilhamento em plataformas
-          como o LinkedIn.
+          Gere uma versão digital do certificado selecionado (imprima ou salve em
+          PDF) para uso profissional e compartilhamento em plataformas como o
+          LinkedIn. Cada certificado tem um código único de registro.
         </p>
 
         <button
@@ -577,7 +594,7 @@
           class="btn btn-primary"
           type="button"
           disabled
-          title="A exportação será disponibilizada quando o histórico real estiver integrado"
+          title="Imprimir ou salvar o certificado em PDF"
         >
           Exportar certificado
         </button>

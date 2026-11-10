@@ -1,190 +1,520 @@
-// Tela: Interesses — lógica
-// ==========================
-//
-// Busca os interesses recebidos e enviados.
-// Os dois endpoints já existem no backend.
+// Tela: Interesses para Startups
+// ==============================
+// Mostra os INVESTIDORES que demonstraram interesse na investidor
+// (GET /interests/received). "Aceitar" devolve o interesse (POST /interests):
+// como o interesse passa a ser mútuo, a API cria o match e a tela mostra o
+// "É um match!". Os segmentos servem de filtro sobre a lista.
+// É o espelho da tela interesses-investidor.
 
 import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
-import type { Interesse } from '../../scripts/types';
+import { abrirModalMatch, iniciais } from '../../scripts/matchModal';
+import { escapeHtml, TIPO_INVESTIDOR_LABEL } from '../../scripts/investidor';
+import type { Interesse, Match, Investidor } from '../../scripts/types';
 
-const usuario = requireAuth(['startup', 'investidor']);
+const usuario = requireAuth(['investidor']);
 
 renderNav(
   document.getElementById('nav-links') as HTMLElement,
-  usuario.tipo
+  usuario.tipo,
 );
 
-const recebidosEl = document.getElementById(
-  'interesses-recebidos'
+const segmentosContainer = document.getElementById(
+  'segmentos-container',
 ) as HTMLDivElement;
 
-const enviadosEl = document.getElementById(
-  'interesses-enviados'
-) as HTMLDivElement;
-
-const totalEl = document.getElementById(
-  'interesses-total'
+const selectedCount = document.getElementById(
+  'selected-count',
 ) as HTMLElement;
 
-const tipoContraparte =
-  usuario.tipo === 'startup'
-    ? 'investidor'
-    : 'startup';
+// Campo de pesquisa por texto
+const textoBusca = document.getElementById(
+  'texto',
+) as HTMLInputElement;
 
-function contraparteId(interesse: Interesse): number {
-  return tipoContraparte === 'investidor'
-    ? interesse.investidorId
-    : interesse.startupId;
+const investidoresGrid = document.getElementById(
+  'investidores-grid',
+) as HTMLDivElement;
+
+const btnSalvar = document.getElementById(
+  'btn-salvar-preferencias',
+) as HTMLButtonElement;
+
+const modal = document.getElementById(
+  'modal-perfil',
+) as HTMLDivElement;
+
+const modalNome = document.getElementById(
+  'modal-nome',
+) as HTMLElement;
+
+const modalEmpresa = document.getElementById(
+  'modal-empresa',
+) as HTMLElement;
+
+const modalAportes = document.getElementById(
+  'modal-aportes',
+) as HTMLElement;
+
+const btnFecharModal = document.getElementById(
+  'btn-fechar-modal',
+) as HTMLButtonElement;
+
+const listaSegmentos = [
+  'Fintech',
+  'Healthtech',
+  'Edtech',
+  'Agtech',
+  'SaaS B2B',
+  'Martech',
+  'Logtech',
+  'Retailtech',
+  'Greentech / Cleantech',
+  'Cybersecurity',
+  'Mobtech',
+  'Economia Criativa',
+];
+
+interface InvestidorInteresse {
+  id: string;
+  investidorId: number;
+  nome: string;
+  empresa: string;
+  segmentos: string[];
+  /** true quando já existe match com este investidor. */
+  jaMatch: boolean;
 }
 
-function getNome(interesse: Interesse): string {
-  if (tipoContraparte === 'investidor') {
-    return 'Investidor';
+let investidoresData: InvestidorInteresse[] = [];
+let carregando = true;
+let erroCarga = '';
+
+let selecoes: string[] = [];
+
+/**
+ * Renderiza os segmentos de interesse.
+ */
+function renderizarSegmentos(): void {
+  segmentosContainer.innerHTML = '';
+
+  listaSegmentos.forEach((nome) => {
+    const index = selecoes.indexOf(nome);
+    const isSelected = index !== -1;
+
+    const chip = document.createElement('label');
+
+    chip.className = `segmento-chip ${
+      isSelected ? 'selected' : ''
+    }`;
+
+    chip.innerHTML = `
+      <input
+        type="checkbox"
+        ${isSelected ? 'checked' : ''}
+      >
+
+      <span>${nome}</span>
+
+      <span class="priority-badge">
+        ${isSelected ? index + 1 : ''}
+      </span>
+    `;
+
+    const checkbox = chip.querySelector(
+      'input[type="checkbox"]',
+    );
+
+    checkbox?.addEventListener(
+      'change',
+      () => toggleSegmento(nome),
+    );
+
+    segmentosContainer.appendChild(chip);
+  });
+
+  selectedCount.textContent = String(
+    selecoes.length,
+  );
+}
+
+/**
+ * Adiciona ou remove um segmento da seleção.
+ */
+function toggleSegmento(nome: string): void {
+  const index = selecoes.indexOf(nome);
+
+  if (index === -1) {
+    selecoes.push(nome);
+  } else {
+    selecoes.splice(index, 1);
   }
 
-  return `Startup #${interesse.startupId}`;
+  renderizarSegmentos();
+
+  // Atualiza os resultados imediatamente
+  // quando o usuário seleciona/remove um segmento.
+  renderizarInvestidores(
+    obterInvestidoresFiltrados(),
+  );
 }
 
-function getInitials(nome: string): string {
-  const partes = nome
+/**
+ * Retorna os investidores filtrados pelos segmentos
+ * e também pelo campo de pesquisa.
+ */
+function obterInvestidoresFiltrados(): InvestidorInteresse[] {
+  const texto = textoBusca.value
     .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+    .toLowerCase();
 
-  if (!partes.length) {
-    return 'SM';
-  }
+  return investidoresData.filter((investidor) => {
+    /*
+     * FILTRO 1 — SEGMENTOS
+     *
+     * Se nenhum segmento foi selecionado,
+     * todos os investidores podem aparecer.
+     *
+     * Se houver segmentos selecionados,
+     * o investidor precisa possuir pelo menos
+     * um dos segmentos escolhidos.
+     */
+    const segmentoCompativel =
+      selecoes.length === 0 ||
+      investidor.segmentos.some((segmento) =>
+        selecoes.includes(segmento),
+      );
 
-  return partes
-    .slice(0, 2)
-    .map((parte) => parte[0].toUpperCase())
-    .join('');
+    if (!segmentoCompativel) {
+      return false;
+    }
+
+    /*
+     * FILTRO 2 — PESQUISA POR TEXTO
+     *
+     * A pesquisa verifica:
+     * - nome da investidor;
+     * - empresa;
+     * - segmentos.
+     */
+    if (texto.length === 0) {
+      return true;
+    }
+
+    const conteudoInvestidor = [
+      investidor.nome,
+      investidor.empresa,
+      investidor.segmentos.join(' '),
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return conteudoInvestidor.includes(texto);
+  });
 }
 
-function renderLista(
-  container: HTMLDivElement,
-  interesses: Interesse[],
-  vazioMsg: string
+/**
+ * Renderiza os cards dos investidores.
+ */
+function renderizarInvestidores(
+  investidores: InvestidorInteresse[],
 ): void {
-  if (interesses.length === 0) {
-    container.innerHTML = `
-      <p class="text-muted">
-        ${vazioMsg}
-      </p>
+  investidoresGrid.innerHTML = '';
+
+  if (carregando) {
+    investidoresGrid.innerHTML = `
+      <div class="empty-state">Carregando interesses…</div>
+    `;
+    return;
+  }
+
+  if (erroCarga) {
+    investidoresGrid.innerHTML = `
+      <div class="empty-state">${escapeHtml(erroCarga)}</div>
+    `;
+    return;
+  }
+
+  if (investidores.length === 0) {
+    investidoresGrid.innerHTML = `
+      <div class="empty-state">
+        ${
+          investidoresData.length === 0
+            ? 'Nenhuma investidor demonstrou interesse em você ainda.'
+            : 'Nenhuma investidor encontrada para os filtros selecionados.'
+        }
+      </div>
     `;
 
     return;
   }
 
-  container.innerHTML = interesses
-    .map((interesse) => {
-      const id = contraparteId(interesse);
-      const nome = getNome(interesse);
+  investidores.forEach((investidor) => {
+    const card = document.createElement('div');
 
-      const data = new Date(
-        interesse.criadoEm
-      ).toLocaleDateString('pt-BR');
+    card.className = 'investor-card';
+    card.id = investidor.id;
 
-      return `
-        <a
-          class="interesse-card"
-          href="../perfil/index.html?tipo=${tipoContraparte}&id=${id}"
-        >
+    card.innerHTML = `
+      <div class="investor-card-header">
+        <div class="investor-info">
+          <h3>${escapeHtml(investidor.nome)}</h3>
 
-          <div class="interesse-card-top">
+          <p>${escapeHtml(investidor.empresa)}</p>
+        </div>
+      </div>
 
-            <div class="interesse-avatar">
-              ${getInitials(nome)}
-            </div>
+      <div class="investor-card-body">
+        <strong>Tese e segmentos:</strong>
+        ${escapeHtml(investidor.segmentos.join(', '))}
+      </div>
 
-            <div class="interesse-person">
+      <div class="investor-card-actions">
+        ${
+          investidor.jaMatch
+            ? `<span style="color:#15803d;font-weight:600;font-size:0.85rem">Match aceito!</span>
+               <a class="btn-ver" href="../matches/index.html" style="text-decoration:none">Ver matches</a>`
+            : `<button class="btn-ver" type="button">Ver Perfil</button>
+               <button class="btn-aceitar" type="button">Aceitar</button>
+               <button class="btn-recusar" type="button">Recusar</button>`
+        }
+      </div>
+    `;
 
-              <div class="interesse-name">
-                ${nome}
-              </div>
+    card
+      .querySelector('.btn-ver')
+      ?.addEventListener(
+        'click',
+        () => verPerfil(investidor),
+      );
 
-              <div class="interesse-location">
-                ${tipoContraparte === 'investidor'
-                  ? 'Investidor'
-                  : 'Startup'}
-              </div>
+    card
+      .querySelector('.btn-aceitar')
+      ?.addEventListener(
+        'click',
+        () => void aceitarPerfil(investidor),
+      );
 
-            </div>
+    card
+      .querySelector('.btn-recusar')
+      ?.addEventListener(
+        'click',
+        () => recusarPerfil(investidor.id),
+      );
 
-          </div>
-
-          <span class="badge badge-success">
-            Interesse
-          </span>
-
-          <div class="interesse-date">
-            Interesse registrado em ${data}
-          </div>
-
-          <div class="interesse-footer">
-
-            <span class="interesse-status">
-              Aguardando conexão
-            </span>
-
-            <span class="btn btn-primary">
-              Ver perfil
-            </span>
-
-          </div>
-
-        </a>
-      `;
-    })
-    .join('');
+    investidoresGrid.appendChild(card);
+  });
 }
 
-async function init(): Promise<void> {
-  const [recebidos, enviados] = await Promise.all([
-    api.get<Interesse[]>('/interests/received'),
-    api.get<Interesse[]>('/interests/sent'),
-  ]);
-
-  totalEl.textContent = String(
-    recebidos.length + enviados.length
-  );
-
-  renderLista(
-    recebidosEl,
-    recebidos,
-    'Nenhum interesse recebido ainda.'
-  );
-
-  renderLista(
-    enviadosEl,
-    enviados,
-    'Você ainda não demonstrou interesse em ninguém — explore a busca!'
+/**
+ * Salva/atualiza os filtros e renderiza os resultados.
+ */
+function salvarEFiltrar(): void {
+  renderizarInvestidores(
+    obterInvestidoresFiltrados(),
   );
 }
 
-// Esta tela hoje é visual (a lista de investidores é estática no próprio HTML) e
-// não tem os blocos da lista real. Se eles não existirem, não tenta carregar a API.
-const temListaReal = Boolean(recebidosEl && enviadosEl && totalEl);
+/**
+ * Abre o modal com os dados da investidor.
+ */
+function verPerfil(
+  investidor: InvestidorInteresse,
+): void {
+  modalNome.textContent = investidor.nome;
 
-if (temListaReal) init().catch((error) => {
-  const mensagem =
-    error instanceof ApiError
-      ? error.message
-      : 'Erro ao carregar interesses.';
+  modalEmpresa.textContent =
+    investidor.empresa;
 
-  recebidosEl.innerHTML = `
-    <p class="form-error">
-      ${mensagem}
-    </p>
-  `;
+  modalAportes.textContent =
+    investidor.segmentos.join(', ');
 
-  enviadosEl.innerHTML = `
-    <p class="text-muted">
-      Não foi possível carregar os interesses enviados.
-    </p>
-  `;
+  modal.classList.add('active');
+}
 
-  totalEl.textContent = '—';
-});
+/**
+ * Fecha o modal.
+ */
+function fecharModal(): void {
+  modal.classList.remove('active');
+}
+
+/**
+ * Recusa um investidor.
+ */
+function recusarPerfil(
+  investidorCardId: string,
+): void {
+  const card =
+    document.getElementById(investidorCardId);
+
+  if (!card) {
+    return;
+  }
+
+  card.classList.add('fade-out');
+
+  setTimeout(() => {
+    investidoresData =
+      investidoresData.filter(
+        (investidor) =>
+          investidor.id !== investidorCardId,
+      );
+
+    salvarEFiltrar();
+  }, 300);
+}
+
+/**
+ * Aceita uma investidor: devolve o interesse. Como a investidor já tinha
+ * demonstrado interesse, a API cria o match e mostramos o "É um match!".
+ */
+async function aceitarPerfil(
+  investidor: InvestidorInteresse,
+): Promise<void> {
+  const card = document.getElementById(investidor.id);
+  const actions = card?.querySelector('.investor-card-actions');
+
+  if (!card || !actions) {
+    return;
+  }
+
+  actions.querySelectorAll('button').forEach((botao) => {
+    (botao as HTMLButtonElement).disabled = true;
+  });
+
+  try {
+    try {
+      await api.post('/interests', {
+        contraparteId: investidor.investidorId,
+      });
+    } catch (error) {
+      // 409 = interesse já registrado antes; segue para checar o match.
+      if (!(error instanceof ApiError && error.status === 409)) {
+        throw error;
+      }
+    }
+
+    const matches = await api.get<Match[]>('/matches');
+    const match = matches.find(
+      (m) => m.investidorId === investidor.investidorId,
+    );
+
+    investidor.jaMatch = Boolean(match);
+    salvarEFiltrar();
+
+    if (match) {
+      abrirModalMatch({
+        iniciaisVoce: iniciais(usuario.nome),
+        iniciaisOutro: iniciais(investidor.nome),
+        nomeOutro: investidor.nome,
+        score: match.scoreCompatibilidade,
+        hrefMatches: '../matches/index.html',
+      });
+    }
+  } catch (error) {
+    actions.querySelectorAll('button').forEach((botao) => {
+      (botao as HTMLButtonElement).disabled = false;
+    });
+    alert(
+      error instanceof ApiError
+        ? error.message
+        : 'Não foi possível aceitar agora. Tente novamente.',
+    );
+  }
+}
+
+/**
+ * Botão "Salvar Preferências".
+ */
+btnSalvar.addEventListener(
+  'click',
+  salvarEFiltrar,
+);
+
+/**
+ * Pesquisa por texto.
+ *
+ * Atualiza os cards enquanto o usuário digita,
+ * sem precisar clicar em outro botão.
+ */
+textoBusca.addEventListener(
+  'input',
+  () => {
+    renderizarInvestidores(
+      obterInvestidoresFiltrados(),
+    );
+  },
+);
+
+/**
+ * Fecha o modal pelo botão X.
+ */
+btnFecharModal.addEventListener(
+  'click',
+  fecharModal,
+);
+
+/**
+ * Fecha o modal clicando fora do conteúdo.
+ */
+modal.addEventListener(
+  'click',
+  (event) => {
+    if (event.target === modal) {
+      fecharModal();
+    }
+  },
+);
+
+/**
+ * Carrega os interesses recebidos e os detalhes de cada investidor.
+ */
+async function carregarInteresses(): Promise<void> {
+  try {
+    const [recebidos, matches] = await Promise.all([
+      api.get<Interesse[]>('/interests/received'),
+      api.get<Match[]>('/matches'),
+    ]);
+
+    const comMatch = new Set(matches.map((m) => m.investidorId));
+
+    const investidores = await Promise.all(
+      recebidos.map((interesse) =>
+        api
+          .get<Investidor>(`/investors/${interesse.investidorId}`)
+          .catch(() => null),
+      ),
+    );
+
+    investidoresData = investidores
+      .filter((inv): inv is Investidor => inv !== null)
+      .map((inv) => ({
+        id: `investidor-${inv.id}`,
+        investidorId: inv.id,
+        nome: inv.nome ?? `Investidor #${inv.id}`,
+        empresa: `${TIPO_INVESTIDOR_LABEL[inv.tipo] ?? inv.tipo} · ${inv.cidade}/${inv.uf}`,
+        segmentos: (inv.segmentos ?? []).map((seg) => seg.nome),
+        jaMatch: comMatch.has(inv.id),
+      }));
+  } catch (error) {
+    erroCarga =
+      error instanceof ApiError
+        ? error.message
+        : 'Erro ao carregar os interesses.';
+  } finally {
+    carregando = false;
+    salvarEFiltrar();
+  }
+}
+
+/**
+ * Inicialização da tela.
+ */
+renderizarSegmentos();
+
+renderizarInvestidores(
+  investidoresData,
+);
+
+void carregarInteresses();

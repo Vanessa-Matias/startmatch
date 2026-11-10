@@ -1,19 +1,21 @@
 // Tela: Solicitações — lógica
 // ============================
 //
-// Os pedidos são demonstrativos (scripts/mentorDemo.ts -> SOLICITACOES): ainda
-// não existe endpoint/entidade de solicitação de mentoria no backend. O status
-// de cada um (pendente / aceita / recusada) fica no navegador e é o mesmo que o
-// Dashboard e a Agenda leem — aceitar uma solicitação a coloca nas "Próximas
-// sessões" da Agenda.
+// Mostra as mentorias que as startups pediram a este mentor (GET /mentorias).
+// O mentor aceita ou recusa (PATCH /mentorias/:id/status). Aceitar coloca a
+// sessão nas "Próximas sessões" da Agenda. Depois do horário combinado, o
+// mentor marca a sessão como realizada e o sistema gera o certificado.
 //
-// "Conversar com a startup" abre a conversa simulada em Mensagens, que já chega
-// com a mensagem do pedido (scripts/matchSimulado.ts).
+// "Conversar com a startup" abre uma conversa direta em Mensagens (o mentor
+// pode falar com a startup quando quiser, sem precisar de match).
 
+import { ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import {
   SOLICITACOES,
+  carregarMentoriasDoMentor,
   definirStatus,
+  marcarRealizada,
   iniciais,
   statusDe,
   type Solicitacao,
@@ -77,7 +79,7 @@ function cardHtml(s: Solicitacao): string {
       <p class="item-note">“${s.mensagem}”</p>
 
       <div class="item-actions">
-        <a class="btn btn-outline" href="../mensagens/index.html?simulado=${s.id}">Conversar com a startup</a>
+        <a class="btn btn-outline" href="../mensagens/index.html?conversarCom=startup-${s.startupId}">Conversar com a startup</a>
         ${
           status === 'recusada'
             ? ''
@@ -85,7 +87,9 @@ function cardHtml(s: Solicitacao): string {
         }
         ${
           status === 'aceita'
-            ? '<a class="btn btn-primary" href="../agenda/index.html">Ver na agenda</a>'
+            ? s.podeConcluir
+              ? '<button type="button" class="btn btn-primary" data-acao="realizada">Marcar como realizada</button>'
+              : '<a class="btn btn-primary" href="../agenda/index.html">Ver na agenda</a>'
             : '<button type="button" class="btn btn-primary" data-acao="aceita">Aceitar mentoria</button>'
         }
       </div>
@@ -96,28 +100,56 @@ function cardHtml(s: Solicitacao): string {
 
 function render(): void {
   renderResumo();
-  listaEl.innerHTML = SOLICITACOES.map(cardHtml).join('');
+  listaEl.innerHTML = SOLICITACOES.length
+    ? SOLICITACOES.map(cardHtml).join('')
+    : '<p class="text-muted">Nenhuma solicitação de mentoria por enquanto. Quando uma startup pedir, ela aparece aqui.</p>';
 }
 
-listaEl.addEventListener('click', (event) => {
+listaEl.addEventListener('click', async (event) => {
   const botao = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-acao]');
   if (!botao) return;
   const card = botao.closest<HTMLElement>('[data-id]');
   if (!card?.dataset.id) return;
 
   const id = card.dataset.id;
-  const acao = botao.dataset.acao as StatusSolicitacao;
-  definirStatus(id, acao);
-  render();
+  const acao = botao.dataset.acao as StatusSolicitacao | 'realizada';
+  botao.disabled = true;
 
+  let mensagem = '';
+  let erro = false;
+  try {
+    if (acao === 'realizada') {
+      await marcarRealizada(id);
+      mensagem = 'Mentoria realizada! O certificado já está disponível em Certificados.';
+    } else {
+      await definirStatus(id, acao);
+      mensagem =
+        acao === 'aceita'
+          ? 'Mentoria aceita! A sessão já aparece nas próximas sessões da sua Agenda.'
+          : 'Solicitação recusada.';
+    }
+  } catch (error) {
+    erro = true;
+    mensagem = error instanceof ApiError ? error.message : 'Não foi possível atualizar agora.';
+  }
+
+  render();
+  // a mentoria realizada sai desta lista; as demais continuam e mostram o aviso
   const resultado = listaEl.querySelector<HTMLElement>(`[data-id="${id}"] .solicitacao-resultado`);
   if (resultado) {
-    resultado.textContent =
-      acao === 'aceita'
-        ? 'Mentoria aceita! A sessão já aparece nas próximas sessões da sua Agenda.'
-        : 'Solicitação recusada. Você ainda pode aceitar caso mude de ideia.';
-    resultado.classList.add(acao === 'aceita' ? 'is-success' : 'is-error');
+    resultado.textContent = mensagem;
+    resultado.classList.add(erro || acao === 'recusada' ? 'is-error' : 'is-success');
   }
 });
 
-render();
+async function init(): Promise<void> {
+  await carregarMentoriasDoMentor();
+  render();
+}
+
+init().catch((error) => {
+  listaEl.innerHTML = `<p class="form-error">${
+    error instanceof ApiError ? error.message : 'Erro ao carregar as solicitações.'
+  }</p>`;
+});
+

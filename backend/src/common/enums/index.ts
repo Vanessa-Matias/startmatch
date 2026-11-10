@@ -6,3 +6,5 @@ export * from './interest-origin.enum';
 export * from './consent-type.enum';
 export * from './audit-event-type.enum';
 export * from './audit-result.enum';
+export * from './modalidade-mentoria.enum';
+export * from './status-mentoria.enum';

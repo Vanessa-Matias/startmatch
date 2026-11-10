@@ -1,7 +1,6 @@
 // src/scripts/payment.ts
 // =======================
-// Área de pagamento (cartão ou PIX) usada em mais de uma tela: "Plano e
-// assinatura" (plano/) e "Mentorias extras" da startup (comprar-mentorias/).
+// Área de pagamento (cartão ou PIX) da tela "Plano e assinatura" (plano/).
 //
 // Nesta etapa o pagamento é só demonstração, feito no frontend: valida os
 // campos do cartão, gera um código PIX de exemplo e mostra "Pagamento
@@ -9,7 +8,7 @@
 //
 // Uso:
 //   const pagamento = createPayment(document.getElementById('pagamento-area')!);
-//   pagamento.open('Plano Plus — R$ 350/mês', 'PLUS');
+//   pagamento.open('Plano Plus — R$ 550/mês', 'PLUS');
 //
 // O HTML é criado aqui dentro (não precisa repetir nos index.html) e o estilo
 // está em components.css (.payment-*).

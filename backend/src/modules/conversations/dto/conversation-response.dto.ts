@@ -1,13 +1,11 @@
-import { Exclude, Expose } from 'class-transformer';
-
-@Exclude()
+// Resposta de uma conversa: já traz o nome de com quem a pessoa está falando.
 export class ConversationResponseDto {
-  @Expose()
   id: number;
-
-  @Expose()
-  matchId: number;
-
-  @Expose()
+  // Preenchido só nas conversas de match.
+  matchId: number | null;
+  // 'match' (startup e investidor) ou 'direta' (mentor com startup/investidor).
+  tipo: 'match' | 'direta';
+  // Nome da outra pessoa (ou da startup/investidor).
+  titulo: string;
   criadaEm: Date;
 }

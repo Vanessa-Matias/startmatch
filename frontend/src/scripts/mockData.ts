@@ -103,21 +103,29 @@ export const MOCK_INVESTIDORES: Investidor[] = [
 export const MOCK_MENTORES: Mentor[] = [
   {
     id: 1,
+    usuarioId: 102,
+    nome: 'Mentor Teste',
     areaAtuacao: 'Growth e captação de investimento',
     bio: 'Mais de 10 anos ajudando startups do Porto Digital a captar investimento-anjo.',
     especialidades: ['growth', 'fundraising', 'produto'],
     vinculoPortoDigital: true,
     disponibilidade: '2 sessões por mês, terças à tarde.',
-    planoAssinatura: 'basico',
+    duracaoMinutos: 60,
+    mentoriasPorMes: 2,
+    modalidade: 'remoto',
   },
   {
     id: 2,
+    usuarioId: 103,
+    nome: 'Mentora Demo',
     areaAtuacao: 'Produto e experiência do usuário',
     bio: 'Ex-líder de produto em duas startups do ecossistema nordestino.',
     especialidades: ['produto', 'ux', 'pesquisa com usuários'],
     vinculoPortoDigital: false,
     disponibilidade: '1 sessão por mês, sob consulta.',
-    planoAssinatura: 'basico',
+    duracaoMinutos: 30,
+    mentoriasPorMes: 1,
+    modalidade: 'hibrido',
   },
 ];
 
@@ -166,6 +174,8 @@ export const MOCK_INTERESSES_ENVIADOS: Interesse[] = [
 export const MOCK_CONVERSA: Conversa = {
   id: 1,
   matchId: 1,
+  tipo: 'match',
+  titulo: 'Investidor Demo',
   criadaEm: new Date('2026-08-10T12:05:00Z').toISOString(),
 };
 

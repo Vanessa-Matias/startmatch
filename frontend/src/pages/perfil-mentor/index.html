@@ -283,10 +283,22 @@
               <div class="field">
                 <label for="modalidade">Modalidade das mentorias</label>
                 <select class="select" id="modalidade">
-                  <option value="online">Online</option>
-                  <option value="presencial">Presencial (Recife)</option>
-                  <option value="ambos">Online ou presencial (Recife)</option>
+                  <option value="remoto">Remoto</option>
+                  <option value="presencial">Presencial</option>
+                  <option value="hibrido">Híbrido (presencial ou remoto)</option>
                 </select>
+              </div>
+              <div class="field">
+                <label for="duracao">Duração de cada mentoria</label>
+                <select class="select" id="duracao">
+                  <option value="30">30 minutos</option>
+                  <option value="60">1 hora</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="mentoriasPorMes">Mentorias por mês</label>
+                <input class="input" id="mentoriasPorMes" type="number" min="1" max="30" value="4" />
+                <p class="form-hint">Quantas mentorias você aceita por mês. Acima disso, o agendamento é bloqueado.</p>
               </div>
             </div>
           </section>

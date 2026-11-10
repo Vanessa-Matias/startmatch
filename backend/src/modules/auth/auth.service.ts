@@ -37,6 +37,7 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
+  // >> Cadastro: cria a conta do usuário no banco.
     const usuario = await this.usersService.create({
       nome: dto.nome,
       email: dto.email,
@@ -56,6 +57,7 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {
+  // >> Login: confere e-mail e senha e devolve o token.
     try {
       const usuario = await this.validateCredentials(dto.email, dto.senha);
 
@@ -97,6 +99,7 @@ export class AuthService {
     }
 
     const senhaValida = await bcrypt.compare(senha, usuario.senhaHash);
+    // >> Compara a senha digitada com a senha criptografada (hash) do banco.
     if (!senhaValida) {
       throw new UnauthorizedException(
         'Senha ou e-mail incorretos, digite novamente.',
@@ -107,9 +110,11 @@ export class AuthService {
   }
 
   private buildAuthResponse(usuario: Usuario): AuthResponseDto {
+  // >> Monta a resposta do login: token + dados do usuário.
     const payload: JwtPayload = { sub: usuario.id, tipo: usuario.tipo };
     return {
       accessToken: this.jwtService.sign(payload),
+      // >> Gera o token (JWT): a chave que prova que o usuário fez login.
       usuario: plainToInstance(UserResponseDto, usuario),
     };
   }
