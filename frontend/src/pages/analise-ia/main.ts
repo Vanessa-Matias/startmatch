@@ -376,6 +376,16 @@ async function rodarTeste(): Promise<void> {
       faixaMax: Number(perfil.investimentoMax),
       exigeCnpjAtivo: exigeCnpjEl.checked,
     };
+    // Teste 1 com perfil sem segmentos cadastrados: para a demonstração não
+    // depender desse dado, usamos os segmentos das startups analisadas e avisamos.
+    let avisoSegmentos = '';
+    if (modo === 't1' && investidor.segmentos.length === 0) {
+      investidor.segmentos = Array.from(
+        new Set(base.flatMap((s) => (s.segmentos ?? []).map((x) => x.nome))),
+      );
+      avisoSegmentos =
+        ' Seu perfil ainda não tem segmentos de interesse cadastrados; nesta demonstração usamos os segmentos das startups analisadas (simulação).';
+    }
     // No modo simulado, a ficha do investidor é ajustada para as startups
     // escolhidas serem compatíveis; assim o único problema é o dado simulado.
     if (simulado) {
@@ -432,8 +442,8 @@ async function rodarTeste(): Promise<void> {
     $<HTMLElement>('teste-resumo').innerHTML = n
       ? `<strong>${n}</strong> startup${n === 1 ? '' : 's'} neste cenário${
           simulado ? ' (condição simulada em startups cadastradas)' : ` de ${r.analisadas} analisadas`
-        }.`
-      : 'Nenhuma startup cadastrada se encaixa neste cenário agora.';
+        }.${escapeHtml(avisoSegmentos)}`
+      : `Nenhuma startup cadastrada se encaixa neste cenário agora.${escapeHtml(avisoSegmentos)}`;
     $<HTMLElement>('teste-cards').innerHTML = r.destaques
       .map((d) => cardDestaque(d, porId.get(d.startupId)))
       .join('');
