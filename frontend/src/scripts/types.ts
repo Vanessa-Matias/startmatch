@@ -237,6 +237,8 @@ export interface AdminMetrics {
   totalMentores: number;
   mentoresPortoDigital: number;
   totalMatches: number;
+  totalInteresses: number;
+  oportunidadesEmAberto: number;
 }
 
 // Um evento do histórico de auditoria (GET /admin/audit-log, tela

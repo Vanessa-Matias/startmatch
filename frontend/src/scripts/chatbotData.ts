@@ -50,4 +50,4 @@ export const ANSWERS: Record<string, string> = {
 };
 
 export const UNKNOWN =
-  'Não entendi. Escolha um número de 1 a 9 ou 0 para voltar ao menu.';
+  'Opção inválida. Digite apenas um número de 1 a 9, ou 0 para ver o menu.';

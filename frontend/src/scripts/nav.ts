@@ -69,6 +69,10 @@ export const NAV_BY_ROLE: Record<
       label: 'Matches',
     },
     {
+      href: '../analise-ia/index.html',
+      label: 'Análise IA',
+    },
+    {
       href: '../mensagens/index.html',
       label: 'Mensagens',
     },
@@ -149,6 +153,10 @@ export const NAV_BY_ROLE: Record<
     {
       href: '../admin-auditoria/index.html',
       label: 'Auditoria',
+    },
+    {
+      href: '../admin-alertas/index.html',
+      label: 'Alertas de risco',
     },
   ],
 };

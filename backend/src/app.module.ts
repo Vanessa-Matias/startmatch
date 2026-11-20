@@ -21,6 +21,7 @@ import { LgpdModule } from './modules/lgpd/lgpd.module';
 import { BetaEvaluationModule } from './modules/beta-evaluation/beta-evaluation.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { AiAnalysisModule } from './modules/ai-analysis/ai-analysis.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { AuditModule } from './modules/audit/audit.module';
     BetaEvaluationModule,
     AuditModule,
     AdminModule,
+    AiAnalysisModule,
   ],
 })
 export class AppModule {}

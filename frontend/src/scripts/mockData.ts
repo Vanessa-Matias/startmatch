@@ -223,6 +223,8 @@ export const MOCK_ADMIN_METRICS: AdminMetrics = {
   totalMentores: 2,
   mentoresPortoDigital: 1,
   totalMatches: 1,
+  totalInteresses: 3,
+  oportunidadesEmAberto: 1,
 };
 
 // IDs de usuário (tabela "usuario") — usados nas mensagens (remetenteId) e na

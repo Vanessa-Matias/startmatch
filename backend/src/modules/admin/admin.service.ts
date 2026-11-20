@@ -17,6 +17,7 @@ import { Startup } from '../startups/entities/startup.entity';
 import { Investidor } from '../investors/entities/investidor.entity';
 import { Mentor } from '../mentors/entities/mentor.entity';
 import { Match } from '../matches/entities/match.entity';
+import { Interesse } from '../interests/entities/interesse.entity';
 import {
   TipoUsuario,
   PlanoAssinatura,
@@ -38,6 +39,11 @@ export interface AdminMetrics {
   totalMentores: number;
   mentoresPortoDigital: number;
   totalMatches: number;
+  // Interesses demonstrados (startup→investidor e investidor→startup).
+  totalInteresses: number;
+  // Oportunidades em aberto: interesses que ainda não viraram match
+  // (o outro lado ainda não respondeu).
+  oportunidadesEmAberto: number;
 }
 
 export interface LgpdSummary {
@@ -59,6 +65,8 @@ export class AdminService {
     private readonly mentorRepository: Repository<Mentor>,
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
+    @InjectRepository(Interesse)
+    private readonly interesseRepository: Repository<Interesse>,
     private readonly auditService: AuditService,
     private readonly lgpdService: LgpdService,
   ) {}
@@ -71,6 +79,8 @@ export class AdminService {
       totalMentores,
       totalMatches,
       mentoresPortoDigital,
+      totalInteresses,
+      oportunidadesEmAberto,
     ] = await Promise.all([
       this.usuarioRepository.count(),
       this.startupRepository.count(),
@@ -78,6 +88,17 @@ export class AdminService {
       this.mentorRepository.count(),
       this.matchRepository.count(),
       this.mentorRepository.count({ where: { vinculoPortoDigital: true } }),
+      this.interesseRepository.count(),
+      // Interesse sem match correspondente = oportunidade ainda em aberto.
+      this.interesseRepository
+        .createQueryBuilder('i')
+        .leftJoin(
+          Match,
+          'm',
+          'm.startupId = i.startupId AND m.investidorId = i.investidorId',
+        )
+        .where('m.id IS NULL')
+        .getCount(),
     ]);
 
     const [
@@ -119,6 +140,8 @@ export class AdminService {
       totalMentores,
       mentoresPortoDigital,
       totalMatches,
+      totalInteresses,
+      oportunidadesEmAberto,
     };
   }
 

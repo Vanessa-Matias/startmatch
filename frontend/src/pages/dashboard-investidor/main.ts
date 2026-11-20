@@ -13,6 +13,7 @@ import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import { escapeHtml } from '../../scripts/investidor';
+import { iconeSegmento } from '../../scripts/segmentIcons';
 import type { Interesse, Investidor, Match, Startup } from '../../scripts/types';
 
 const usuario = requireAuth(['investidor']);
@@ -166,41 +167,37 @@ interface StartupsPagina {
   total: number;
 }
 
-interface Sugestao {
-  score: number;
-  startup?: Startup;
+function cardStartup(st: Startup, score?: number): string {
+  const nomes = (st.segmentos ?? []).map((s) => s.nome);
+  const chips = [ESTAGIO_LABEL[st.estagio] ?? st.estagio, ...nomes.slice(0, 2)];
+  return `
+    <div class="card card-feature startup-tile">
+      ${score !== undefined ? `<span class="badge-plan badge-plan--green tile-score">${score}/100</span>` : ''}
+      <a class="tile-link" href="../perfil-startup/index.html?id=${st.id}">
+        <span class="tile-ico">${iconeSegmento(nomes, 26)}</span>
+        <h3 class="tile-nome">${escapeHtml(st.nomeFantasia)}</h3>
+        <p class="tile-meta">${escapeHtml(st.cidade)}/${escapeHtml(st.uf)}</p>
+        <ul class="tile-chips">${chips.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}</ul>
+      </a>
+    </div>
+  `;
 }
 
-function cardStartup(st: Startup, score?: number): string {
-  const segmentos = (st.segmentos ?? []).map((s) => s.nome).join(', ');
-  return `
-    <a class="card card-feature" href="../perfil-startup/index.html?id=${st.id}"
-       style="display:block;text-decoration:none;color:inherit;margin-bottom:12px">
-      <div class="card-title">
-        ${escapeHtml(st.nomeFantasia)}
-        ${score !== undefined ? `<span class="badge-plan badge-plan--green" style="margin-left:8px">${score}/100</span>` : ''}
-      </div>
-      <p class="text-muted">
-        ${escapeHtml(ESTAGIO_LABEL[st.estagio] ?? st.estagio)} · ${escapeHtml(st.cidade)}/${escapeHtml(st.uf)}
-        ${segmentos ? ` · ${escapeHtml(segmentos)}` : ''}
-      </p>
-    </a>
-  `;
+function gradeStartups(html: string): string {
+  return `<div class="startup-tiles">${html}</div>`;
 }
 
 async function carregarPainel(): Promise<void> {
   const novasEl = document.getElementById('novas-startups') as HTMLElement;
-  const sugestoesEl = document.getElementById('sugestoes') as HTMLElement;
   const kpiDisponiveisEl = document.getElementById('kpi-disponiveis') as HTMLElement;
   const kpiMatchesEl = document.getElementById('kpi-matches') as HTMLElement;
   const kpiInteressesEl = document.getElementById('kpi-interesses') as HTMLElement;
 
   try {
-    const [pagina, matches, recebidos, sugestoes] = await Promise.all([
+    const [pagina, matches, recebidos] = await Promise.all([
       api.get<StartupsPagina>('/startups?limit=3'),
       api.get<Match[]>('/matches'),
       api.get<Interesse[]>('/interests/received'),
-      api.get<Sugestao[]>('/matches/suggestions').catch(() => [] as Sugestao[]),
     ]);
 
     const comMatch = new Set(matches.map((m) => m.startupId));
@@ -211,18 +208,12 @@ async function carregarPainel(): Promise<void> {
     kpiInteressesEl.textContent = String(pendentes.length);
 
     novasEl.innerHTML = pagina.items.length
-      ? pagina.items.map((st) => cardStartup(st)).join('')
+      ? gradeStartups(pagina.items.map((st) => cardStartup(st)).join(''))
       : '<p class="text-muted">Ainda não há startups cadastradas.</p>';
-
-    const top = sugestoes.filter((s) => s.startup).slice(0, 3);
-    sugestoesEl.innerHTML = top.length
-      ? top.map((s) => cardStartup(s.startup as Startup, s.score)).join('')
-      : '<p class="text-muted">Sem sugestões por enquanto. Complete seu perfil para melhorar o ranking.</p>';
   } catch (error) {
     const msg =
       error instanceof ApiError ? error.message : 'Erro ao carregar o painel.';
     novasEl.innerHTML = `<p class="form-error">${escapeHtml(msg)}</p>`;
-    sugestoesEl.innerHTML = '';
   }
 }
 

@@ -1,0 +1,214 @@
+<!--
+  Tela: Alertas de risco (Admin) — PROTÓTIPO VISUAL
+  ====================================================
+  Feita para a atividade de Metodologia Ágil e IAs (squad "Detecção de
+  anomalias"). É só um mockup no front-end: os alertas são exemplos fixos e
+  NADA é lido ou gravado no banco de dados nem no back-end.
+-->
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Alertas de risco</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+
+    <style>
+      .alertas-header {
+        margin-bottom: var(--spacing-lg);
+      }
+      .alertas-header h1 {
+        margin-bottom: 4px;
+      }
+      .alertas-demo {
+        margin-bottom: var(--spacing-md);
+        padding: 12px 16px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: var(--radius);
+        font-size: 0.92rem;
+      }
+      .alertas-guia {
+        margin-bottom: var(--spacing-lg);
+        font-size: 0.94rem;
+      }
+      .alertas-guia ol {
+        margin: 10px 0 10px 18px;
+        padding: 0;
+      }
+      .alertas-guia li {
+        margin-bottom: 4px;
+      }
+      .alertas-filtros {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+      }
+      .alerta {
+        display: block;
+        margin-bottom: var(--spacing-md);
+        border-left: 5px solid var(--color-border);
+      }
+      .alerta--alta {
+        border-left-color: #dc2626;
+      }
+      .alerta--media {
+        border-left-color: #d97706;
+      }
+      .alerta--baixa {
+        border-left-color: #0ea5e9;
+      }
+      .alerta-topo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .alerta-titulo {
+        margin: 0;
+        font-family: var(--font-family-display);
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+      .alerta-pontos {
+        margin-left: auto;
+        font-weight: 700;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+      .alerta-evidencias {
+        margin: 8px 0;
+        padding-left: 18px;
+        font-size: 0.92rem;
+      }
+      .alerta-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .alerta-acoes input {
+        flex: 1;
+        min-width: 180px;
+      }
+      .alerta-revisado {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+      .alerta-revisado--confirmado {
+        color: #b91c1c;
+      }
+      .alerta-revisado--falso_positivo {
+        color: #15803d;
+      }
+      .badge-danger-soft {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-warning-soft {
+        background: #fef3c7;
+        color: #92400e;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html"> StartMatch </a>
+
+        <!-- Preenchido dinamicamente por main.ts -->
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <header class="alertas-header">
+        <h1>Alertas de risco</h1>
+        <p class="text-muted">
+          Detecção de comportamentos fora do padrão nos últimos 30 dias.
+        </p>
+      </header>
+
+      <p class="alertas-demo" role="note">
+        <strong>Protótipo visual.</strong> Esta tela foi criada para a atividade
+        de Metodologia Ágil e IAs (squad Detecção de Anomalias). Os alertas
+        abaixo são <strong>exemplos fictícios</strong>: nenhuma informação é
+        lida ou gravada no banco de dados.
+      </p>
+
+      <details class="card alertas-guia" open>
+        <summary><strong>Como analisar esta tela (passo a passo)</strong></summary>
+        <ol>
+          <li>Veja os cartões do topo: quantos alertas existem, quantos já foram revisados e a precisão.</li>
+          <li>Leia um alerta: a severidade (alta, média ou baixa), a pontuação de 0 a 100, o motivo e as evidências.</li>
+          <li>Decida: clique em <strong>Confirmar</strong> se o alerta faz sentido ou em <strong>Falso positivo</strong> se for comportamento normal. A observação é opcional.</li>
+          <li>Veja os cartões atualizarem. A <strong>precisão</strong> é a parte dos alertas revisados que foram confirmados.</li>
+          <li>Use os filtros (Pendentes, Todos, Confirmados, Falsos positivos). O botão <strong>Restaurar exemplo</strong> volta tudo ao início.</li>
+        </ol>
+        <p class="text-muted">
+          A ideia da squad: o sistema <strong>apenas sinaliza</strong> comportamentos fora do padrão
+          (muitos interesses em pouco tempo, cadastros em massa, e-mail descartável e senhas erradas
+          seguidas). Nada é bloqueado automaticamente: a decisão final é sempre do administrador.
+        </p>
+      </details>
+
+      <section class="kpi-grid" aria-label="Resumo dos alertas">
+        <div class="card kpi-card">
+          <div class="kpi-body">
+            <p class="kpi-label">Alertas</p>
+            <p class="kpi-value" id="kpi-total">—</p>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-body">
+            <p class="kpi-label">Pendentes de revisão</p>
+            <p class="kpi-value" id="kpi-pendentes">—</p>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-body">
+            <p class="kpi-label">Confirmados</p>
+            <p class="kpi-value" id="kpi-confirmados">—</p>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-body">
+            <p class="kpi-label">Falsos positivos</p>
+            <p class="kpi-value" id="kpi-falsos">—</p>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-body">
+            <p class="kpi-label">Precisão dos alertas</p>
+            <p class="kpi-value" id="kpi-precisao">—</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="alertas-filtros" id="filtros" role="group" aria-label="Filtro de alertas">
+        <button type="button" class="btn btn-primary" data-filtro="pendentes">Pendentes</button>
+        <button type="button" class="btn btn-outline" data-filtro="todos">Todos</button>
+        <button type="button" class="btn btn-outline" data-filtro="confirmado">Confirmados</button>
+        <button type="button" class="btn btn-outline" data-filtro="falso_positivo">Falsos positivos</button>
+        <button type="button" class="btn btn-outline" id="btn-restaurar">Restaurar exemplo</button>
+      </div>
+
+      <div id="lista-alertas">
+        <p class="text-muted">Carregando alertas…</p>
+      </div>
+
+      <p class="voltar-dashboard"><a class="btn-pill btn-pill--sm" href="../dashboard-admin/index.html"><svg class="btn-pill-arrow btn-pill-arrow--back" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar ao dashboard</a></p>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

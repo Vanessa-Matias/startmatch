@@ -57,7 +57,7 @@ export function initChatbot(root: HTMLElement): void {
     if (!texto) return;
     addMensagem(texto, 'user');
 
-    if (texto === '0' || /^menu$/i.test(texto)) {
+    if (texto === '0') {
       mostrarMenu();
       return;
     }
@@ -70,16 +70,10 @@ export function initChatbot(root: HTMLElement): void {
       addSuporte();
       return;
     }
-    if (/^\d+$/.test(texto)) {
-      addMensagem(UNKNOWN, 'bot');
-      return;
-    }
-    if (/^(oi|ol[aá]|bom dia|boa tarde|boa noite|ajuda)\b/i.test(texto)) {
-      addMensagem('Olá! Como posso ajudar?', 'bot');
-      mostrarMenu();
-      return;
-    }
+    // Qualquer outra coisa (palavra, frase, número fora do menu, símbolo):
+    // alerta pedindo para escolher uma das opções do menu.
     addMensagem(UNKNOWN, 'bot');
+    addMensagem(BACK_HINT, 'bot');
   }
 
   addMensagem(WELCOME, 'bot');

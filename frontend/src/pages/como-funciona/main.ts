@@ -1,7 +1,8 @@
 // Tela: Como funciona — lógica
 // ==============================
 // Página estática, exceto pelo chatbot Stella (FAQ à esquerda, chat à direita):
-// o menu numérico roda no navegador e perguntas livres vão para POST /api/chat.
+// o menu numérico roda no navegador, com respostas prontas (chatbot por regras,
+// sem IA e sem chamar a API).
 // Ver scripts/chatbot.ts e scripts/chatbotData.ts.
 import { initChatbot } from '../../scripts/chatbot';
 import { initReveal } from '../../scripts/reveal';

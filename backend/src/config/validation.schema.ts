@@ -13,4 +13,7 @@ export const validationSchema = Joi.object({
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRES_IN: Joi.string().default('1d'),
   CORS_ORIGIN: Joi.string().default('http://localhost:5173'),
+  // IA da análise de compatibilidade (opcional: sem chave, a tela usa só as regras).
+  GROQ_API_KEY: Joi.string().allow('').optional(),
+  GROQ_MODEL: Joi.string().allow('').optional(),
 });

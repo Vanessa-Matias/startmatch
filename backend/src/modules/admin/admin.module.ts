@@ -14,6 +14,7 @@ import { Startup } from '../startups/entities/startup.entity';
 import { Investidor } from '../investors/entities/investidor.entity';
 import { Mentor } from '../mentors/entities/mentor.entity';
 import { Match } from '../matches/entities/match.entity';
+import { Interesse } from '../interests/entities/interesse.entity';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
 import { AuditModule } from '../audit/audit.module';
@@ -21,7 +22,14 @@ import { LgpdModule } from '../lgpd/lgpd.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Usuario, Startup, Investidor, Mentor, Match]),
+    TypeOrmModule.forFeature([
+      Usuario,
+      Startup,
+      Investidor,
+      Mentor,
+      Match,
+      Interesse,
+    ]),
     AuditModule,
     LgpdModule,
   ],

@@ -23,6 +23,17 @@
 
     <style>
       /* Frase de apoio abaixo do valor do indicador */
+      /* Título à esquerda e selo de boas-vindas no canto direito */
+      .page-head--boas-vindas {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+      }
+      .page-head--boas-vindas .section-eyebrow {
+        margin-bottom: 0;
+      }
       .kpi-desc {
         margin: 2px 0 0;
         color: var(--color-text-muted);
@@ -78,10 +89,12 @@
     </header>
 
     <main class="container">
-      <div class="page-head">
-        <span class="section-eyebrow blue">Administração</span>
-        <h1>Dashboard geral</h1>
-        <p>Visão consolidada da plataforma.</p>
+      <div class="page-head page-head--boas-vindas">
+        <div>
+          <h1>Dashboard geral</h1>
+          <p>Visão consolidada da plataforma.</p>
+        </div>
+        <span class="section-eyebrow blue">Olá, admin. Bem-vindo, bem-vinda de volta.</span>
       </div>
 
       <!-- INDICADORES (preenchidos pelo main.ts) -->
@@ -137,6 +150,15 @@
           <div>
             <div class="card-title">Auditoria</div>
             <p class="text-muted">Registro de eventos da plataforma.</p>
+          </div>
+        </a>
+        <a class="card atalho-card" href="../admin-alertas/index.html">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 16.5H2.5z"/><path d="M12 10v4M12 17.5v.01"/></svg>
+          </span>
+          <div>
+            <div class="card-title">Alertas de risco</div>
+            <p class="text-muted">Comportamentos fora do padrão.</p>
           </div>
         </a>
       </div>

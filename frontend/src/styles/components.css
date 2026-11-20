@@ -2720,3 +2720,10 @@ label {
   color: var(--color-text-muted);
   background: var(--color-surface);
 }
+
+/* botão "Voltar ao dashboard" no fim das telas do administrador (canto direito) */
+.voltar-dashboard {
+  display: flex;
+  justify-content: flex-end;
+  margin: var(--spacing-xl, 40px) 0 var(--spacing-lg);
+}
