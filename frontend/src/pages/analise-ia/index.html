@@ -31,7 +31,7 @@
       .ia-header p { margin: 0; }
 
       /* ---- bloco principal ---- */
-      .ia-hero {
+      .card.ia-hero {
         display: flex;
         gap: 18px;
         align-items: flex-start;
@@ -49,10 +49,10 @@
         display: grid;
         place-items: center;
       }
-      .ia-hero h2 { margin: 0 0 6px; font-size: 1.25rem; color: #fff; }
-      .ia-hero p { margin: 0 0 14px; color: #dbe6ff; max-width: 640px; }
-      .ia-hero .btn-primary { background: #fff; color: #0f2148; font-weight: 700; }
-      .ia-hero .btn-primary:hover:not(:disabled) { background: #e8efff; }
+      .card.ia-hero h2 { margin: 0 0 6px; font-size: 1.25rem; color: #fff; }
+      .card.ia-hero p { margin: 0 0 14px; color: #dbe6ff; max-width: 640px; }
+      .card.ia-hero .btn-primary { background: #fff; color: #0f2148; font-weight: 700; }
+      .card.ia-hero .btn-primary:hover:not(:disabled) { background: #e8efff; }
       .ia-status { margin-left: 12px; color: #dbe6ff; font-size: 0.92rem; }
       .ia-criterios { margin-top: 14px; font-size: 0.92rem; }
       .ia-criterios summary { cursor: pointer; color: #dbe6ff; }
@@ -168,7 +168,7 @@
         .ia-fluxo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .ia-controles, .ia-fichas { grid-template-columns: 1fr; }
         .ia-grid { grid-template-columns: 1fr; }
-        .ia-hero { flex-direction: column; }
+        .card.ia-hero { flex-direction: column; }
         .ia-tabela { display: block; overflow-x: auto; }
       }
     </style>
