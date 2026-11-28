@@ -457,7 +457,7 @@ label {
 
 .page-hero h1 {
   color: var(--color-primary);
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 
 .page-hero p.lead {
@@ -467,17 +467,6 @@ label {
   margin: 0;
 }
 
-/* filete azul curto abaixo do título (celular e computador) */
-.page-hero h1::after {
-  content: '';
-  display: block;
-  width: 44px;
-  height: 3px;
-  margin: 12px 0 14px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--color-accent), #60a5fa);
-}
-
 /* Celular: título um pouco maior, textos alinhados à esquerda */
 @media (max-width: 720px) {
   .page-hero {
@@ -485,10 +474,7 @@ label {
   }
   .page-hero h1 {
     font-size: 2rem;
-    margin-bottom: 0;
-  }
-  .page-hero h1::after {
-    margin: 10px 0 12px;
+    margin-bottom: 10px;
   }
   .page-hero p.lead {
     font-size: 15px;
@@ -1888,6 +1874,13 @@ label {
   overflow: hidden;
   height: 560px;
 }
+/* celular: o card não passa da parte visível da tela com o teclado aberto */
+@media (max-width: 720px) {
+  .chat-card {
+    height: min(560px, 78svh);
+    min-height: 380px;
+  }
+}
 .chat-header {
   display: flex;
   align-items: center;
@@ -1920,7 +1913,6 @@ label {
   /* rolar as mensagens não arrasta a página junto (celular) */
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
   /* barra de rolagem fina e discreta, no lugar da padrão do sistema */
   scrollbar-width: thin;
   scrollbar-color: rgba(47, 111, 235, 0.35) transparent;
@@ -1973,6 +1965,7 @@ label {
   background: var(--color-surface);
 }
 .chat-form input {
+  scroll-margin-bottom: 24px;
   flex: 1;
   min-width: 0;
   padding: 10px 12px;
