@@ -17,12 +17,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StartMatch — Entrar</title>
+    <title>StartMatch — Acesso rápido</title>
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#0f2148" />
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/perfil.css" />
     <style>
       .login-split {
         display: grid;
@@ -65,7 +66,9 @@
         max-width: 480px;
         margin: 0;
       }
-      .login-brand h2 .highlight {
+      /* "demonstração" no mesmo degradê do "investidores e mentores" */
+      .login-brand h2 .highlight,
+      .acesso-rapido h1 .highlight {
         background: linear-gradient(90deg, #5b9bff, #4ade80, #5b9bff);
         background-size: 200% auto;
         -webkit-background-clip: text;
@@ -150,28 +153,35 @@
       <div class="login-form-side">
         <div class="container--narrow sm-reveal">
           <p class="text-muted back-link"><a class="btn-pill btn-pill--sm" href="../home/index.html"><svg class="btn-pill-arrow btn-pill-arrow--back" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Voltar para o site</a></p>
+          <!-- Acesso rápido (demonstração): os cards são criados pelo main.ts em #acesso-rapido -->
+          <div id="acesso-rapido-area"></div>
+
+          <!-- Entrada com e-mail e senha: só aparece quando o acesso rápido está desligado
+               (VITE_DEMO_LOGIN=false), para o site continuar funcionando depois da apresentação. -->
+          <div id="login-real" hidden>
           <h1>Entrar</h1>
-          <p class="text-muted">Acesse sua conta StartMatch.</p>
-          <div class="spacer-md"></div>
-
-          <form id="form-login">
-            <div class="field">
-              <label for="email">E-mail</label>
-              <input class="input" id="email" name="email" type="email" required />
-            </div>
-            <div class="field">
-              <label for="senha">Senha</label>
-              <input class="input" id="senha" name="senha" type="password" maxlength="8" required />
-            </div>
-
-            <button class="btn btn-primary btn-block" type="submit">Entrar</button>
-            <p class="form-error" id="form-error" role="alert"></p>
-            <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
-          </form>
-
-          <p class="text-muted text-center">
-            Ainda não tem conta? <a class="btn btn-primary" href="../onboarding/index.html">Cadastre-se</a>
-          </p>
+            <p class="text-muted">Acesse sua conta StartMatch.</p>
+            <div class="spacer-md"></div>
+  
+            <form id="form-login">
+              <div class="field">
+                <label for="email">E-mail</label>
+                <input class="input" id="email" name="email" type="email" required />
+              </div>
+              <div class="field">
+                <label for="senha">Senha</label>
+                <input class="input" id="senha" name="senha" type="password" maxlength="8" required />
+              </div>
+  
+              <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+              <p class="form-error" id="form-error" role="alert"></p>
+              <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
+            </form>
+  
+            <p class="text-muted text-center">
+              Ainda não tem conta? <a class="btn btn-primary" href="../onboarding/index.html">Cadastre-se</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

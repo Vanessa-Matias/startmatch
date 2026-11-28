@@ -18,8 +18,16 @@ export const NAV_BY_ROLE: Record<
       label: 'Dashboard',
     },
     {
+      href: '../meu-perfil-startup/index.html',
+      label: 'Perfil',
+    },
+    {
       href: '../busca/index.html',
       label: 'Buscar investidores',
+    },
+    {
+      href: '../investidores-compativeis/index.html',
+      label: 'Investidores compatíveis',
     },
     {
       href: '../interesses-startup/index.html',
@@ -55,6 +63,10 @@ export const NAV_BY_ROLE: Record<
     {
       href: '../dashboard-investidor/index.html',
       label: 'Dashboard',
+    },
+    {
+      href: '../meu-perfil-investidor/index.html',
+      label: 'Perfil',
     },
     {
       href: '../busca/index.html',

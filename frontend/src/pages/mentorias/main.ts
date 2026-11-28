@@ -17,6 +17,8 @@ import { api, ApiError } from '../../scripts/api';
 import { requireAuth } from '../../scripts/auth';
 import { MODALIDADE_LABEL, iniciais, lerPerfilExtra } from '../../scripts/mentorDemo';
 import { renderNav } from '../../scripts/nav';
+import { planoEfetivo, planoPago } from '../../scripts/perfilExtra';
+import { blocoContatos, seloLinkedin } from '../../scripts/perfilUi';
 import type { CotaMensal, Mentor, Mentoria } from '../../scripts/types';
 
 const usuario = requireAuth(['startup']);
@@ -45,6 +47,11 @@ interface MentorExemplo {
   redeParceira: boolean;
   /** Selo azul de verificado. */
   verificado: boolean;
+  /** LinkedIn (badge clicável) e contatos autorizados pelo mentor (LGPD). */
+  linkedin: string;
+  telefone: string;
+  email: string;
+  consentiu: boolean;
 }
 
 // Sem perfis de exemplo: só mentores reais podem receber agendamento.
@@ -117,6 +124,10 @@ function deMentorReal(mentor: Mentor): MentorExemplo {
     mentoriasPorMes: mentor.mentoriasPorMes,
     redeParceira: mentor.vinculoPortoDigital,
     verificado: Boolean(extra.foto && extra.empresa),
+    linkedin: extra.linkedin,
+    telefone: extra.telefone,
+    email: extra.emailContato,
+    consentiu: extra.mostrarContatos && Boolean(extra.telefone || extra.emailContato),
   };
 }
 
@@ -146,6 +157,7 @@ function renderExemplo(mentor: MentorExemplo): string {
         </div>
       </div>
       ${badgeTipo(mentor.redeParceira)}
+      ${mentor.linkedin ? `<div class="selos" style="margin:6px 0">${seloLinkedin(mentor.linkedin)}</div>` : ''}
       <p class="mentor-bio">${mentor.areaAtuacao}</p>
       <p class="mentor-tags">${tags(mentor.especialidades)}</p>
       <div class="mentor-acoes">
@@ -217,6 +229,17 @@ function abrirPerfil(mentor: MentorExemplo): void {
     </ul>
     <p class="mentor-bio">${mentor.bio}</p>
     <p class="mentor-tags">${tags(mentor.especialidades)}</p>
+    ${mentor.linkedin ? `<div class="selos" style="margin:10px 0">${seloLinkedin(mentor.linkedin)}</div>` : ''}
+    <div style="margin:10px 0">
+      <strong>Contatos</strong>
+      ${blocoContatos({
+        contato: { telefone: mentor.telefone, email: mentor.email },
+        consentiu: mentor.consentiu,
+        podeVer: planoPago(planoEfetivo('startup', cota?.plano)),
+        quem: mentor.nome,
+        hrefPlanos: '../plano/index.html',
+      })}
+    </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline" data-fechar>Fechar</button>
       <button type="button" class="btn btn-primary" data-solicitar="${mentor.id}">Agendar mentoria</button>

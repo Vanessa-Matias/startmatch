@@ -8,9 +8,11 @@
 // Inicializar o fundo animado de partículas do Hero.
 
 import { initParticleNetwork } from '../../scripts/particleNetwork';
+import { initPublicNav } from '../../scripts/publicNav';
 import { initReveal } from '../../scripts/reveal';
 
 initReveal();
+initPublicNav();
 
 function iniciarParticulas(): void {
   const canvas = document.getElementById('particle-bg');

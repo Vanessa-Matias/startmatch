@@ -37,6 +37,9 @@ const btnRemoverFoto = document.getElementById('remover-foto') as HTMLButtonElem
 const campo = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const nomeEl = campo<HTMLInputElement>('nome');
 const linkedinEl = campo<HTMLInputElement>('linkedin');
+const telefoneEl = campo<HTMLInputElement>('telefone');
+const emailContatoEl = campo<HTMLInputElement>('emailContato');
+const mostrarContatosEl = campo<HTMLInputElement>('mostrarContatos');
 const cargoEl = campo<HTMLInputElement>('cargo');
 const empresaEl = campo<HTMLInputElement>('empresa');
 const anosEl = campo<HTMLInputElement>('anos');
@@ -111,6 +114,7 @@ function renderPrevia(): void {
       <li><strong>Modalidade:</strong> ${MODALIDADE_LABEL[modalidadeEl.value as Modalidade]}</li>
       <li><strong>Duração:</strong> ${duracaoEl.value === '30' ? '30 minutos' : '1 hora'} · ${escapeHtml(mentoriasMesEl.value || '—')} por mês</li>
       <li><strong>Disponibilidade:</strong> ${escapeHtml(disponibilidadeEl.value.trim() || '—')}</li>
+      <li><strong>Contatos:</strong> ${mostrarContatosEl.checked ? 'visíveis para startups Plus e Premium' : 'protegidos (você não autorizou)'}</li>
     </ul>
   `;
 }
@@ -118,6 +122,9 @@ function renderPrevia(): void {
 function preencher(mentor: Mentor, extra: PerfilExtraMentor): void {
   nomeEl.value = extra.nome || usuario.nome || '';
   linkedinEl.value = extra.linkedin;
+  telefoneEl.value = extra.telefone;
+  emailContatoEl.value = extra.emailContato;
+  mostrarContatosEl.checked = extra.mostrarContatos;
   cargoEl.value = extra.cargo;
   empresaEl.value = extra.empresa;
   anosEl.value = extra.anosExperiencia ? String(extra.anosExperiencia) : '';
@@ -205,6 +212,9 @@ form.addEventListener('submit', async (event) => {
       anosExperiencia: anos > 0 ? anos : null,
       linkedin: linkedinEl.value.trim(),
       foto: fotoAtual,
+      telefone: telefoneEl.value.trim(),
+      emailContato: emailContatoEl.value.trim(),
+      mostrarContatos: mostrarContatosEl.checked,
     });
 
     if (!salvou) {

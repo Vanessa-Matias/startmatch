@@ -17,6 +17,8 @@ import {
   matchesSimulados,
   type MatchExemplo,
 } from '../../scripts/matchSimulado';
+import { avatarImg, generoPorNome } from '../../scripts/avatars';
+import { extraInvestidor, extraStartup } from '../../scripts/perfilExtra';
 import type { Match } from '../../scripts/types';
 
 const usuario = requireAuth(['startup', 'investidor']);
@@ -63,20 +65,6 @@ function getDescricao(match: Match): string {
     : match.startup?.descricao ?? '';
 }
 
-function getInitials(nome: string): string {
-  const partes = nome
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (!partes.length) return 'SM';
-
-  return partes
-    .slice(0, 2)
-    .map((parte) => parte[0].toUpperCase())
-    .join('');
-}
-
 interface CardDados {
   nome: string;
   localizacao: string;
@@ -85,6 +73,8 @@ interface CardDados {
   href: string;
   simulado: boolean;
   novo?: boolean;
+  /** HTML do avatar/logo (img). */
+  avatar: string;
 }
 
 function cardHtml(dados: CardDados): string {
@@ -94,9 +84,7 @@ function cardHtml(dados: CardDados): string {
       href="${dados.href}"
     >
       <div class="match-card-top">
-        <div class="match-avatar">
-          ${getInitials(dados.nome)}
-        </div>
+        ${dados.avatar}
 
         <div>
           <div class="match-card-name">
@@ -139,21 +127,42 @@ function renderCard(match: Match): string {
 
   if (!contraparte) return '';
 
+  const nome = getNome(match);
+  const avatar =
+    usuario.tipo === 'startup' && match.investidor
+      ? (() => {
+          const extra = extraInvestidor({ ...match.investidor, nome });
+          return avatarImg(nome, { genero: extra.genero, foto: extra.foto, tamanho: 48 });
+        })()
+      : match.startup
+        ? (() => {
+            const extra = extraStartup(match.startup);
+            return avatarImg(nome, { tipo: 'startup', cor: extra.logoCor ?? undefined, tamanho: 48 });
+          })()
+        : avatarImg(nome, { genero: generoPorNome(nome), tamanho: 48 });
+
   return cardHtml({
-    nome: getNome(match),
+    nome,
     localizacao: getLocalizacao(match),
     descricao: getDescricao(match),
     score: match.scoreCompatibilidade,
     href: `../mensagens/index.html?matchId=${match.id}`,
     simulado: false,
+    avatar,
   });
 }
 
 function renderExemplo(exemplo: MatchExemplo): string {
+  const eLogo = exemplo.papel === 'startup' || exemplo.id === 'rede-nordeste-anjos';
   return cardHtml({
     ...exemplo,
     href: `../mensagens/index.html?simulado=${exemplo.id}`,
     simulado: true,
+    avatar: avatarImg(exemplo.nome, {
+      tipo: eLogo ? 'startup' : 'pessoa',
+      genero: exemplo.genero,
+      tamanho: 48,
+    }),
   });
 }
 

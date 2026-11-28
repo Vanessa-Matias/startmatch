@@ -19,6 +19,9 @@ import { requireAuth } from '../../scripts/auth';
 import { renderNav } from '../../scripts/nav';
 import { UFS } from '../../scripts/ufs';
 import { TIPO_INVESTIDOR_LABEL, escapeHtml } from '../../scripts/investidor';
+import { avatarImg } from '../../scripts/avatars';
+import { extraInvestidor, extraStartup } from '../../scripts/perfilExtra';
+import { seloVerificado } from '../../scripts/perfilUi';
 import type { Investidor, PaginatedResponse, Segmento, Startup } from '../../scripts/types';
 
 const usuario = requireAuth(['startup', 'investidor']);
@@ -53,24 +56,37 @@ for (const uf of UFS) {
 }
 
 function renderStartupCard(startup: Startup): string {
+  const extra = extraStartup(startup);
   return `
     <a
-      class="card"
+      class="card card-pessoa"
       href="../perfil-startup/index.html?id=${startup.id}"
       style="text-decoration:none;color:inherit"
     >
-      <div class="card-title">${startup.nomeFantasia}</div>
-      <p class="text-muted">${startup.cidade}/${startup.uf}</p>
-      <p>${startup.descricao}</p>
+      <div class="card-pessoa-topo">
+        ${avatarImg(extra.nome, { tipo: 'startup', cor: extra.logoCor ?? undefined, tamanho: 52 })}
+        <div>
+          <div class="card-title">${escapeHtml(startup.nomeFantasia)}</div>
+          <p class="text-muted">${escapeHtml(startup.cidade)}/${escapeHtml(startup.uf)}</p>
+        </div>
+      </div>
+      <p>${escapeHtml(startup.descricao)}</p>
     </a>
   `;
 }
 
 function renderInvestorCard(investidor: Investidor): string {
+  const extra = extraInvestidor(investidor);
   return `
-    <a class="card" href="../perfil-investidor/index.html?id=${investidor.id}" style="text-decoration:none;color:inherit">
-      <div class="card-title">${escapeHtml(investidor.nome ?? 'Investidor')}</div>
-      <p class="text-muted">${TIPO_INVESTIDOR_LABEL[investidor.tipo]} · ${investidor.cidade}/${investidor.uf}</p>
+    <a class="card card-pessoa" href="../perfil-investidor/index.html?id=${investidor.id}" style="text-decoration:none;color:inherit">
+      <div class="card-pessoa-topo">
+        ${avatarImg(extra.nome, { genero: extra.genero, foto: extra.foto, tamanho: 52 })}
+        <div>
+          <div class="card-title">${escapeHtml(investidor.nome ?? 'Investidor')}</div>
+          <p class="text-muted">${TIPO_INVESTIDOR_LABEL[investidor.tipo]} · ${escapeHtml(investidor.cidade)}/${escapeHtml(investidor.uf)}</p>
+        </div>
+      </div>
+      ${extra.verificado ? `<div class="selos" style="margin-bottom:8px">${seloVerificado()}</div>` : ''}
       <p>${escapeHtml(investidor.teseInvestimento)}</p>
       <div>${(investidor.segmentos ?? []).map((seg) => `<span class="badge">${escapeHtml(seg.nome)}</span>`).join(' ')}</div>
     </a>

@@ -33,11 +33,9 @@
 
     <link rel="stylesheet" href="../../styles/components.css" />
 
-    <style>
-      /* =========================================================
-         NAVBAR PÚBLICA
-         ========================================================= */
+    <link rel="stylesheet" href="../../styles/perfil.css" />
 
+    <style>
       /* =========================================================
          HERO
          ========================================================= */
@@ -190,11 +188,11 @@
       .hero p.lead {
         color: #e6ecf7;
 
-        font-size: 17px;
+        font-size: 19px;
 
-        line-height: 1.6;
+        line-height: 1.55;
 
-        max-width: 560px;
+        max-width: 600px;
 
         margin-top: var(--spacing-md);
       }
@@ -210,7 +208,37 @@
 
         flex-wrap: wrap;
 
-        margin-top: var(--spacing-lg);
+        /* botão "Entrar" centralizado na tela */
+        justify-content: center;
+
+        /* afasta o botão "Entrar" do texto do hero */
+        margin-top: 64px;
+      }
+
+      /* botão "Entrar" do hero aparece só no celular (no computador
+         a barra fixa já tem o link "Entrar") */
+      .hero .actions {
+        display: none;
+      }
+
+      @media (max-width: 720px) {
+        .hero .actions {
+          display: flex;
+        }
+      }
+
+      /* Botões "Entrar" (hero e banner final): mesmo estilo do
+         "Ver como funciona em detalhes" (.btn-pill, em components.css) */
+      .hero .actions .btn-pill,
+      .cta-final-actions .btn-pill {
+        font-size: 18px;
+
+        font-weight: 700;
+
+        /* formato anterior: fino, largo nas laterais e quase quadrado */
+        padding: 8px 48px;
+
+        border-radius: 4px;
       }
 
       /* "Já tenho conta": verde sólido (mesma cor do destaque do título),
@@ -242,6 +270,156 @@
           0 10px 20px -8px rgba(22, 163, 74, 0.55);
 
         outline: none;
+      }
+
+      /* botão "Ver como funciona em detalhes" centralizado */
+      .como-funciona-cta {
+        text-align: center;
+      }
+
+      /* =========================================================
+         CARDS "COMO FUNCIONA" (Home): filete lateral colorido e
+         ícone à direita do título, tudo no azul do site.
+         ========================================================= */
+
+      .step-card {
+        --step-rgb: 47, 111, 235;
+        border-left: 3px solid rgb(var(--step-rgb));
+      }
+
+
+      .step-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+      }
+
+      .step-icon {
+        display: inline-grid;
+
+        place-items: center;
+
+        width: 34px;
+        height: 34px;
+
+        flex-shrink: 0;
+
+        border-radius: 10px;
+
+        /* ícone depois do texto do título */
+        order: 2;
+
+        /* mesmo degradê azul→verde claro dos ícones de Recursos, Sobre e
+           "Como o match é calculado", com o traço em azul */
+        background: linear-gradient(135deg, #e8f0ff, #e3f7ea);
+
+        color: #2f6feb;
+      }
+
+      .step-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* =========================================================
+         CARDS "PARA QUEM É": mesmo degradê de níveis dos Planos
+         Startups → branco acinzentado | Investidores → azul |
+         Mentores → azul-marinho com brilho neon. Ícones em azul.
+         ========================================================= */
+
+      /* ícone à direita do nome, como nos cards de "Como funciona" */
+      .persona-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+      }
+
+      .personas-section .persona-title .icon-circle {
+        width: 34px;
+
+        height: 34px;
+
+        border-radius: 10px;
+
+        margin: 0;
+      }
+
+      .personas-section .persona-title .icon-circle svg {
+        width: 18px;
+
+        height: 18px;
+      }
+
+      .persona-card .icon-circle {
+        background: #ffffff;
+
+        color: var(--color-accent);
+
+        box-shadow: 0 0 0 1px rgba(47, 111, 235, 0.25);
+      }
+
+      .persona-card .icon-circle svg {
+        stroke: var(--color-accent);
+      }
+
+      .persona--startups {
+        background: linear-gradient(160deg, #ffffff 0%, #eef1f6 100%);
+
+        border: 1px solid #dde3ec;
+
+        box-shadow: 0 8px 22px -14px rgba(15, 33, 72, 0.35);
+      }
+
+      .persona--startups .card-feature > p,
+      .persona--startups.card-feature > p,
+      .persona--startups .persona-benefits li {
+        color: var(--color-text);
+      }
+
+      .persona--startups .persona-benefits svg {
+        stroke: var(--color-accent);
+      }
+
+      .persona--investidores {
+        background: linear-gradient(160deg, #1d4ed8 0%, #3b82f6 100%);
+
+        border: 1px solid rgba(147, 197, 253, 0.55);
+
+        box-shadow: 0 12px 28px -12px rgba(59, 130, 246, 0.55);
+      }
+
+      .persona--mentores {
+        background: linear-gradient(160deg, #0a1430 0%, #0f2148 100%);
+
+        border: 1px solid rgba(56, 189, 248, 0.6);
+
+        box-shadow:
+          0 0 0 1px rgba(56, 189, 248, 0.12),
+          0 0 22px -4px rgba(56, 189, 248, 0.5);
+      }
+
+      .persona--investidores .card-title,
+      .persona--mentores .card-title {
+        color: #ffffff;
+      }
+
+      .persona--investidores.card-feature > p,
+      .persona--investidores .persona-benefits li {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .persona--mentores.card-feature > p,
+      .persona--mentores .persona-benefits li {
+        color: #c7d4ee;
+      }
+
+      .persona--investidores .persona-benefits svg,
+      .persona--mentores .persona-benefits svg {
+        stroke: #bfdbfe;
       }
 
       /* =========================================================
@@ -346,7 +524,9 @@
 
         display: flex;
 
-        align-items: center;
+        /* o conteúdo ocupa toda a altura do banner, para o botão
+           "Criar conta grátis" ficar no final dele */
+        align-items: stretch;
 
         padding: clamp(40px, 4vw, 64px) 0;
 
@@ -387,6 +567,9 @@
 
         align-items: flex-start;
 
+        /* texto no topo, botão no final do banner */
+        justify-content: space-between;
+
         gap: var(--spacing-lg);
       }
 
@@ -419,12 +602,19 @@
         color: transparent;
       }
 
-      .cta-final p {
-        color: #e6ecf7;
+      /* frase de apoio logo abaixo do título, em branco */
+      .cta-final-text {
+        color: #ffffff;
 
-        font-size: 16px;
+        font-size: clamp(17px, 1.4vw, 20px);
 
-        margin: 0;
+        font-weight: 400;
+
+        line-height: 1.55;
+
+        max-width: 520px;
+
+        margin: var(--spacing-md) 0 0;
       }
 
       .cta-final-actions {
@@ -496,7 +686,7 @@
         }
 
         .hero p.lead {
-          font-size: 15px;
+          font-size: 16px;
 
           line-height: 1.55;
         }
@@ -517,10 +707,17 @@
           gap: 10px;
 
           width: 100%;
+
+          /* afasta os botões do texto acima */
+          margin-top: 56px;
+        }
+
+        .hero .actions {
+          align-items: center;
         }
 
         .hero .actions .btn {
-          width: 100%;
+          width: auto;
         }
 
         /* -------------------------------------------------------
@@ -535,19 +732,30 @@
            CTA
            ------------------------------------------------------- */
 
-        /* no celular o texto vem primeiro e a imagem ocupa a faixa de baixo */
+        /* no celular o texto vem primeiro e a imagem vertical
+           (banner1.mobile.png) ocupa a parte de baixo */
         .cta-final {
           display: block;
 
           min-height: 0;
 
-          padding: var(--spacing-xl) 0 calc(33.4vw + var(--spacing-lg));
+          padding: var(--spacing-xl) 0 calc(105vw + var(--spacing-lg));
         }
 
         .cta-final::before {
           top: auto;
+          left: 0;
+          right: 0;
 
-          height: 33.4vw;
+          height: min(150vw, 700px);
+
+          aspect-ratio: auto;
+
+          background: url('/imagens/banner1.mobile.png') center bottom / cover
+            no-repeat;
+
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 35%);
         }
 
         .cta-final-inner {
@@ -560,14 +768,39 @@
           text-align: center;
         }
 
-        .cta-final-actions {
-          align-items: center;
+        .cta-final-text {
+          margin-left: auto;
+          margin-right: auto;
+        }
 
-          width: 100%;
+        /* botão "Entrar" no final do banner, por cima da parte
+           de baixo da imagem */
+        .cta-final-inner {
+          position: static;
+        }
+
+        /* mantém o texto por cima da imagem (senão a imagem, com
+           transparência, cobre o texto e ele fica acinzentado) */
+        .cta-final-copy {
+          position: relative;
+
+          z-index: 1;
+        }
+
+        .cta-final-actions {
+          position: absolute;
+
+          z-index: 1;
+
+          left: var(--spacing-md);
+          right: var(--spacing-md);
+          bottom: var(--spacing-xl);
+
+          align-items: center;
         }
 
         .cta-final-actions .btn {
-          width: 100%;
+          width: auto;
         }
       }
 
@@ -601,7 +834,21 @@
         <!-- MENU NORMAL
              Sem hambúrguer e sem esconder no celular -->
 
-        <nav aria-label="Navegação principal">
+        <!-- No celular os links ficam num painel aberto pelo botão de
+             3 linhas (scripts/publicNav.ts); no computador aparecem
+             todos na barra, como sempre. -->
+        <nav class="public-menu" aria-label="Navegação principal">
+          <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-controls="public-menu-links"
+            aria-label="Abrir menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="public-menu-links" id="public-menu-links">
           <a href="./index.html"> Home </a>
 
           <a href="../sobre/index.html"> Sobre </a>
@@ -612,13 +859,26 @@
 
           <a href="../planos/index.html"> Planos </a>
 
-
+          <!-- Quem criou o StartMatch: no computador abre um menu suspenso;
+               no celular fica dentro do painel do botão de menu. -->
+          <details class="nav-creators">
+            <summary>
+              <span class="nav-creators-long">Quem criou o StartMatch</span>
+              <span class="nav-creators-short">Quem criou</span>
+            </summary>
+            <div class="nav-creators-list">
+              <a class="nav-creator" data-creator="agnes" href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Letícia</a>
+              <a class="nav-creator" data-creator="vanessa" href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+              <a class="nav-creator" data-creator="wedja" href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>
+            </div>
+          </details>
 
           <a href="../login/index.html"> Entrar </a>
 
           <a class="btn btn-accent" href="../onboarding/index.html">
             Criar conta
           </a>
+          </div>
         </nav>
       </div>
     </header>
@@ -641,27 +901,18 @@
           Conectando Startups,
 
           <span class="highlight sm-gradient-text">
-            Investidores e mentores </span
-          >.
+            Investidores e mentores
+          </span>
         </h1>
 
         <p class="lead">
-          Uma plataforma de matchmaking para o ecossistema de startups e
-          economia criativa: cadastro, busca, manifestação de interesse e match
-          — tudo num só lugar.
+          Encontre quem faz o seu negócio crescer. Dê match com startups,
+          investidores e mentores do Porto Digital — e comece a conversar hoje.
         </p>
 
         <div class="actions">
-          <a
-            class="btn btn-primary"
-            id="cta-criar-conta"
-            href="../onboarding/index.html"
-          >
-            Criar conta grátis
-          </a>
-
-          <a class="btn btn-outline" id="cta-entrar" href="../login/index.html">
-            Já tenho conta
+          <a class="btn-pill" id="cta-entrar" href="../login/index.html">
+            Entrar
           </a>
         </div>
       </div>
@@ -687,8 +938,8 @@
           <div class="spacer-sm"></div>
 
           <div class="grid">
-            <div class="card sm-reveal" style="animation-delay: 0s">
-              <div class="card-title">1. Conheça</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span>1. Conheça</div>
 
               <p class="text-muted">
                 Entenda como a plataforma conecta startups, investidores e
@@ -696,24 +947,24 @@
               </p>
             </div>
 
-            <div class="card sm-reveal" style="animation-delay: 0.06s">
-              <div class="card-title">2. Crie sua conta</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0.06s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span>2. Crie sua conta</div>
 
               <p class="text-muted">
                 Escolha seu perfil: Startup, Investidor ou Mentor.
               </p>
             </div>
 
-            <div class="card sm-reveal" style="animation-delay: 0.12s">
-              <div class="card-title">3. Complete o perfil</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0.12s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.7 1.6-2.5 3-2.5s2.5.8 3 2.5M14 9h4M14 13h4"/></svg></span>3. Complete o perfil</div>
 
               <p class="text-muted">
                 Segmento, estágio, tese de investimento ou área de mentoria.
               </p>
             </div>
 
-            <div class="card sm-reveal" style="animation-delay: 0.18s">
-              <div class="card-title">4. Busque oportunidades</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0.18s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>4. Busque oportunidades</div>
 
               <p class="text-muted">
                 Filtros por segmento, estágio, localização e faixa de
@@ -721,16 +972,16 @@
               </p>
             </div>
 
-            <div class="card sm-reveal" style="animation-delay: 0.24s">
-              <div class="card-title">5. Demonstre interesse</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0.24s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>5. Demonstre interesse</div>
 
               <p class="text-muted">
                 Quando o interesse é mútuo, nasce um Match.
               </p>
             </div>
 
-            <div class="card sm-reveal" style="animation-delay: 0.3s">
-              <div class="card-title">6. Feche negócio</div>
+            <div class="card step-card sm-reveal" style="animation-delay: 0.3s">
+              <div class="card-title step-title"><span class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10l2.5 2.5L16 7"/></svg></span>6. Feche negócio</div>
 
               <p class="text-muted">
                 Converse pelo chat da plataforma e avance a parceria.
@@ -740,7 +991,7 @@
 
           <div class="spacer-md"></div>
 
-          <p>
+          <p class="como-funciona-cta">
             <a class="btn-pill" href="../como-funciona/index.html">Ver como funciona em detalhes <svg class="btn-pill-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </p>
         </section>
@@ -752,7 +1003,7 @@
              ===================================================== -->
 
         <section class="personas-section">
-          <span class="section-eyebrow green"> PARA QUEM É </span>
+          <span class="section-eyebrow blue"> PARA QUEM É </span>
 
           <h2>Para quem é o StartMatch</h2>
 
@@ -766,9 +1017,8 @@
                  STARTUPS
                  ================================================= -->
 
-            <div class="card card-feature sm-reveal">
-              <div class="icon-circle" style="background: #eff6ff">
-                <svg
+            <div class="card card-feature persona-card persona--startups sm-reveal">
+              <div class="card-title persona-title">Startups<span class="icon-circle"><svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -783,10 +1033,7 @@
                   ></path>
 
                   <path d="M9.5 12.5l2 2 3.5-4"></path>
-                </svg>
-              </div>
-
-              <div class="card-title">Startups</div>
+                </svg></span></div>
 
               <p class="text-muted">
                 Ganhe visibilidade, encontre investidores compatíveis e acesse
@@ -835,11 +1082,10 @@
                  ================================================= -->
 
             <div
-              class="card card-feature sm-reveal"
+              class="card card-feature persona-card persona--investidores sm-reveal"
               style="animation-delay: 0.08s"
             >
-              <div class="icon-circle" style="background: #ecfdf5">
-                <svg
+              <div class="card-title persona-title">Investidores<span class="icon-circle"><svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -852,10 +1098,7 @@
                   <path d="M3 17l6-6 4 4 8-9"></path>
 
                   <path d="M15 6h6v6"></path>
-                </svg>
-              </div>
-
-              <div class="card-title">Investidores</div>
+                </svg></span></div>
 
               <p class="text-muted">
                 Descubra startups do Porto Digital alinhadas à sua tese, com
@@ -904,11 +1147,10 @@
                  ================================================= -->
 
             <div
-              class="card card-feature sm-reveal"
+              class="card card-feature persona-card persona--mentores sm-reveal"
               style="animation-delay: 0.16s"
             >
-              <div class="icon-circle" style="background: #fef2f2">
-                <svg
+              <div class="card-title persona-title">Mentores<span class="icon-circle"><svg
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -927,10 +1169,7 @@
                   <circle cx="18" cy="9" r="2.3"></circle>
 
                   <path d="M15.8 13.6c2.3.2 4.2 2.1 4.2 4.9"></path>
-                </svg>
-              </div>
-
-              <div class="card-title">Mentores</div>
+                </svg></span></div>
 
               <p class="text-muted">
                 Compartilhe experiência, construa rede de contatos e ganhe
@@ -1012,25 +1251,23 @@
         </div>
       </div>
 
-      <section class="cta-final sm-reveal">
+      <section class="cta-final">
         <div class="container cta-final-inner">
           <div class="cta-final-copy">
-            <span class="section-eyebrow dark">Pronto para começar?</span>
-
             <h2>
               Um match perfeito
               <span class="highlight">a um clique de distância</span>
             </h2>
 
-            <p>
-              Leva menos de 5 minutos para criar sua conta e completar o
-              perfil — sem cartão, sem burocracia.
+            <p class="cta-final-text">
+              Crie sua conta em menos de 5 minutos, sem cartão de crédito e
+              sem burocracia.
             </p>
           </div>
 
           <div class="cta-final-actions">
-            <a class="btn btn-primary" href="../onboarding/index.html">
-              Criar conta grátis
+            <a class="btn-pill" href="../login/index.html">
+              Entrar
             </a>
 
             <span class="form-hint"></span>
@@ -1046,11 +1283,7 @@
     <footer class="site-footer">
       <div class="container">
         <p class="copy copy-rights">
-          © 2026 StartMatch. Todos os direitos reservados a
-          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
-          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
-          e
-          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
+          © 2026 StartMatch. Todos os direitos reservados.
         </p>
       </div>
     </footer>

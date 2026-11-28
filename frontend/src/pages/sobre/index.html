@@ -16,7 +16,7 @@
 
   IDENTIDADE VISUAL:
 
-  Cabeçalho escuro (.page-hero), cards com ícones próprios
+  Cabeçalho só com textos (.page-hero), cards com ícones próprios
 
   e espaçamento maior entre os blocos.
 
@@ -44,29 +44,68 @@
 
     <link rel="stylesheet" href="../../styles/components.css" />
 
+    <link rel="stylesheet" href="../../styles/perfil.css" />
+
     <style>
-      /* Grid exclusivo da página Sobre */
+      /* Grid da página Sobre: 2 colunas no computador, 1 no celular.
+         Cards compactos no mesmo padrão de Recursos: ícone ao lado do
+         título e descrição embaixo, em largura total. */
       .sobre-cards {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: var(--spacing-lg);
+        gap: var(--spacing-md);
         width: 100%;
+        max-width: 960px;
+        margin: 0 auto;
       }
-
-      /* Todos os cards possuem a mesma altura */
       .sobre-cards .card-feature {
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        align-content: start;
+        column-gap: 12px;
+        row-gap: 6px;
+        padding: 16px 18px;
+      }
+      .sobre-cards .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        margin-bottom: 0;
+      }
+      .sobre-cards .icon-circle {
+        /* mesmo degradê azul→verde claro dos ícones de "Como o match é
+           calculado" (Como funciona), com o traço em azul */
+        background: linear-gradient(135deg, #e8f0ff, #e3f7ea);
+      }
+      .sobre-cards .icon-circle svg {
+        width: 20px;
+        height: 20px;
+        stroke: #2f6feb;
+      }
+      .sobre-cards .card-title {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      .sobre-cards .card-feature > p {
+        grid-column: 1 / -1;
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.93rem;
+        line-height: 1.55;
       }
 
       @media (max-width: 720px) {
         .sobre-cards {
           grid-template-columns: 1fr;
+          gap: 12px;
         }
-
         .sobre-cards .card-feature {
-          height: auto;
+          padding: 14px 16px;
+        }
+        .sobre-cards .icon-circle {
+          width: 38px;
+          height: 38px;
         }
       }
     </style>
@@ -77,7 +116,18 @@
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
 
-        <nav>
+        <nav class="public-menu" aria-label="Navegação principal">
+          <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-controls="public-menu-links"
+            aria-label="Abrir menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="public-menu-links" id="public-menu-links">
           <a href="../home/index.html">Home</a>
 
           <a href="./index.html">Sobre</a>
@@ -88,6 +138,20 @@
 
           <a href="../planos/index.html">Planos</a>
 
+          <!-- Quem criou o StartMatch: no computador abre um menu suspenso;
+               no celular fica dentro do painel do botão de menu. -->
+          <details class="nav-creators">
+            <summary>
+              <span class="nav-creators-long">Quem criou o StartMatch</span>
+              <span class="nav-creators-short">Quem criou</span>
+            </summary>
+            <div class="nav-creators-list">
+              <a class="nav-creator" data-creator="agnes" href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Letícia</a>
+              <a class="nav-creator" data-creator="vanessa" href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+              <a class="nav-creator" data-creator="wedja" href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>
+            </div>
+          </details>
+
 
 
           <a href="../login/index.html">Entrar</a>
@@ -95,17 +159,13 @@
           <a class="btn btn-accent" href="../onboarding/index.html">
             Criar conta
           </a>
+          </div>
         </nav>
       </div>
     </header>
 
     <section class="page-hero">
       <div class="container">
-        <span
-          class="section-eyebrow dark"
-        >
-          SOBRE O PROJETO
-        </span>
 
         <h1>Sobre o StartMatch</h1>
 
@@ -125,7 +185,7 @@
         <!-- MISSÃO -->
 
         <div class="card card-feature sm-reveal">
-          <div class="icon-circle" style="background: #eff6ff">
+          <div class="icon-circle">
             <svg
               width="24"
               height="24"
@@ -154,7 +214,7 @@
         <!-- O PROBLEMA -->
 
         <div class="card card-feature sm-reveal" style="animation-delay: 0.06s">
-          <div class="icon-circle" style="background: #fef2f2">
+          <div class="icon-circle">
             <svg
               width="22"
               height="22"
@@ -188,7 +248,7 @@
         <!-- A SOLUÇÃO -->
 
         <div class="card card-feature sm-reveal" style="animation-delay: 0.12s">
-          <div class="icon-circle" style="background: #ecfdf5">
+          <div class="icon-circle">
             <svg
               width="22"
               height="22"
@@ -218,7 +278,7 @@
         <!-- ECOSSISTEMA PORTO DIGITAL -->
 
         <div class="card card-feature sm-reveal" style="animation-delay: 0.18s">
-          <div class="icon-circle" style="background: #eff6ff">
+          <div class="icon-circle">
             <svg
               width="24"
               height="24"
@@ -258,11 +318,7 @@
     <footer class="site-footer">
       <div class="container">
         <p class="copy copy-rights">
-          © 2026 StartMatch. Todos os direitos reservados a
-          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
-          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
-          e
-          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
+          © 2026 StartMatch. Todos os direitos reservados.
         </p>
       </div>
     </footer>

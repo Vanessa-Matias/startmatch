@@ -10,6 +10,8 @@
 
 // /investors/me ou /mentors/me.
 
+import { initPublicNav } from '../../scripts/publicNav';
 import { initReveal } from '../../scripts/reveal';
 
 initReveal();
+initPublicNav();

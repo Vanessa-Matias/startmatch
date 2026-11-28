@@ -1,0 +1,220 @@
+<!--
+  Tela: Meu perfil (investidor) — assistente de 3 passos
+  =======================================================
+  Item "Perfil" do menu do investidor, no mesmo estilo do perfil do mentor.
+  Passo 1: informações básicas (foto, nome, telefone, e-mail, LinkedIn)
+  Passo 2: o que você busca (segmentos, estágio, ticket)
+  Passo 3: sobre você, consentimento LGPD e plano
+  Ao lado, uma prévia ao vivo de como as startups veem o perfil.
+
+  APRESENTAÇÃO: tudo é salvo só neste navegador (localStorage), nada vai para o
+  banco. Ver scripts/perfilExtra.ts.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Meu perfil de investidor</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/perfil.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-head">
+        <span class="section-eyebrow blue">Meu perfil</span>
+        <h1>Perfil do investidor</h1>
+        <p>
+          Assim as startups conhecem você. Preencha em 3 passos rápidos; a prévia ao lado mostra
+          o resultado na hora.
+        </p>
+      </div>
+
+      <p class="demo-aviso">
+        Modo apresentação: as alterações ficam salvas só neste navegador e não vão para o banco de dados.
+      </p>
+
+      <div class="perfil-layout">
+        <form id="form-perfil" novalidate>
+          <ol class="stepper" aria-label="Passos do perfil">
+            <li data-passo="1"><span class="num">1</span><span class="txt">Informações básicas</span></li>
+            <li data-passo="2"><span class="num">2</span><span class="txt">O que você busca</span></li>
+            <li data-passo="3"><span class="num">3</span><span class="txt">Sobre você e plano</span></li>
+          </ol>
+
+          <!-- PASSO 1 -->
+          <section class="form-section passo" data-passo="1">
+            <div class="form-section-head">
+              <span class="step-badge">1</span>
+              <div>
+                <h2>Informações básicas</h2>
+                <p>Quem você é e como falar com você.</p>
+              </div>
+            </div>
+
+            <div class="foto-campo">
+              <span id="foto-slot"></span>
+              <div class="foto-acoes">
+                <div class="foto-botoes">
+                  <label class="btn btn-outline" for="foto">Enviar foto</label>
+                  <button type="button" class="btn btn-outline" id="remover-foto" hidden>Usar desenho</button>
+                </div>
+                <input class="visually-hidden" id="foto" type="file" accept="image/png, image/jpeg, image/webp" />
+                <p class="form-hint">Sem foto, mostramos um desenho gerado. A imagem enviada fica só neste navegador.</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label-like">Desenho do avatar</span>
+              <div class="escolhas" role="radiogroup" aria-label="Desenho do avatar">
+                <label class="escolha"><input type="radio" name="genero" value="f" /><span>Mulher</span></label>
+                <label class="escolha"><input type="radio" name="genero" value="m" /><span>Homem</span></label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="nome">Nome completo</label>
+                <input class="input" id="nome" type="text" placeholder="Ex.: Carlos Menezes" autocomplete="name" />
+              </div>
+              <div class="field">
+                <label for="linkedin">LinkedIn</label>
+                <input class="input" id="linkedin" type="url" placeholder="https://www.linkedin.com/in/seu-perfil" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="telefone">Telefone</label>
+                <input class="input" id="telefone" type="tel" placeholder="(81) 99999-9999" autocomplete="tel" />
+              </div>
+              <div class="field">
+                <label for="email">E-mail de contato</label>
+                <input class="input" id="email" type="email" placeholder="voce@exemplo.com.br" autocomplete="email" />
+              </div>
+            </div>
+
+            <div class="passos-nav">
+              <span></span>
+              <button type="button" class="btn btn-primary" data-prox>Próximo: o que você busca</button>
+            </div>
+          </section>
+
+          <!-- PASSO 2 -->
+          <section class="form-section passo" data-passo="2" hidden>
+            <div class="form-section-head">
+              <span class="step-badge">2</span>
+              <div>
+                <h2>O que você busca</h2>
+                <p>Segmentos, estágio e valor do investimento.</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label-like">Segmentos de interesse</span>
+              <div class="escolhas" id="segmentos"><span class="text-muted">Carregando segmentos…</span></div>
+            </div>
+
+            <div class="field">
+              <span class="label-like">Estágio das startups</span>
+              <div class="escolhas" id="estagios"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="ticketMin">Ticket mínimo (R$)</label>
+                <input class="input" id="ticketMin" type="number" min="0" step="1000" placeholder="50000" />
+              </div>
+              <div class="field">
+                <label for="ticketMax">Ticket máximo (R$)</label>
+                <input class="input" id="ticketMax" type="number" min="0" step="1000" placeholder="300000" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="cidade">Cidade</label>
+                <input class="input" id="cidade" type="text" placeholder="Recife" />
+              </div>
+              <div class="field">
+                <label for="uf">UF</label>
+                <select class="select" id="uf"></select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="procura">O que você procura em uma startup</label>
+              <textarea class="textarea" id="procura" placeholder="Ex.: Startups em MVP com clientes pagantes e time dedicado."></textarea>
+            </div>
+
+            <div class="passos-nav">
+              <button type="button" class="btn btn-outline" data-ant>Voltar</button>
+              <button type="button" class="btn btn-primary" data-prox>Próximo: sobre você e plano</button>
+            </div>
+          </section>
+
+          <!-- PASSO 3 -->
+          <section class="form-section passo" data-passo="3" hidden>
+            <div class="form-section-head">
+              <span class="step-badge">3</span>
+              <div>
+                <h2>Sobre você e plano</h2>
+                <p>Conte sua trajetória, autorize os contatos e escolha o plano.</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="bio">Biografia</label>
+              <textarea class="textarea" id="bio" placeholder="Conte sua trajetória e como você costuma ajudar as startups."></textarea>
+            </div>
+
+            <div class="consent-box" style="margin-bottom: var(--spacing-md)">
+              <div class="checkbox-row">
+                <input id="mostrarContatos" type="checkbox" />
+                <label for="mostrarContatos">Eu concordo em mostrar meus dados pessoais</label>
+              </div>
+              <p class="form-hint">
+                Telefone e e-mail aparecem somente para startups com plano Plus ou Premium. Você pode
+                desmarcar quando quiser (LGPD, Lei 13.709/2018).
+              </p>
+            </div>
+
+            <div class="field">
+              <span class="label-like">Plano</span>
+              <div id="planos"></div>
+              <p class="form-hint">Demonstração: nenhuma cobrança é feita.</p>
+            </div>
+
+            <div class="passos-nav">
+              <button type="button" class="btn btn-outline" data-ant>Voltar</button>
+              <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar perfil</button>
+            </div>
+            <p class="form-success" id="form-success" role="status" aria-live="polite"></p>
+            <p class="form-error" id="form-error" role="alert"></p>
+          </section>
+        </form>
+
+        <!-- PRÉVIA AO VIVO -->
+        <aside class="previa" aria-label="Prévia do seu perfil">
+          <p class="previa-titulo">Como as startups veem seu perfil</p>
+          <div class="card previa-card" id="previa"></div>
+        </aside>
+      </div>
+
+      <div class="spacer-xl"></div>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

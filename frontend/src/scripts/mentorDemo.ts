@@ -52,6 +52,11 @@ export interface PerfilExtraMentor {
   linkedin: string;
   /** Foto já reduzida para ~320px, em data URL (JPEG). */
   foto: string;
+  /** Contatos que o mentor autorizou mostrar (LGPD). */
+  telefone: string;
+  emailContato: string;
+  /** "Eu concordo em mostrar meus dados pessoais": só então telefone e e-mail aparecem. */
+  mostrarContatos: boolean;
 }
 
 export const MODALIDADE_LABEL: Record<Modalidade, string> = {
@@ -67,6 +72,9 @@ const PERFIL_VAZIO: PerfilExtraMentor = {
   anosExperiencia: null,
   linkedin: '',
   foto: '',
+  telefone: '',
+  emailContato: '',
+  mostrarContatos: false,
 };
 
 export function lerPerfilExtra(mentorId: number): PerfilExtraMentor {

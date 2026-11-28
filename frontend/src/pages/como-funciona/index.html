@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/perfil.css" />
     <style>
       /* Timeline horizontal: linha contínua passando pelos .step-badge,
          ligando os 6 passos da esquerda para a direita como uma linha do
@@ -34,6 +35,8 @@
       }
       .timeline {
         position: relative;
+        /* camada própria: linhas (z 0) sempre atrás dos passos (z 1) */
+        isolation: isolate;
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
         column-gap: 56px;
@@ -48,10 +51,60 @@
         left: calc(100% / 12);
         right: calc(100% / 12);
         height: 2px;
-        background: linear-gradient(90deg, #bfdbfe, #e2e5ea);
+        /* trilho tracejado claro; o preenchimento azul vem no ::after */
+        background: repeating-linear-gradient(
+          90deg,
+          #cbd5e1 0 8px,
+          transparent 8px 14px
+        );
+      }
+
+      /* Preenchimento tracejado azul neon que avança conforme a rolagem
+         (main.ts calcula --line-start e --fill em px) */
+      .timeline::after {
+        content: '';
+        position: absolute;
+        z-index: 0;
+        top: 21px;
+        /* computador: tracejado azul completo, de ponta a ponta (fixo) */
+        left: calc(100% / 12);
+        right: calc(100% / 12);
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg,
+          #3b82f6 0 8px,
+          transparent 8px 14px
+        );
+        filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.9));
+        pointer-events: none;
+      }
+
+      /* bolinha acesa: azul neon dos botões principais */
+      .timeline-item .step-badge {
+        transition:
+          background 0.3s ease,
+          color 0.3s ease,
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
+      }
+      /* computador e tablet: todas as bolinhas já acesas; no celular
+         elas acendem com a rolagem (.is-active, via main.ts) */
+      .timeline-item .step-badge,
+      .timeline-item.is-active .step-badge {
+        background: linear-gradient(
+          135deg,
+          var(--color-accent),
+          var(--color-accent-hover)
+        );
+        color: #fff;
+        box-shadow:
+          0 0 0 6px var(--color-bg, #fff),
+          0 0 18px 4px rgba(59, 130, 246, 0.65);
+        transform: scale(1.06);
       }
       .timeline-item {
         position: relative;
+        z-index: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -64,8 +117,8 @@
         width: 44px;
         height: 44px;
         font-size: 16px;
-        /* recorta a linha atrás do número */
-        box-shadow: 0 0 0 6px var(--color-bg, #fff);
+        /* o anel claro (box-shadow) que recorta a linha atrás do número
+           está na regra da bolinha acesa, acima */
       }
       .timeline-item .timeline-body {
         display: flex;
@@ -90,100 +143,290 @@
         text-wrap: pretty;
       }
 
-      /* Banner "como o match é calculado": faixa escura de ponta a ponta
-         dividida em duas partes, para nenhum texto ficar sobre as mãos:
-         1) .match-banner-visual: a imagem, com o título na área escura
-            vazia do topo;
-         2) .match-banner-criteria: os três critérios numa barra logo
-            abaixo da imagem, no mesmo fundo escuro. */
-      .match-banner {
-        width: 100%;
-        background-color: #01060f;
-        color: #ffffff;
-      }
-      .match-banner-visual {
+      /* =========================================================
+         IA NO STARTMATCH (banner2.ia.mobile.png)
+         Desktop: imagem à direita, texto à esquerda.
+         Celular: texto no topo e a imagem vertical embaixo.
+         ========================================================= */
+      .ia-banner {
         position: relative;
-        min-height: clamp(420px, 36vw, 600px);
-        background-image: url('/imagens/banner.png');
-        background-size: cover;
-        background-position: center 55%;
-        background-repeat: no-repeat;
+        overflow: hidden;
+        background-color: #01060f;
+        color: #fff;
       }
-      /* escurece o topo (contraste do título) e funde a base da imagem
-         com a barra de critérios, sem emenda */
-      .match-banner-visual::before {
+      .ia-banner::before {
         content: '';
         position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(
-            180deg,
-            rgba(1, 6, 15, 0.8) 0%,
-            rgba(1, 6, 15, 0.35) 30%,
-            rgba(1, 6, 15, 0) 45%
-          ),
-          linear-gradient(0deg, #01060f 0%, rgba(1, 6, 15, 0) 18%);
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: min(46%, 640px);
+        background: url('/imagens/banner2.ia.mobile.png') center / cover no-repeat;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 45%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 45%);
         pointer-events: none;
       }
-      .match-banner-visual .container {
+      .container.ia-banner-inner {
         position: relative;
         z-index: 1;
-        padding-top: clamp(40px, 4.5vw, 72px);
+        padding-top: clamp(48px, 6vw, 96px);
+        padding-bottom: clamp(48px, 6vw, 96px);
       }
-      .match-banner-criteria {
-        padding: var(--spacing-md) 0 clamp(40px, 4.5vw, 64px);
+      .ia-banner-copy {
+        max-width: 640px;
       }
-      .match-banner h2 {
+      .ia-banner .section-eyebrow {
+        position: static;
+        top: auto;
+      }
+      .ia-banner h2 {
+        margin: 8px 0 var(--spacing-md);
+        color: #fff;
+      }
+      .ia-banner h2 .highlight {
+        color: #60a5fa;
+      }
+      .ia-banner-copy > p {
+        color: #c7d4ee;
+        margin: 0 0 var(--spacing-lg);
+      }
+      .ia-pontos {
+        list-style: none;
+        margin: 0 0 var(--spacing-md);
+        padding: 0;
+        display: grid;
+        gap: var(--spacing-md);
+      }
+      .ia-pontos li {
+        padding: 14px 16px;
+        border-left: 3px solid #3b82f6;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        color: #e6edfb;
+        font-size: 0.97rem;
+      }
+      .ia-pontos li:nth-child(2) {
+        border-left-color: #22c55e;
+      }
+      .ia-pontos li:nth-child(3) {
+        border-left-color: #a78bfa;
+      }
+      .ia-pontos strong {
+        display: block;
+        color: #fff;
+        margin-bottom: 2px;
+      }
+      .ia-nota {
+        font-size: 0.82rem;
+        color: #9fb2d6;
+      }
+      /* Computador/tablet: bloco centralizado na área livre à esquerda
+         da imagem, com os textos alinhados à esquerda */
+      @media (min-width: 721px) {
+        .container.ia-banner-inner {
+          max-width: none;
+          padding-left: var(--spacing-xl);
+          padding-right: calc(min(46%, 640px) + var(--spacing-md));
+        }
+        .ia-banner-copy {
+          margin: 0 auto;
+          text-align: left;
+        }
+      }
+
+      /* botão "Entrar" do banner de IA: só no celular, embaixo da imagem */
+      .ia-banner-cta {
+        display: none;
+      }
+      @media (max-width: 720px) {
+        .container.ia-banner-inner {
+          padding-bottom: 112vw;
+        }
+        .ia-banner::before {
+          top: auto;
+          left: 0;
+          width: 100%;
+          height: min(165vw, 680px);
+          background-position: center bottom;
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 40%);
+        }
+        .ia-banner-cta {
+          display: flex;
+          justify-content: center;
+          position: absolute;
+          z-index: 1;
+          left: 0;
+          right: 0;
+          /* dentro do banner, sobre a parte de baixo da imagem */
+          bottom: 32px;
+        }
+        .ia-banner-cta .btn-pill {
+          font-size: 18px;
+          font-weight: 700;
+          padding: 8px 48px;
+          border-radius: 4px;
+        }
+      }
+
+      /* "Como o match é calculado": três cards logo depois dos 6 passos */
+      .container.match-calc {
+        padding-top: clamp(24px, 4vw, 56px);
+        padding-bottom: clamp(56px, 7vw, 96px);
+        text-align: center;
+      }
+      .match-calc h2 {
         font-family: var(--font-family-display);
-        font-size: clamp(1.75rem, 3.6vw, 3.2rem);
-        line-height: 1.12;
-        font-weight: 700;
-        color: #ffffff;
-        max-width: 820px;
-        margin: 0;
+        font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+        line-height: 1.15;
+        max-width: 760px;
+        margin: 8px auto var(--spacing-xl);
         text-wrap: balance;
       }
-      .match-banner h2 .highlight {
-        background: linear-gradient(90deg, #5b9bff, #4ade80);
+      .match-calc h2 .highlight {
+        background: linear-gradient(90deg, #2f6feb, #16a34a);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
       }
-      .match-criteria {
+      .match-cards {
         list-style: none;
         margin: 0;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        max-width: 1000px;
+        gap: var(--spacing-lg);
+        text-align: left;
       }
-      .match-criteria li {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        padding: 4px var(--spacing-lg);
-        border-left: 1px solid rgba(96, 165, 250, 0.45);
-        font-size: 1rem;
-        line-height: 1.5;
-        color: #e6ecf7;
+      .match-card-info {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: clamp(20px, 2.4vw, 28px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
-      .match-criteria li:first-child {
-        padding-left: 0;
-        border-left: none;
+      .match-card-info:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
       }
-      .match-criteria svg {
-        flex-shrink: 0;
-        width: 30px;
-        height: 30px;
-        color: #60a5fa;
-        filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
+      .match-card-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, #e8f0ff, #e3f7ea);
+        color: #2f6feb;
       }
-      .match-criteria strong {
-        display: block;
-        font-family: var(--font-family-display);
-        font-weight: 600;
-        color: #ffffff;
-        margin-bottom: 2px;
+      .match-card-info:nth-child(2) .match-card-icon {
+        color: #16a34a;
+      }
+      .match-card-icon svg {
+        width: 26px;
+        height: 26px;
+      }
+      .match-card-info h3 {
+        margin: 0 0 6px;
+        font-size: 1.15rem;
+      }
+      .match-card-info p {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 0.97rem;
+        line-height: 1.55;
+      }
+      @media (max-width: 900px) {
+        .match-cards {
+          grid-template-columns: 1fr;
+          gap: var(--spacing-md);
+        }
+      }
+
+      /* Cards compactos (celular e computador), com o ícone ao lado do
+         título do card */
+      .match-card-info {
+        display: grid;
+        /* conteúdo no topo, mesmo quando o card vizinho é mais alto */
+        align-content: start;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        column-gap: 12px;
+        row-gap: 6px;
+        padding: 16px 18px;
+      }
+      .match-card-info .match-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        margin-bottom: 0;
+      }
+      .match-card-info .match-card-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .match-card-info h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      .match-card-info p {
+        grid-column: 1 / -1;
+        font-size: 0.93rem;
+      }
+      @media (min-width: 901px) {
+        .match-cards {
+          max-width: 960px;
+          margin: 0 auto;
+          gap: var(--spacing-md);
+        }
+      }
+
+      /* Celular: título à esquerda em texto corrido */
+      @media (max-width: 720px) {
+        .container.match-calc {
+          text-align: left;
+        }
+
+        .match-calc h2 {
+          margin: 8px 0 var(--spacing-lg);
+          text-wrap: wrap;
+        }
+
+        .match-cards {
+          gap: 12px;
+        }
+
+        .match-card-info {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          column-gap: 12px;
+          row-gap: 6px;
+          padding: 14px 16px;
+        }
+
+        .match-card-icon {
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          margin-bottom: 0;
+        }
+
+        .match-card-icon svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        .match-card-info h3 {
+          margin: 0;
+          font-size: 1.05rem;
+        }
+
+        .match-card-info p {
+          grid-column: 1 / -1;
+          font-size: 0.93rem;
+        }
       }
 
       @media (max-width: 900px) {
@@ -194,7 +437,8 @@
           grid-template-columns: repeat(3, minmax(0, 1fr));
           row-gap: var(--spacing-xl);
         }
-        .timeline::before {
+        .timeline::before,
+        .timeline::after {
           display: none;
         }
       }
@@ -210,13 +454,32 @@
         }
         .timeline::before {
           display: block;
+          z-index: 0;
           top: 8px;
           bottom: 8px;
           left: 21px;
           right: auto;
           width: 2px;
           height: auto;
-          background: linear-gradient(180deg, #bfdbfe, #e2e5ea);
+          background: repeating-linear-gradient(
+            180deg,
+            #cbd5e1 0 8px,
+            transparent 8px 14px
+          );
+        }
+        .timeline::after {
+          display: block;
+          top: var(--line-start, 0px);
+          left: 21px;
+          right: auto;
+          width: 2px;
+          height: var(--fill, 0px);
+          transition: height 0.15s linear;
+          background: repeating-linear-gradient(
+            180deg,
+            #3b82f6 0 8px,
+            transparent 8px 14px
+          );
         }
         .timeline-item {
           flex-direction: row;
@@ -224,8 +487,17 @@
           text-align: left;
           gap: var(--spacing-md);
         }
+        /* bolinha apagada até a linha chegar nela */
         .timeline-item .step-badge {
-          box-shadow: none;
+          background: #eff6ff;
+          color: #1d4ed8;
+          transform: none;
+          box-shadow: 0 0 0 4px var(--color-bg, #fff);
+        }
+        .timeline-item.is-active .step-badge {
+          box-shadow:
+            0 0 0 4px var(--color-bg, #fff),
+            0 0 16px 3px rgba(59, 130, 246, 0.65);
         }
         .timeline-item .timeline-body {
           max-width: none;
@@ -235,42 +507,6 @@
         .timeline-item strong {
           min-height: 0;
           display: block;
-        }
-
-        /* No celular o texto vem primeiro e a imagem ocupa a parte de
-           baixo, mostrando as mãos sem ficar atrás das palavras. */
-        .match-banner-visual {
-          min-height: 0;
-          background-size: 190% auto;
-          background-position: center bottom;
-          padding-bottom: 92vw;
-        }
-        .match-banner-visual::before {
-          background:
-            linear-gradient(
-              180deg,
-              rgba(1, 6, 15, 0.9) 0%,
-              rgba(1, 6, 15, 0.6) 55%,
-              rgba(1, 6, 15, 0) 80%
-            ),
-            linear-gradient(0deg, #01060f 0%, rgba(1, 6, 15, 0) 18%);
-        }
-        .match-banner-visual .container {
-          padding-top: var(--spacing-xl);
-        }
-        .match-criteria {
-          grid-template-columns: 1fr;
-          gap: var(--spacing-md);
-        }
-        .match-criteria li,
-        .match-criteria li:first-child {
-          padding: 0 0 0 14px;
-          border-left: 2px solid rgba(96, 165, 250, 0.6);
-          font-size: 0.95rem;
-        }
-        .match-criteria svg {
-          width: 24px;
-          height: 24px;
         }
       }
 
@@ -340,6 +576,12 @@
       .help-layout .chat-card {
         grid-area: chat;
       }
+      /* "Criar conta grátis": respiro maior em relação à caixa da Stella
+         (em cima) e ao rodapé (embaixo) */
+      .faq-cta {
+        text-align: center;
+        margin: clamp(56px, 6vw, 88px) 0 clamp(72px, 8vw, 120px);
+      }
       @media (max-width: 860px) {
         .help-layout {
           grid-template-columns: 1fr;
@@ -355,7 +597,8 @@
           margin-top: var(--spacing-lg);
         }
         .chat-card {
-          height: 480px;
+          /* cabe na tela mesmo com o teclado do celular aberto */
+          height: min(480px, 72svh);
         }
       }
     </style>
@@ -364,27 +607,49 @@
     <header class="navbar">
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
-        <nav>
+        <nav class="public-menu" aria-label="Navegação principal">
+          <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-controls="public-menu-links"
+            aria-label="Abrir menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="public-menu-links" id="public-menu-links">
           <a href="../home/index.html">Home</a>
           <a href="../sobre/index.html">Sobre</a>
           <a href="./index.html">Como funciona</a>
           <a href="../recursos/index.html">Recursos</a>
           <a href="../planos/index.html">Planos</a>
 
+          <!-- Quem criou o StartMatch: no computador abre um menu suspenso;
+               no celular fica dentro do painel do botão de menu. -->
+          <details class="nav-creators">
+            <summary>
+              <span class="nav-creators-long">Quem criou o StartMatch</span>
+              <span class="nav-creators-short">Quem criou</span>
+            </summary>
+            <div class="nav-creators-list">
+              <a class="nav-creator" data-creator="agnes" href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Letícia</a>
+              <a class="nav-creator" data-creator="vanessa" href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+              <a class="nav-creator" data-creator="wedja" href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>
+            </div>
+          </details>
+
           <a href="../login/index.html">Entrar</a>
           <a class="btn btn-accent" href="../onboarding/index.html"
             >Criar conta</a
           >
+          </div>
         </nav>
       </div>
     </header>
 
     <section class="page-hero">
       <div class="container">
-        <span
-          class="section-eyebrow dark"
-          >PASSO A PASSO</span
-        >
         <h1>Como funciona</h1>
         <p class="lead">
           O caminho principal da plataforma, do primeiro acesso ao negócio
@@ -456,6 +721,48 @@
       </ol>
     </div>
 
+    <section class="container match-calc" aria-labelledby="match-calc-title">
+      <span class="section-eyebrow blue">Como o match é calculado</span>
+      <h2 id="match-calc-title">
+        O algoritmo de compatibilidade combina
+        <span class="highlight">três critérios</span>
+      </h2>
+      <ul class="match-cards">
+        <li class="match-card-info sm-reveal">
+          <span class="match-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8"></circle>
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+            </svg>
+          </span>
+          <h3>Segmentos</h3>
+          <p>Sobreposição dos segmentos de atuação e de interesse.</p>
+        </li>
+        <li class="match-card-info sm-reveal" style="animation-delay: 0.05s">
+          <span class="match-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+              <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+              <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
+            </svg>
+          </span>
+          <h3>Faixa de investimento</h3>
+          <p>Compatível com o valor pretendido pela startup.</p>
+        </li>
+        <li class="match-card-info sm-reveal" style="animation-delay: 0.1s">
+          <span class="match-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path>
+              <circle cx="12" cy="9.5" r="2.5"></circle>
+            </svg>
+          </span>
+          <h3>Localização</h3>
+          <p>Proximidade: mesma cidade, mesma UF ou nenhuma.</p>
+        </li>
+      </ul>
+    </section>
+
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
         <div class="marquee-group">
@@ -477,52 +784,39 @@
       </div>
     </div>
 
-    <section class="match-banner" aria-labelledby="match-banner-title">
-      <div class="match-banner-visual">
-        <div class="container">
-          <span class="section-eyebrow dark">Como o match é calculado</span>
-          <h2 id="match-banner-title">
-            O algoritmo de compatibilidade combina
-            <span class="highlight">três critérios</span>
+    <!-- IA: como a inteligência artificial ajuda a encontrar investidor e mentor -->
+    <section class="ia-banner" aria-labelledby="ia-banner-title">
+      <div class="container ia-banner-inner">
+        <div class="ia-banner-copy">
+          <span class="section-eyebrow dark">Inteligência artificial</span>
+          <h2 id="ia-banner-title">
+            A IA ajuda você a encontrar
+            <span class="highlight">o investidor certo</span>
           </h2>
+          <p>
+            Em vez de procurar às cegas, o StartMatch compara os perfis e mostra, em
+            português claro, por que cada conexão faz sentido.
+          </p>
+          <ul class="ia-pontos">
+            <li>
+              <strong>Para o investidor</strong>
+              A análise de IA ordena as startups pelo encaixe com a sua tese e explica
+              o motivo de cada sugestão.
+            </li>
+            <li>
+              <strong>Para a startup (plano Premium)</strong>
+              Os investidores compatíveis aparecem do mais para o menos alinhado, com
+              os motivos: segmento, valor do ticket, estágio e região.
+            </li>
+          </ul>
+          <p class="ia-nota">
+            A IA sugere e explica; a decisão de conversar e de investir é sempre sua.
+          </p>
         </div>
       </div>
 
-      <div class="container match-banner-criteria">
-        <ul class="match-criteria">
-          <li>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="8"></circle>
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
-            </svg>
-            <div>
-              <strong>Segmentos</strong>
-              Sobreposição dos segmentos de atuação e de interesse.
-            </div>
-          </li>
-          <li>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
-              <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
-              <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path>
-            </svg>
-            <div>
-              <strong>Faixa de investimento</strong>
-              Compatível com o valor pretendido pela startup.
-            </div>
-          </li>
-          <li>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path>
-              <circle cx="12" cy="9.5" r="2.5"></circle>
-            </svg>
-            <div>
-              <strong>Localização</strong>
-              Proximidade: mesma cidade, mesma UF ou nenhuma.
-            </div>
-          </li>
-        </ul>
+      <div class="ia-banner-cta">
+        <a class="btn-pill" href="../login/index.html">Entrar</a>
       </div>
     </section>
 
@@ -607,23 +901,18 @@
         </div>
       </div>
 
-      <div class="spacer-xl"></div>
-      <p style="text-align: center">
+      <p class="faq-cta">
         <a class="btn btn-primary" href="../onboarding/index.html"
           >Criar conta grátis</a
         >
       </p>
-      <div class="spacer-xl"></div>
     </div>
+
 
     <footer class="site-footer">
       <div class="container">
         <p class="copy copy-rights">
-          © 2026 StartMatch. Todos os direitos reservados a
-          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
-          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
-          e
-          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
+          © 2026 StartMatch. Todos os direitos reservados.
         </p>
       </div>
     </footer>

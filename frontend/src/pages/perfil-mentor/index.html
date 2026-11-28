@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../../styles/variables.css" />
     <link rel="stylesheet" href="../../styles/global.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/perfil.css" />
     <style>
       .perfil-layout {
         display: grid;
@@ -264,6 +265,26 @@
                 <label for="linkedin">LinkedIn (opcional)</label>
                 <input class="input" id="linkedin" type="url" placeholder="https://www.linkedin.com/in/seu-perfil" />
               </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="telefone">Telefone (opcional)</label>
+                <input class="input" id="telefone" type="tel" placeholder="(81) 99999-9999" autocomplete="tel" />
+              </div>
+              <div class="field">
+                <label for="emailContato">E-mail de contato (opcional)</label>
+                <input class="input" id="emailContato" type="email" placeholder="voce@exemplo.com.br" autocomplete="email" />
+              </div>
+            </div>
+            <div class="consent-box" style="margin-top: var(--spacing-md)">
+              <div class="checkbox-row">
+                <input id="mostrarContatos" type="checkbox" />
+                <label for="mostrarContatos">Eu concordo em mostrar meus dados pessoais</label>
+              </div>
+              <p class="form-hint">
+                Telefone e e-mail aparecem somente para startups com plano Plus ou Premium. Você pode
+                desmarcar quando quiser (LGPD, Lei 13.709/2018).
+              </p>
             </div>
             <div class="form-row">
               <div class="field">

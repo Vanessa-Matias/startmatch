@@ -79,6 +79,17 @@ export function initChatbot(root: HTMLElement): void {
   addMensagem(WELCOME, 'bot');
 
   input.addEventListener('focus', iniciar);
+
+  // No celular, quando o teclado abre, centraliza a caixa da Stella na parte
+  // visível da tela (campo de digitar e últimas mensagens à vista), em vez de
+  // deixar o navegador empurrar a página de qualquer jeito.
+  input.addEventListener('focus', () => {
+    if (!window.matchMedia('(max-width: 720px)').matches) return;
+    window.setTimeout(() => {
+      root.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      log!.scrollTop = log!.scrollHeight;
+    }, 300);
+  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     iniciar();

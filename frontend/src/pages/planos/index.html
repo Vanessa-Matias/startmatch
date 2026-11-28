@@ -17,6 +17,245 @@
     <link rel="stylesheet" href="../../styles/global.css" />
 
     <link rel="stylesheet" href="../../styles/components.css" />
+
+    <link rel="stylesheet" href="../../styles/perfil.css" />
+
+    <style>
+      /* Celular: o nome de cada público (Startups, Investidores, Mentores)
+         ganha uma barrinha na cor do grupo: azul, verde e lilás. Sem painel
+         de fundo; os cards ficam direto sobre o fundo da página. */
+      .plan-group {
+        --group-rgb: 47, 111, 235;
+      }
+      .plan-group--investidores {
+        --group-rgb: 47, 111, 235;
+      }
+      .plan-group--mentores {
+        --group-rgb: 47, 111, 235;
+      }
+
+      /* Seções Startups, Investidores e Mentores (celular e computador):
+         cada público num painel branco, nome centralizado com ícone e
+         Mentores em texto corrido, sem card. */
+      .plan-group {
+        margin-top: 24px;
+        padding: 28px 28px 26px;
+        background: #ffffff;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 10px 28px -20px rgba(15, 33, 72, 0.35);
+      }
+      .plan-group h2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-size: 1.7rem;
+        color: var(--color-primary);
+        margin-bottom: 4px;
+      }
+      /* ícone do público num quadradinho na cor do grupo */
+      .plan-group-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: rgba(var(--group-rgb), 0.12);
+        color: rgb(var(--group-rgb));
+        box-shadow: 0 0 0 1px rgba(var(--group-rgb), 0.25);
+      }
+      .plan-group-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+      .plan-group .grid {
+        gap: 14px;
+      }
+
+      /* Mentores: sem card, só o texto */
+      .plan-group .plan-card--mentor {
+        background: none;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+        max-width: 760px;
+      }
+      .plan-group .plan-card--mentor .plan-head {
+        justify-content: flex-start;
+        gap: 12px;
+      }
+      /* "Grátis" num selo branco com brilho azul, igual ao do Básico */
+      .plan-group .plan-card--mentor .badge-plan {
+        --plan-rgb: 59, 130, 246;
+        color: #1d4ed8;
+        background: #ffffff;
+        border-color: rgba(59, 130, 246, 0.9);
+        text-shadow: none;
+        box-shadow:
+          0 0 0 1px rgba(59, 130, 246, 0.15),
+          0 0 12px rgba(59, 130, 246, 0.55);
+      }
+      .plan-group .plan-card--mentor .badge-plan::before {
+        box-shadow: 0 0 6px rgb(59, 130, 246);
+      }
+      .plan-group .plan-card--mentor .plan-price,
+      .plan-group .plan-card--mentor strong {
+        color: var(--color-text);
+      }
+      .plan-group .plan-card--mentor .text-muted {
+        color: var(--color-text);
+        text-align: left;
+        line-height: 1.6;
+      }
+      /* Mentores ocupa a largura toda do painel no computador */
+      .plan-group--mentores .grid {
+        grid-template-columns: 1fr;
+      }
+
+      @media (max-width: 720px) {
+        .plan-group {
+          padding: 22px 18px 20px;
+        }
+        .plan-group h2 {
+          gap: 10px;
+        }
+        .plan-group-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 10px;
+        }
+        .plan-group-icon svg {
+          width: 19px;
+          height: 19px;
+        }
+        .plan-group .grid {
+          gap: 12px;
+        }
+        /* cards um pouco mais estreitos e compactos dentro do painel */
+        .plan-group .card {
+          padding: 16px 18px;
+        }
+        .plan-group .plan-card--mentor {
+          padding: 0;
+        }
+      }
+
+      /* =====================================================
+         Cards de plano em degradê de níveis (computador e celular):
+         Básico   → branco puxando para cinza claro (texto escuro)
+         Plus     → azul médio, mais claro
+         Premium  → azul-marinho escuro com brilho neon
+         Mentor   → lilás/roxo, em destaque próprio
+         ===================================================== */
+
+      /* Básico: branco acinzentado, textos em preto e selo neon azul */
+      .plan-card--basic {
+        background: linear-gradient(160deg, #ffffff 0%, #eef1f6 100%);
+        border: 1px solid #dde3ec;
+        box-shadow: 0 8px 22px -14px rgba(15, 33, 72, 0.35);
+      }
+      .plan-card--basic .text-muted,
+      .plan-card--basic strong,
+      .plan-card--basic .plan-price {
+        color: var(--color-text);
+      }
+      .plan-card--basic .badge-plan {
+        --plan-rgb: 59, 130, 246;
+        color: #1d4ed8;
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.9);
+        box-shadow:
+          0 0 0 1px rgba(59, 130, 246, 0.15),
+          0 0 12px rgba(59, 130, 246, 0.55);
+      }
+      .plan-card--basic .badge-plan::before {
+        box-shadow: 0 0 6px rgb(59, 130, 246);
+      }
+
+      /* Plus, Premium e Mentor: cards coloridos com texto claro */
+      .plan-card--plus,
+      .plan-card--premium,
+      .plan-card--mentor {
+        --neon-rgb: 96, 165, 250;
+        --neon-light: #dbeafe;
+        border: 1px solid rgba(var(--neon-rgb), 0.55);
+        box-shadow:
+          0 0 0 1px rgba(var(--neon-rgb), 0.1),
+          0 12px 28px -12px rgba(var(--neon-rgb), 0.55);
+      }
+
+      /* Plus: azul médio, um nível mais claro que o Premium */
+      .plan-card--plus {
+        --neon-rgb: 147, 197, 253;
+        --neon-light: #ffffff;
+        background: linear-gradient(160deg, #1d4ed8 0%, #3b82f6 100%);
+      }
+
+      /* Premium: azul-marinho escuro, com brilho neon */
+      .plan-card--premium {
+        --neon-rgb: 56, 189, 248;
+        --neon-light: #bae6fd;
+        background: linear-gradient(160deg, #0a1430 0%, #0f2148 100%);
+        box-shadow:
+          0 0 0 1px rgba(var(--neon-rgb), 0.12),
+          0 0 22px -4px rgba(var(--neon-rgb), 0.5);
+      }
+
+      /* Mentor: lilás/roxo, todo o card em destaque */
+      .plan-card--mentor {
+        --neon-rgb: 196, 181, 253;
+        --neon-light: #ffffff;
+        background: linear-gradient(160deg, #6d28d9 0%, #8b5cf6 100%);
+      }
+
+      .plan-card--plus .plan-price,
+      .plan-card--premium .plan-price,
+      .plan-card--mentor .plan-price,
+      .plan-card--plus strong,
+      .plan-card--premium strong,
+      .plan-card--mentor strong {
+        color: #ffffff;
+      }
+      .plan-card--plus .text-muted,
+      .plan-card--mentor .text-muted {
+        color: rgba(255, 255, 255, 0.88);
+      }
+      .plan-card--premium .text-muted {
+        color: #c7d4ee;
+      }
+
+      /* selos dos cards coloridos: vidro claro com borda acesa */
+      .plan-card--plus .badge-plan,
+      .plan-card--premium .badge-plan {
+        --plan-rgb: var(--neon-rgb);
+        color: var(--neon-light);
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(var(--neon-rgb), 0.9);
+        text-shadow: 0 0 8px rgba(var(--neon-rgb), 0.7);
+        box-shadow: 0 0 12px rgba(var(--neon-rgb), 0.4);
+      }
+      .plan-card--plus .badge-plan::before,
+      .plan-card--premium .badge-plan::before {
+        box-shadow: 0 0 6px rgb(var(--neon-rgb));
+      }
+      /* selo do Plus mais escuro, para destacar sobre o azul */
+      .plan-card--plus .badge-plan {
+        color: #ffffff;
+        background: rgba(10, 20, 48, 0.55);
+        border-color: rgba(191, 219, 254, 0.85);
+        box-shadow: 0 0 12px rgba(10, 20, 48, 0.45);
+      }
+      .plan-card--mentor .badge-neon {
+        --neon-rgb: 237, 233, 254;
+        --neon-text: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.75);
+        text-shadow: none;
+        box-shadow: 0 0 12px rgba(237, 233, 254, 0.35);
+      }
+    </style>
   </head>
 
   <body>
@@ -24,7 +263,18 @@
       <div class="container">
         <a href="../home/index.html">StartMatch</a>
 
-        <nav>
+        <nav class="public-menu" aria-label="Navegação principal">
+          <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-controls="public-menu-links"
+            aria-label="Abrir menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="public-menu-links" id="public-menu-links">
           <a href="../home/index.html">Home</a>
 
           <a href="../sobre/index.html">Sobre</a>
@@ -35,12 +285,27 @@
 
           <a href="./index.html">Planos</a>
 
+          <!-- Quem criou o StartMatch: no computador abre um menu suspenso;
+               no celular fica dentro do painel do botão de menu. -->
+          <details class="nav-creators">
+            <summary>
+              <span class="nav-creators-long">Quem criou o StartMatch</span>
+              <span class="nav-creators-short">Quem criou</span>
+            </summary>
+            <div class="nav-creators-list">
+              <a class="nav-creator" data-creator="agnes" href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Letícia</a>
+              <a class="nav-creator" data-creator="vanessa" href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
+              <a class="nav-creator" data-creator="wedja" href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>
+            </div>
+          </details>
+
 
           <a href="../login/index.html">Entrar</a>
 
           <a class="btn btn-accent" href="../onboarding/index.html"
             >Criar conta</a
           >
+          </div>
         </nav>
       </div>
     </header>
@@ -58,94 +323,100 @@
     <div class="container">
       <div class="spacer-lg"></div>
 
-      <h2>Startups</h2>
+      <section class="plan-group plan-group--startups">
+        <h2>Startups<span class="plan-group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span></h2>
 
-      <div class="spacer-sm"></div>
+        <div class="spacer-sm"></div>
 
-      <div class="grid">
-        <div class="card sm-reveal">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--gray">Básico</span><span class="plan-price">Grátis</span></div>
+        <div class="grid">
+          <div class="card plan-card--basic sm-reveal">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--gray">Básico</span><span class="plan-price">Grátis</span></div>
 
-          <p class="text-muted">
-            Perfil da startup, <strong>até 3 interesses por mês</strong> e
-            conversa com o investidor depois do match.
-          </p>
+            <p class="text-muted">
+              Perfil da startup, <strong>até 3 interesses por mês</strong> e
+              conversa com o investidor depois do match.
+            </p>
+          </div>
+
+          <div class="card plan-card--plus sm-reveal" style="animation-delay: 0.05s">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--blue">Plus</span><span class="plan-price">R$ 550/mês</span></div>
+
+            <p class="text-muted">
+              <strong>Interesses ilimitados</strong> e
+              <strong>1 mentoria por mês</strong> com mentores da rede.
+            </p>
+          </div>
+
+          <div class="card plan-card--premium sm-reveal" style="animation-delay: 0.1s">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--green">Premium</span><span class="plan-price">R$ 800/mês</span></div>
+
+            <p class="text-muted">
+              Tudo do Plus + <strong>prioridade no match</strong>, destaque na
+              seção Premium dos investidores, relatório de compatibilidade, selo
+              "verificado" e <strong>2 mentorias por mês</strong>.
+            </p>
+          </div>
         </div>
-
-        <div class="card sm-reveal" style="animation-delay: 0.05s">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--blue">Plus</span><span class="plan-price">R$ 550/mês</span></div>
-
-          <p class="text-muted">
-            <strong>Interesses ilimitados</strong> e
-            <strong>1 mentoria por mês</strong> com mentores da rede.
-          </p>
-        </div>
-
-        <div class="card sm-reveal" style="animation-delay: 0.1s">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--green">Premium</span><span class="plan-price">R$ 800/mês</span></div>
-
-          <p class="text-muted">
-            Tudo do Plus + <strong>prioridade no match</strong>, destaque na
-            seção Premium dos investidores, relatório de compatibilidade, selo
-            "verificado" e <strong>2 mentorias por mês</strong>.
-          </p>
-        </div>
-      </div>
+      </section>
 
       <div class="spacer-lg"></div>
 
-      <h2>Investidores</h2>
+      <section class="plan-group plan-group--investidores">
+        <h2>Investidores<span class="plan-group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/><path d="M15 8h5v5"/></svg></span></h2>
 
-      <div class="spacer-sm"></div>
+        <div class="spacer-sm"></div>
 
-      <div class="grid">
-        <div class="card sm-reveal">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--gray">Básico</span><span class="plan-price">Grátis</span></div>
+        <div class="grid">
+          <div class="card plan-card--basic sm-reveal">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--gray">Básico</span><span class="plan-price">Grátis</span></div>
 
-          <p class="text-muted">
-            Dashboard simples, <strong>até 3 interesses por mês</strong> e
-            filtros básicos de busca.
-          </p>
+            <p class="text-muted">
+              Dashboard simples, <strong>até 3 interesses por mês</strong> e
+              filtros básicos de busca.
+            </p>
+          </div>
+
+          <div class="card plan-card--plus sm-reveal" style="animation-delay: 0.05s">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--blue">Plus</span><span class="plan-price">R$ 700/mês</span></div>
+
+            <p class="text-muted">
+              <strong>Dashboard completo</strong>, filtros avançados e
+              interesses ilimitados.
+            </p>
+          </div>
+
+          <div class="card plan-card--premium sm-reveal" style="animation-delay: 0.1s">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--green">Premium</span><span class="plan-price">R$ 1.200/mês</span></div>
+
+            <p class="text-muted">
+              Tudo do Plus + <strong>seção Premium</strong> com aviso de novas
+              startups compatíveis, relatórios e exportação de listas.
+            </p>
+          </div>
         </div>
-
-        <div class="card sm-reveal" style="animation-delay: 0.05s">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--blue">Plus</span><span class="plan-price">R$ 700/mês</span></div>
-
-          <p class="text-muted">
-            <strong>Dashboard completo</strong>, filtros avançados e
-            interesses ilimitados.
-          </p>
-        </div>
-
-        <div class="card sm-reveal" style="animation-delay: 0.1s">
-          <div class="card-title plan-head"><span class="badge-plan badge-plan--green">Premium</span><span class="plan-price">R$ 1.200/mês</span></div>
-
-          <p class="text-muted">
-            Tudo do Plus + <strong>seção Premium</strong> com aviso de novas
-            startups compatíveis, relatórios e exportação de listas.
-          </p>
-        </div>
-      </div>
+      </section>
 
       <div class="spacer-lg"></div>
 
-      <h2>Mentores</h2>
+      <section class="plan-group plan-group--mentores">
+        <h2>Mentores<span class="plan-group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></span></h2>
 
-      <div class="spacer-sm"></div>
+        <div class="spacer-sm"></div>
 
-      <div class="grid">
-        <div class="card sm-reveal">
-          <div class="card-title plan-head"><span class="badge-neon badge-neon--green">Mentor voluntário</span><span class="plan-price">Grátis</span></div>
+        <div class="grid">
+          <div class="card plan-card--mentor sm-reveal">
+            <div class="card-title plan-head"><span class="badge-plan badge-plan--gray">Grátis</span></div>
 
-          <p class="text-muted">
-            Mentores <strong>não pagam assinatura</strong>. Ao se cadastrar,
-            você define duração, quantas mentorias faz por mês, dias, horários e
-            modalidade. Ganha selo de verificado, badge de Parceiro Porto
-            Digital, <strong>certificado</strong> a cada mentoria realizada e
-            pode mandar mensagem direta para startups e investidores.
-          </p>
+            <p class="text-muted">
+              Mentores <strong>não pagam assinatura</strong>. Ao se cadastrar,
+              você define duração, quantas mentorias faz por mês, dias, horários e
+              modalidade. Ganha selo de verificado, badge de Parceiro Porto
+              Digital, <strong>certificado</strong> a cada mentoria realizada e
+              pode mandar mensagem direta para startups e investidores.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
       <div class="spacer-lg"></div>
 
@@ -159,11 +430,7 @@
     <footer class="site-footer">
       <div class="container">
         <p class="copy copy-rights">
-          © 2026 StartMatch. Todos os direitos reservados a
-          <a href="https://www.linkedin.com/in/agneslribeiro/" target="_blank" rel="noopener noreferrer">Agnes Ribeiro</a>,
-          <a href="https://www.linkedin.com/in/vanessamatiasdev/" target="_blank" rel="noopener noreferrer">Vanessa Matias</a>
-          e
-          <a href="https://www.linkedin.com/in/wedja-sousa-43639b19b/" target="_blank" rel="noopener noreferrer">Wedja Souza</a>.
+          © 2026 StartMatch. Todos os direitos reservados.
         </p>
       </div>
     </footer>

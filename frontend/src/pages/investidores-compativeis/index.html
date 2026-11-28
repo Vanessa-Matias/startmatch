@@ -1,0 +1,63 @@
+<!--
+  Tela: Investidores compatíveis (startup) — recurso do plano Premium
+  ====================================================================
+  Lista os investidores que mais combinam com a startup, do mais para o menos
+  compatível, dizendo POR QUE combinam (segmento, valor do ticket, estágio e
+  região). Investidores claramente incompatíveis ficam escondidos atrás de "Ver
+  outros investidores".
+
+  O cálculo é feito por regras no próprio navegador (scripts/perfilExtra.ts ->
+  compatibilidade). Para a apresentação, há um seletor "Plano (simulação)" que
+  deixa mostrar a tela como Básico, Plus ou Premium. Nada é salvo no banco.
+-->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StartMatch — Investidores compatíveis</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#152a54" />
+    <link rel="stylesheet" href="../../styles/variables.css" />
+    <link rel="stylesheet" href="../../styles/global.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/perfil.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <a href="../home/index.html">StartMatch</a>
+        <nav id="nav-links"></nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="compat-topo">
+        <div class="page-head" style="margin-bottom: 0">
+          <span class="section-eyebrow blue">Plano Premium</span>
+          <h1>Investidores compatíveis</h1>
+          <p>
+            Os investidores que mais combinam com a sua startup, ordenados pela compatibilidade de
+            segmento, valor do ticket, estágio e região.
+          </p>
+        </div>
+        <label class="simulador-plano">
+          Plano (simulação)
+          <select class="select" id="simular-plano">
+            <option value="">Plano da conta</option>
+            <option value="basico">Básico</option>
+            <option value="plus">Plus</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="spacer-md"></div>
+      <div id="compat-conteudo"><p class="text-muted">Calculando compatibilidade…</p></div>
+      <div class="spacer-xl"></div>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

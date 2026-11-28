@@ -183,6 +183,24 @@ a.card:hover,
   gap: var(--spacing-md);
 }
 
+/* toque no celular não "seleciona"/destaca a pergunta; o contorno
+   de foco continua só para quem navega pelo teclado */
+.faq-item summary {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.faq-item summary:focus {
+  outline: none;
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
 .faq-item summary::-webkit-details-marker {
   display: none;
 }
@@ -429,27 +447,52 @@ label {
    PÁGINAS PÚBLICAS
    ========================================================= */
 
+/* Cabeçalho das páginas públicas (Sobre, Como funciona, Recursos, Planos):
+   só os textos, sobre o fundo claro da página. Sem faixa escura, para não
+   se confundir com a barra de navegação fixa (que já é azul-escura). */
 .page-hero {
-  padding: var(--spacing-2xl) 0 64px;
-  background-image:
-    radial-gradient(
-      rgba(255, 255, 255, 0.08) 1.2px,
-      transparent 1.2px
-    ),
-    var(--banner-gradient);
-  background-color: var(--banner-dark);
-  background-size: 22px 22px, 100% 100%, 100% 100%, 100% 100%;
+  padding: 40px 0 8px;
+  background: none;
 }
 
 .page-hero h1 {
-  color: #fff;
+  color: var(--color-primary);
+  margin-bottom: 0;
 }
 
 .page-hero p.lead {
-  color: #a9b4cc;
-  font-size: 16px;
+  color: var(--color-text-muted);
+  font-size: 17px;
   max-width: 640px;
   margin: 0;
+}
+
+/* filete azul curto abaixo do título (celular e computador) */
+.page-hero h1::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin: 12px 0 14px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--color-accent), #60a5fa);
+}
+
+/* Celular: título um pouco maior, textos alinhados à esquerda */
+@media (max-width: 720px) {
+  .page-hero {
+    padding: 28px 0 4px;
+  }
+  .page-hero h1 {
+    font-size: 2rem;
+    margin-bottom: 0;
+  }
+  .page-hero h1::after {
+    margin: 10px 0 12px;
+  }
+  .page-hero p.lead {
+    font-size: 15px;
+  }
 }
 
 .page-hero .back-link {
@@ -457,7 +500,7 @@ label {
 }
 
 .page-hero .back-link a {
-  color: #a9b4cc;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -1874,11 +1917,28 @@ label {
 .chat-log {
   flex: 1;
   overflow-y: auto;
+  /* rolar as mensagens não arrasta a página junto (celular) */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  /* barra de rolagem fina e discreta, no lugar da padrão do sistema */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 111, 235, 0.35) transparent;
   padding: var(--spacing-md);
   background: var(--color-bg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+.chat-log::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-log::-webkit-scrollbar-thumb {
+  background: rgba(47, 111, 235, 0.35);
+  border-radius: 4px;
 }
 .chat-msg {
   max-width: 88%;
@@ -1923,6 +1983,12 @@ label {
 .chat-form input:focus {
   outline: none;
   border-color: var(--color-accent);
+}
+/* 16px evita o zoom automático do celular ao tocar no campo */
+@media (max-width: 720px) {
+  .chat-form input {
+    font-size: 16px;
+  }
 }
 
 
@@ -2726,4 +2792,491 @@ label {
   display: flex;
   justify-content: flex-end;
   margin: var(--spacing-xl, 40px) 0 var(--spacing-lg);
+}
+
+/* =========================================================
+   CELULAR — navbar pública enxuta
+   - "Entrar" e "Criar conta" saem da barra fixa (já existem nos botões
+     "Criar conta grátis" e "Já tenho conta" do topo da home);
+   - logo um pouco menor.
+   ========================================================= */
+@media (max-width: 720px) {
+  .navbar nav a[href$='login/index.html'],
+  .navbar nav a.btn-accent[href$='onboarding/index.html'],
+  .public-nav nav a[href$='login/index.html'],
+  .public-nav nav a.btn-accent[href$='onboarding/index.html'] {
+    display: none;
+  }
+
+  .navbar > .container > a.brand:first-child,
+  .public-nav .brand {
+    width: 130px;
+    height: 40px;
+    /* "auto" usa a largura/altura acima tanto com a barra em linha
+       quanto em coluna (um valor fixo aqui cortava a logo) */
+    flex: 0 0 auto;
+    background-size: 150px 150px;
+  }
+}
+
+/* =========================================================
+   MENU PÚBLICO (Home, Sobre, Como funciona, Recursos, Planos)
+   scripts/publicNav.ts
+   Computador: links direto na barra (o wrapper "some" com
+   display: contents). Celular: logo à esquerda + botão de menu
+   à direita, abrindo um painel com os links empilhados.
+   ========================================================= */
+
+.public-menu .nav-toggle {
+  display: none;
+}
+
+.public-menu-links {
+  display: contents;
+}
+
+@media (max-width: 720px) {
+  .navbar:has(nav.public-menu) {
+    overflow: visible;
+  }
+
+  .navbar:has(nav.public-menu) .container {
+    flex-direction: row;
+
+    flex-wrap: nowrap;
+
+    align-items: center;
+
+    justify-content: space-between;
+  }
+
+  .navbar nav.public-menu {
+    position: relative;
+
+    width: auto;
+
+    flex-wrap: nowrap;
+  }
+
+  /* logo do mesmo tamanho em todas as páginas públicas (sem isso a
+     regra de 600px, pensada para a barra em coluna, cortava a logo) */
+  .navbar:has(nav.public-menu) > .container > a:first-child {
+    width: 130px;
+    height: 40px;
+    flex: 0 0 auto;
+    background-size: 150px 150px;
+  }
+
+  .public-menu .nav-toggle {
+    display: inline-flex;
+  }
+
+  .public-menu-links {
+    position: absolute;
+
+    top: calc(100% + 12px);
+    right: 0;
+
+    z-index: 200;
+
+    min-width: min(260px, calc(100vw - 24px));
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 2px;
+
+    padding: 10px;
+
+    background: linear-gradient(160deg, #031035 0%, #06184a 100%);
+
+    border: 1px solid rgba(96, 165, 250, 0.35);
+
+    border-radius: 16px;
+
+    box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.7);
+  }
+
+  .public-menu:not(.is-open) .public-menu-links {
+    display: none;
+  }
+
+  .navbar .public-menu-links a {
+    display: block;
+
+    font-size: 16px;
+
+    padding: 12px 16px;
+
+    border-radius: 10px;
+  }
+}
+
+/* =========================================================
+   "QUEM CRIOU O STARTMATCH" (menu das páginas públicas)
+   Computador: item da barra que abre um menu suspenso.
+   Celular: seção dentro do painel do botão de menu.
+   ========================================================= */
+
+.nav-creators {
+  position: relative;
+}
+
+.nav-creators summary {
+  list-style: none;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0.85;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    opacity 0.15s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.nav-creators summary::-webkit-details-marker {
+  display: none;
+}
+
+/* setinha que gira ao abrir */
+.nav-creators summary::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-3px) rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.nav-creators[open] summary::after {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+.nav-creators summary:hover,
+.nav-creators summary:focus-visible,
+.nav-creators[open] summary {
+  opacity: 1;
+  background: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.55);
+  outline: none;
+}
+
+.nav-creators-long {
+  display: none;
+}
+
+.nav-creators-list {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 210;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: linear-gradient(160deg, #031035 0%, #06184a 100%);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.7);
+}
+
+.navbar .nav-creators-list a.nav-creator {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+@media (max-width: 720px) {
+  /* dentro do painel: título da seção + os 3 perfis logo abaixo */
+  .nav-creators {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(96, 165, 250, 0.25);
+  }
+
+  .nav-creators summary {
+    display: block;
+    font-size: 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+  }
+
+  .nav-creators-long {
+    display: inline;
+  }
+
+  .nav-creators-short {
+    display: none;
+  }
+
+  .nav-creators-list {
+    position: static;
+    min-width: 0;
+    padding: 0 0 4px 12px;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .navbar .nav-creators-list a.nav-creator {
+    font-size: 15px;
+    padding: 10px 16px;
+  }
+}
+
+/* =========================================================
+   JANELA DE PERFIL DE QUEM CRIOU (scripts/creators.ts)
+   ========================================================= */
+
+.creator-modal {
+  width: min(92vw, 420px);
+  max-height: 90vh;
+  padding: 32px 26px 26px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  /* degradê bem suave nas cores do site: azul-claro no topo, branco no
+     meio e um toque de verde-claro embaixo */
+  background: linear-gradient(180deg, #eef4ff 0%, #ffffff 42%, #ffffff 70%, #effaf3 100%);
+  color: var(--color-text);
+  box-shadow: 0 30px 60px -20px rgba(6, 14, 36, 0.55);
+  text-align: center;
+}
+
+.creator-modal::backdrop {
+  background: rgba(6, 14, 36, 0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.creator-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dbe6fb;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--color-primary);
+  box-shadow: 0 4px 10px -6px rgba(15, 33, 72, 0.35);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.creator-modal-close:hover,
+.creator-modal-close:focus-visible {
+  background: #dbeafe;
+  outline: none;
+}
+
+/* foto redonda com anel azul; sem foto, mostra as iniciais */
+.creator-modal-avatar {
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  color: #fff;
+  font-family: var(--font-family-display);
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow:
+    0 0 0 4px #fff,
+    0 0 0 6px rgba(47, 111, 235, 0.55),
+    0 10px 24px -8px rgba(47, 111, 235, 0.6);
+}
+
+.creator-modal-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Efeito tecnológico em volta da foto (.is-tech) ----------
+   Só CSS, sem biblioteca:
+   - anel neon em degradê (azul → ciano → verde) girando;
+   - órbita tracejada girando no sentido contrário;
+   - dois pontinhos de luz orbitando a foto. */
+.creator-modal-avatar-wrap {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 14px;
+}
+
+.creator-modal-avatar-wrap .creator-modal-avatar {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+.avatar-orbit {
+  display: none;
+}
+
+.creator-modal-avatar-wrap.is-tech {
+  margin: 14px auto 28px;
+}
+
+/* anel neon girando */
+.creator-modal-avatar-wrap.is-tech::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(47, 111, 235, 0) 0deg,
+    #2f6feb 90deg,
+    #38bdf8 180deg,
+    #4ade80 250deg,
+    rgba(74, 222, 128, 0) 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
+  animation: avatar-spin 3.6s linear infinite;
+}
+
+/* órbita tracejada, girando ao contrário */
+.creator-modal-avatar-wrap.is-tech::after {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  border: 1px dashed rgba(96, 165, 250, 0.55);
+  animation: avatar-spin 14s linear infinite reverse;
+}
+
+/* pontinhos de luz orbitando */
+.creator-modal-avatar-wrap.is-tech .avatar-orbit {
+  display: block;
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  animation: avatar-spin 6s linear infinite;
+  pointer-events: none;
+}
+
+.creator-modal-avatar-wrap.is-tech .avatar-orbit::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow:
+    0 0 8px 2px rgba(56, 189, 248, 0.9),
+    0 0 16px 4px rgba(47, 111, 235, 0.5);
+}
+
+.creator-modal-avatar-wrap.is-tech .avatar-orbit--2 {
+  animation-duration: 9s;
+  animation-direction: reverse;
+}
+
+.creator-modal-avatar-wrap.is-tech .avatar-orbit--2::before {
+  top: auto;
+  bottom: -3px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: #4ade80;
+  box-shadow:
+    0 0 8px 2px rgba(74, 222, 128, 0.85),
+    0 0 14px 3px rgba(22, 163, 74, 0.45);
+}
+
+/* com o efeito, a foto fica só com o anel branco (o neon faz o resto) */
+.creator-modal-avatar-wrap.is-tech .creator-modal-avatar {
+  box-shadow: 0 0 0 3px #fff;
+}
+
+@keyframes avatar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creator-modal-avatar-wrap.is-tech::before,
+  .creator-modal-avatar-wrap.is-tech::after,
+  .creator-modal-avatar-wrap.is-tech .avatar-orbit {
+    animation: none;
+  }
+}
+
+.creator-modal-nome {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  color: var(--color-primary);
+}
+
+/* especialidade: mesmo selo de "Como funciona" (.section-eyebrow.blue),
+   fixo (a animação fica só na foto) */
+.creator-modal-especialidade {
+  margin: 0 auto;
+}
+
+.creator-modal-subtitulo {
+  margin: 20px 0 8px;
+  text-align: left;
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.creator-modal-lista {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.creator-modal-lista li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* marcador de "certo" azul */
+.creator-modal-lista li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--color-accent);
+  border-bottom: 2px solid var(--color-accent);
+  transform: rotate(-45deg);
+}
+
+.creator-modal-linkedin {
+  justify-content: center;
 }
